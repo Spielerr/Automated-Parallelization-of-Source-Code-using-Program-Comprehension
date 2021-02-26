@@ -1,14 +1,16 @@
+#ifndef PARALLEL_H
+#define PARALLEL_H
 #include <omp.h>
-
+#include <algorithm>
 #include <vector>
-#if 0
+
 template <typename T>
 void swap(T& first, T& second) {
     T temp = first;
     first = second;
     second = temp;
 }
-
+#if 0
 template <typename ptr_t, typename T>
 void quicksort(ptr_t array, int high, int low = 0) {
     while (high > low) {
@@ -51,24 +53,72 @@ std::vector<T> vectorise(T array) {
 }
 
 template <typename T>
-void deVectorise(std::vector<T> v, T array) {
+void deVectorise(std::vector<T> v, T& array) 
+{
     // convert vector to type T in parallel
     // need to do based on type of T, like array or list etc.
+
+    std::copy(std::begin(v),std::end(v),std::begin(array));
+
 }
-template <typename ptr_t, typename T>
-int partition(ptr_t array, int p, int r) {}
+template <typename T>
+int partition(T my_vector, int l, int r) 
+{
+    T p = my_vector[l];
+    int i = l;
+    int j = r + 1;
+
+    #pragma omp parallel sections
+    {
+        do
+        {
+            #pragma omp section
+            {
+                do
+                {
+                    ++i;
+                } while (A[i]<p);
+            }
+
+            #pragma omp section
+            {
+                do
+                {
+                    ++j;
+                } while (A[j]>p);
+            }
+            
+
+            #pragma omp barrier
+            swap(my_vector[i],my_vector[j]);
+
+        } while (i<j);
+    }
+    swap(my_vector[i],my_vector[j]);
+    swap(my_vector[l],my_vector[j]);
+
+    return j;
+    
+}
 
 template <typename ptr_t>
-void quicksort(ptr_t array, int p, int r) {
+void quicksort(ptr_t array, int p, int r)
+{
     int div;
-    if (p < r) {
+
+    if (p < r) 
+    {
         div = partition(array, p, r);
-#pragma omp parallel sections
+        #pragma omp parallel sections
         {
-#pragma omp section
+
+        #pragma omp section
             quicksort(array, p, div - 1);
-#pragma omp section
+            
+        #pragma omp section
             quicksort(array, div + 1, r);
         }
     }
-}
+
+
+#endif
