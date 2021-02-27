@@ -1,7 +1,8 @@
 #include <bits/stdc++.h> 
-#include "parallel.h"
-// #include "sequential.h"
+// #include "parallel.h"
+#include "sequential.h"
 
+#if 0
 void sort(int* a, int n)
 {
     
@@ -20,6 +21,7 @@ void sort(int* a, int n)
 
     printf("\n");
 }
+#endif
 
 int main()
 {
@@ -32,21 +34,18 @@ int main()
         a[i] = rand();
     }
 
-    printf("\n%d", RAND_MAX);
-    // time_t start, end; 
-    // time(&start); 
-    // auto aVector = vectorise(a);
-    // quicksort(&aVector,0,n-1);
-    // deVectorise(aVector, a);
+    // printf("\n%d", RAND_MAX);
+    time_t start, end; 
+    time(&start); 
+    auto aVector = vectorise(a);
+    quicksort(&aVector,0,n-1);
+    deVectorise(aVector, a);
 
-    // time(&end); 
+    time(&end); 
   
-    // // Calculating total time taken by the program. 
-    // double time_taken = double(end - start); 
-    // std::cout << "Time taken by program is : " << time_taken << std::setprecision(5); 
-    // std::cout << " sec " << "\n"; 
-
-    // printf("\n");
-    sort(a, n);
+    // Calculating total time taken by the program. 
+    double time_taken = double(end - start); 
+    std::cout << "Time taken by program is : " << time_taken << std::setprecision(5); 
+    std::cout << " sec " << "\n";
 }
 
