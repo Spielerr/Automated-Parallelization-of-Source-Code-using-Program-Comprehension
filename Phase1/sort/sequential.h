@@ -64,15 +64,14 @@ void quicksort(ptr_t* array, int p, int r)
     if (p < r) 
     {
         div = partition(array, p, r);
-        #pragma omp parallel sections
-        {
+       
 
-        #pragma omp section
+       
         quicksort(array, p, div - 1);
             
-        #pragma omp section
+        
         quicksort(array, div + 1, r);
-        }
+        
     }
 }
 
