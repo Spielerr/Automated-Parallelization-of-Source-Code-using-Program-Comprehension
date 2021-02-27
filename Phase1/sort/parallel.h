@@ -46,63 +46,93 @@ wrap the data in container, use that to parallelise code
 
 why not use stl containers itself?
 */
-template <typename T>
-std::vector<T> vectorise(T array) {
+template <typename T, int Size>
+std::vector<T> vectorise(T (&array)[Size]) {
     std::vector<T> v(std::begin(array), std::end(array));
     return v;
 }
 
-template <typename T>
-void deVectorise(std::vector<T> v, T& array) 
+template <typename T, int Size>
+void deVectorise(std::vector<T> v, T (&array)[Size]) 
 {
     // convert vector to type T in parallel
     // need to do based on type of T, like array or list etc.
-
     std::copy(std::begin(v),std::end(v),std::begin(array));
 
 }
 template <typename T>
-int partition(T my_vector, int l, int r) 
+int partition(std::vector<T>* my_vector, int l, int r) 
 {
-    T p = my_vector[l];
+    #if 0
+    T p = (*my_vector)[l];
     int i = l;
     int j = r + 1;
 
-    #pragma omp parallel sections
+    // #pragma omp parallel sections
     {
         do
         {
-            #pragma omp section
-            {
+            // #pragma omp section
+            // {
                 do
                 {
                     ++i;
-                } while (A[i]<p);
-            }
+                } while ((*my_vector)[i]<p);
+            // }
 
-            #pragma omp section
-            {
+            // #pragma omp section
+            // {
                 do
                 {
                     ++j;
-                } while (A[j]>p);
-            }
+                } while ((*my_vector)[j]>p);
+            // }
             
 
-            #pragma omp barrier
-            swap(my_vector[i],my_vector[j]);
+            // #pragma omp barrier
+            T temp = (*my_vector)[i];
+            (*my_vector)[i] = (*my_vector)[j];
+            (*my_vector)[j] = temp;
 
         } while (i<j);
     }
-    swap(my_vector[i],my_vector[j]);
-    swap(my_vector[l],my_vector[j]);
+    T temp = (*my_vector)[i];
+    (*my_vector)[i] = (*my_vector)[j];
+    (*my_vector)[j] = temp;
+
+    T temp2 = (*my_vector)[l];
+    (*my_vector)[l] = (*my_vector)[j];
+    (*my_vector)[j] = temp2;
 
     return j;
-    
+
+    #endif
+
+    int pivot = (*my_vector)[r]; // pivot 
+    int i = (l - 1); // Index of smaller element and indicates the right position of pivot found so far
+ 
+    // #pragma omp for
+    for (int j = l; j <= r - 1; j++) 
+    { 
+        // If current element is smaller than the pivot 
+        if ((*my_vector)[j] < pivot) 
+        { 
+            i++; // increment index of smaller element 
+            T temp = (*my_vector)[i];
+            (*my_vector)[i] = (*my_vector)[j];
+            (*my_vector)[j] = temp; 
+        } 
+    } 
+    // swap(&arr[i + 1], &arr[high]); 
+    T temp = (*my_vector)[i+1];
+    (*my_vector)[i+1] = (*my_vector)[r];
+    (*my_vector)[r] = temp;
+    return (i + 1);
+
 }
 
 template <typename ptr_t>
-void quicksort(ptr_t array, int p, int r)
+void quicksort(ptr_t* array, int p, int r)
 {
     int div;
 
@@ -113,12 +143,12 @@ void quicksort(ptr_t array, int p, int r)
         {
 
         #pragma omp section
-            quicksort(array, p, div - 1);
+        quicksort(array, p, div - 1);
             
         #pragma omp section
-            quicksort(array, div + 1, r);
+        quicksort(array, div + 1, r);
         }
     }
-
+}
 
 #endif
