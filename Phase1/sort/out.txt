@@ -1,0 +1,10 @@
+Breakpoint 1 at 0x1189: file my_sort.c, line 4.
+
+Breakpoint 1, sort (n=0, a=0x0) at my_sort.c:4
+4	{
+#0  sort (n=0, a=0x0) at my_sort.c:4
+#1  0x00005555555552b8 in my_sort (n=4, a=0x7fffffffde10) at my_sort.c:26
+#2  0x0000555555555320 in main () at my_sort.c:34
+4
+1	2	3	5	
+[Inferior 1 (process 54469) exited normally]
