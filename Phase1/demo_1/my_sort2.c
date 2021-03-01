@@ -1,22 +1,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+//insertion sort
 void sort(int n, int* a)
 {
-    for (int i = n - 1; i > 0; --i)
-    {
-        int max = i;
-        for (int j = i - 1; j >= 0; --j)
-        {
-            if ((a)[j] > (a)[max])
-            {
-                max = j;
-            }
-        }
-        int temp = a[i];
-        a[i] = a[max];
-        a[max] = temp;
-    }
+    int i, key, j; 
+    for (i = 1; i < n; i++)
+    { 
+        key = a[i]; 
+        j = i - 1; 
+ 
+        while (j >= 0 && a[j] > key)
+        { 
+            a[j + 1] = a[j]; 
+            j = j - 1; 
+        } 
+        a[j + 1] = key; 
+    } 
 }
 
 void my_sort(int n, int *a)
