@@ -42,7 +42,11 @@ int main()
         printf("%d\t", a[i]);
     }
     // printf("Array length = %d\n", n);
+    struct timeval stop, start;
+    gettimeofday(&start, NULL);
     my_sort(n, a);
+    gettimeofday(&stop, NULL);
+    printf("took %lu ms\n", ((stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec)/1000); 
     printf("\n");
     printf("\n");
     printf("\n");
