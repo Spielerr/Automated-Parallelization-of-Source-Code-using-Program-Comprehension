@@ -46,7 +46,7 @@ def main():
                     outfile.write(lines[i])
 
                 outfile.write("{} = vectorise({}, {});\n".format("auto " + var + "Vector", var, length))
-                outfile.write("my_sort(&{}Vector, 0, {});\n".format(var, int(length) - 1))
+                outfile.write("my_sort({}Vector, 0, {});\n".format(var, int(length) - 1))
                 outfile.write("deVectorise({}Vector, {});\n".format(var, var))
 
                 for i in range(1, len(lines) - (int(size)-1)):

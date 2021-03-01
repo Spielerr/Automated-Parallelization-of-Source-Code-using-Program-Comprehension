@@ -46,19 +46,19 @@ void deVectorise(std::vector<ptr_t> v, ptr_t* array)
 
 
 template <typename ptr_t>
-void my_sort(ptr_t* arr, int p, int r)
+void my_sort(ptr_t& arr, int p, int r)
 {
     for (int i = r - 1; i > 0; --i)
     {
         int max = i;
         for (int j = i - 1; j >= 0; --j)
         {
-            if ((*arr)[j] > (*arr)[max])
+            if (arr[j] > arr[max])
             {
                 max = j;
             }
         }
-        swap((*arr)[i], (*arr)[max]);
+        swap(arr[i], arr[max]);
     }
 }
 

@@ -48,7 +48,7 @@ int main()
     gettimeofday(&start, NULL);
 
     auto aVector = vectorise(a, n);
-    my_sort(&aVector, 0, n-1);
+    my_sort(aVector, 0, n-1);
     deVectorise(aVector, a);
 
     gettimeofday(&stop, NULL);

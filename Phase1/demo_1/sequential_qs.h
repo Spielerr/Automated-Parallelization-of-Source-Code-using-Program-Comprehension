@@ -45,33 +45,33 @@ void deVectorise(std::vector<ptr_t> v, ptr_t* array)
 }
 
 template <typename T>
-int partition(std::vector<T>* my_vector, int l, int r) 
+int partition(std::vector<T>& my_vector, int l, int r) 
 {
 
-    int pivot = (*my_vector)[r];
+    int pivot = my_vector[r];
     int i = (l - 1); 
  
     // #pragma omp for
     for (int j = l; j <= r - 1; j++) 
     { 
          
-        if ((*my_vector)[j] < pivot) 
+        if (my_vector[j] < pivot) 
         { 
             i++;  
-            T temp = (*my_vector)[i];
-            (*my_vector)[i] = (*my_vector)[j];
-            (*my_vector)[j] = temp; 
+            T temp = my_vector[i];
+            my_vector[i] = my_vector[j];
+            my_vector[j] = temp; 
         } 
     }  
-    T temp = (*my_vector)[i+1];
-    (*my_vector)[i+1] = (*my_vector)[r];
-    (*my_vector)[r] = temp;
+    T temp = my_vector[i+1];
+    my_vector[i+1] = my_vector[r];
+    my_vector[r] = temp;
     return (i + 1);
 
 }
 
 template <typename ptr_t>
-void my_sort(ptr_t* arr, int p, int r)
+void my_sort(ptr_t& arr, int p, int r)
 {
     int div;
 
