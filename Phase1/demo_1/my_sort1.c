@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/time.h>
 
 //selection sort
 void sort(int n, int* a)
@@ -46,21 +47,23 @@ int main()
     // printf("Array length = %d\n", n);
     struct timeval stop, start;
     gettimeofday(&start, NULL);
+
     my_sort(n, a);
+    
     gettimeofday(&stop, NULL);
     printf("took %lu ms\n", ((stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec)/1000); 
-    printf("\n");
-    printf("\n");
-    printf("\n");
-    printf("\n");
-    for(int i=0;i<5;i++)
-    {
-        printf("%d\t", a[i]);
-    }
-    printf("\n");
-    printf("\n");
-    printf("\n");
-    printf("\n");
-    printf("\n");
+    // printf("\n");
+    // printf("\n");
+    // printf("\n");
+    // printf("\n");
+    // for(int i=0;i<5;i++)
+    // {
+    //     printf("%d\t", a[i]);
+    // }
+    // printf("\n");
+    // printf("\n");
+    // printf("\n");
+    // printf("\n");
+    // printf("\n");
     return 0;
 }
