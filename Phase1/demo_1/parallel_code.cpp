@@ -1,5 +1,6 @@
 #include <bits/stdc++.h> 
 #include <stdlib.h>
+#include <sys/time.h>
 #include "parallel_selection.h"
 // #include "sequential.h"
 
@@ -43,10 +44,15 @@ int main()
     // printf("\n%d", RAND_MAX);
     // time_t start, end; 
     // time(&start); 
+    struct timeval stop, start;
+    gettimeofday(&start, NULL);
+
     auto aVector = vectorise(a, n);
-    my_sort(&aVector, 0, n-1);
+    my_sort(aVector, 0, n-1);
     deVectorise(aVector, a);
 
+    gettimeofday(&stop, NULL);
+    printf("took %lu ms\n", ((stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec)/1000); 
     // time(&end); 
   
     // // Calculating total time taken by the program. 
@@ -55,4 +61,3 @@ int main()
     // std::cout << " sec " << "\n";
     // }
 }
-

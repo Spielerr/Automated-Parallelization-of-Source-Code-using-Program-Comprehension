@@ -1,0 +1,323 @@
+	.text
+	.file	"my_sort.c"
+	.globl	sort                    # -- Begin function sort
+	.p2align	4, 0x90
+	.type	sort,@function
+sort:                                   # @sort
+	.cfi_startproc
+# %bb.0:
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	pushq	%rbx
+	.cfi_def_cfa_offset 24
+	.cfi_offset %rbx, -24
+	.cfi_offset %rbp, -16
+                                        # kill: def $edi killed $edi def $rdi
+	cmpl	$2, %edi
+	jl	.LBB0_9
+# %bb.1:
+	leal	-1(%rdi), %r8d
+	xorl	%r10d, %r10d
+	movl	%r8d, %r9d
+	jmp	.LBB0_2
+	.p2align	4, 0x90
+.LBB0_8:                                #   in Loop: Header=BB0_2 Depth=1
+	addl	$1, %r10d
+	addl	$-1, %r9d
+	cmpl	%r8d, %r10d
+	je	.LBB0_9
+.LBB0_2:                                # =>This Loop Header: Depth=1
+                                        #     Child Loop BB0_11 Depth 2
+	movl	%r10d, %r11d
+	notl	%r11d
+	addl	%edi, %r11d
+	testl	%r11d, %r11d
+	jle	.LBB0_8
+# %bb.3:                                #   in Loop: Header=BB0_2 Depth=1
+	movl	(%rsi), %edx
+	cmpl	$1, %r11d
+	jne	.LBB0_10
+# %bb.4:                                #   in Loop: Header=BB0_2 Depth=1
+	xorl	%ecx, %ecx
+	jmp	.LBB0_5
+	.p2align	4, 0x90
+.LBB0_10:                               #   in Loop: Header=BB0_2 Depth=1
+	movl	%r9d, %eax
+	movl	%r9d, %ecx
+	andl	$1, %ecx
+	subq	%rcx, %rax
+	xorl	%ebx, %ebx
+	jmp	.LBB0_11
+	.p2align	4, 0x90
+.LBB0_16:                               #   in Loop: Header=BB0_11 Depth=2
+	movl	%ebp, 4(%rsi,%rbx,4)
+	movl	%edx, 8(%rsi,%rbx,4)
+	movq	%rcx, %rbx
+	cmpq	%rcx, %rax
+	je	.LBB0_5
+.LBB0_11:                               #   Parent Loop BB0_2 Depth=1
+                                        # =>  This Inner Loop Header: Depth=2
+	movl	4(%rsi,%rbx,4), %ecx
+	cmpl	%ecx, %edx
+	jle	.LBB0_12
+# %bb.13:                               #   in Loop: Header=BB0_11 Depth=2
+	movl	%ecx, (%rsi,%rbx,4)
+	movl	%edx, 4(%rsi,%rbx,4)
+	leaq	2(%rbx), %rcx
+	movl	8(%rsi,%rbx,4), %ebp
+	cmpl	%ebp, %edx
+	jg	.LBB0_16
+	jmp	.LBB0_15
+	.p2align	4, 0x90
+.LBB0_12:                               #   in Loop: Header=BB0_11 Depth=2
+	movl	%ecx, %edx
+	leaq	2(%rbx), %rcx
+	movl	8(%rsi,%rbx,4), %ebp
+	cmpl	%ebp, %edx
+	jg	.LBB0_16
+.LBB0_15:                               #   in Loop: Header=BB0_11 Depth=2
+	movl	%ebp, %edx
+	movq	%rcx, %rbx
+	cmpq	%rcx, %rax
+	jne	.LBB0_11
+.LBB0_5:                                #   in Loop: Header=BB0_2 Depth=1
+	testb	$1, %r11b
+	je	.LBB0_8
+# %bb.6:                                #   in Loop: Header=BB0_2 Depth=1
+	movl	4(%rsi,%rcx,4), %eax
+	cmpl	%eax, %edx
+	jle	.LBB0_8
+# %bb.7:                                #   in Loop: Header=BB0_2 Depth=1
+	movl	%eax, (%rsi,%rcx,4)
+	movl	%edx, 4(%rsi,%rcx,4)
+	jmp	.LBB0_8
+.LBB0_9:
+	popq	%rbx
+	.cfi_def_cfa_offset 16
+	popq	%rbp
+	.cfi_def_cfa_offset 8
+	retq
+.Lfunc_end0:
+	.size	sort, .Lfunc_end0-sort
+	.cfi_endproc
+                                        # -- End function
+	.globl	my_sort                 # -- Begin function my_sort
+	.p2align	4, 0x90
+	.type	my_sort,@function
+my_sort:                                # @my_sort
+	.cfi_startproc
+# %bb.0:
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	pushq	%rbx
+	.cfi_def_cfa_offset 24
+	.cfi_offset %rbx, -24
+	.cfi_offset %rbp, -16
+                                        # kill: def $edi killed $edi def $rdi
+	cmpl	$2, %edi
+	jl	.LBB1_9
+# %bb.1:
+	leal	-1(%rdi), %r8d
+	xorl	%r10d, %r10d
+	movl	%r8d, %r9d
+	jmp	.LBB1_2
+	.p2align	4, 0x90
+.LBB1_8:                                #   in Loop: Header=BB1_2 Depth=1
+	addl	$1, %r10d
+	addl	$-1, %r9d
+	cmpl	%r8d, %r10d
+	je	.LBB1_9
+.LBB1_2:                                # =>This Loop Header: Depth=1
+                                        #     Child Loop BB1_11 Depth 2
+	movl	%r10d, %r11d
+	notl	%r11d
+	addl	%edi, %r11d
+	testl	%r11d, %r11d
+	jle	.LBB1_8
+# %bb.3:                                #   in Loop: Header=BB1_2 Depth=1
+	movl	(%rdx), %esi
+	cmpl	$1, %r11d
+	jne	.LBB1_10
+# %bb.4:                                #   in Loop: Header=BB1_2 Depth=1
+	xorl	%ecx, %ecx
+	jmp	.LBB1_5
+	.p2align	4, 0x90
+.LBB1_10:                               #   in Loop: Header=BB1_2 Depth=1
+	movl	%r9d, %eax
+	movl	%r9d, %ecx
+	andl	$1, %ecx
+	subq	%rcx, %rax
+	xorl	%ebx, %ebx
+	jmp	.LBB1_11
+	.p2align	4, 0x90
+.LBB1_16:                               #   in Loop: Header=BB1_11 Depth=2
+	movl	%ebp, 4(%rdx,%rbx,4)
+	movl	%esi, 8(%rdx,%rbx,4)
+	movq	%rcx, %rbx
+	cmpq	%rcx, %rax
+	je	.LBB1_5
+.LBB1_11:                               #   Parent Loop BB1_2 Depth=1
+                                        # =>  This Inner Loop Header: Depth=2
+	movl	4(%rdx,%rbx,4), %ecx
+	cmpl	%ecx, %esi
+	jle	.LBB1_12
+# %bb.13:                               #   in Loop: Header=BB1_11 Depth=2
+	movl	%ecx, (%rdx,%rbx,4)
+	movl	%esi, 4(%rdx,%rbx,4)
+	leaq	2(%rbx), %rcx
+	movl	8(%rdx,%rbx,4), %ebp
+	cmpl	%ebp, %esi
+	jg	.LBB1_16
+	jmp	.LBB1_15
+	.p2align	4, 0x90
+.LBB1_12:                               #   in Loop: Header=BB1_11 Depth=2
+	movl	%ecx, %esi
+	leaq	2(%rbx), %rcx
+	movl	8(%rdx,%rbx,4), %ebp
+	cmpl	%ebp, %esi
+	jg	.LBB1_16
+.LBB1_15:                               #   in Loop: Header=BB1_11 Depth=2
+	movl	%ebp, %esi
+	movq	%rcx, %rbx
+	cmpq	%rcx, %rax
+	jne	.LBB1_11
+.LBB1_5:                                #   in Loop: Header=BB1_2 Depth=1
+	testb	$1, %r11b
+	je	.LBB1_8
+# %bb.6:                                #   in Loop: Header=BB1_2 Depth=1
+	movl	4(%rdx,%rcx,4), %eax
+	cmpl	%eax, %esi
+	jle	.LBB1_8
+# %bb.7:                                #   in Loop: Header=BB1_2 Depth=1
+	movl	%eax, (%rdx,%rcx,4)
+	movl	%esi, 4(%rdx,%rcx,4)
+	jmp	.LBB1_8
+.LBB1_9:
+	popq	%rbx
+	.cfi_def_cfa_offset 16
+	popq	%rbp
+	.cfi_def_cfa_offset 8
+	retq
+.Lfunc_end1:
+	.size	my_sort, .Lfunc_end1-my_sort
+	.cfi_endproc
+                                        # -- End function
+	.globl	main                    # -- Begin function main
+	.p2align	4, 0x90
+	.type	main,@function
+main:                                   # @main
+	.cfi_startproc
+# %bb.0:
+	subq	$24, %rsp
+	.cfi_def_cfa_offset 32
+	movaps	.L__const.main.my_array(%rip), %xmm0
+	movaps	%xmm0, (%rsp)
+	movl	$.L.str, %edi
+	movl	$4, %esi
+	xorl	%eax, %eax
+	callq	printf
+	movl	4(%rsp), %eax
+	cmpl	$1, %eax
+	jg	.LBB2_2
+# %bb.1:
+	movl	%eax, (%rsp)
+	movl	$2, 4(%rsp)
+	movl	$2, %eax
+.LBB2_2:
+	movl	8(%rsp), %ecx
+	cmpl	%ecx, %eax
+	jle	.LBB2_3
+# %bb.10:
+	movl	%ecx, 4(%rsp)
+	movl	%eax, 8(%rsp)
+	movl	12(%rsp), %ecx
+	cmpl	%ecx, %eax
+	jg	.LBB2_12
+	jmp	.LBB2_13
+.LBB2_3:
+	movl	%ecx, %eax
+	movl	12(%rsp), %ecx
+	cmpl	%ecx, %eax
+	jle	.LBB2_13
+.LBB2_12:
+	movl	%ecx, 8(%rsp)
+	movl	%eax, 12(%rsp)
+.LBB2_13:
+	movl	(%rsp), %eax
+	movl	4(%rsp), %ecx
+	cmpl	%ecx, %eax
+	jle	.LBB2_14
+# %bb.4:
+	movl	%ecx, (%rsp)
+	movl	%eax, 4(%rsp)
+	movl	8(%rsp), %ecx
+	cmpl	%ecx, %eax
+	jg	.LBB2_6
+	jmp	.LBB2_7
+.LBB2_14:
+	movl	%ecx, %eax
+	movl	8(%rsp), %ecx
+	cmpl	%ecx, %eax
+	jle	.LBB2_7
+.LBB2_6:
+	movl	%ecx, 4(%rsp)
+	movl	%eax, 8(%rsp)
+.LBB2_7:
+	movl	(%rsp), %eax
+	movl	4(%rsp), %ecx
+	cmpl	%ecx, %eax
+	jle	.LBB2_9
+# %bb.8:
+	movl	%ecx, (%rsp)
+	movl	%eax, 4(%rsp)
+.LBB2_9:
+	movl	(%rsp), %esi
+	movl	$.L.str.1, %edi
+	xorl	%eax, %eax
+	callq	printf
+	movl	4(%rsp), %esi
+	movl	$.L.str.1, %edi
+	xorl	%eax, %eax
+	callq	printf
+	movl	8(%rsp), %esi
+	movl	$.L.str.1, %edi
+	xorl	%eax, %eax
+	callq	printf
+	movl	12(%rsp), %esi
+	movl	$.L.str.1, %edi
+	xorl	%eax, %eax
+	callq	printf
+	movl	$10, %edi
+	callq	putchar
+	xorl	%eax, %eax
+	addq	$24, %rsp
+	.cfi_def_cfa_offset 8
+	retq
+.Lfunc_end2:
+	.size	main, .Lfunc_end2-main
+	.cfi_endproc
+                                        # -- End function
+	.type	.L__const.main.my_array,@object # @__const.main.my_array
+	.section	.rodata.cst16,"aM",@progbits,16
+	.p2align	4
+.L__const.main.my_array:
+	.long	2                       # 0x2
+	.long	1                       # 0x1
+	.long	5                       # 0x5
+	.long	3                       # 0x3
+	.size	.L__const.main.my_array, 16
+
+	.type	.L.str,@object          # @.str
+	.section	.rodata.str1.1,"aMS",@progbits,1
+.L.str:
+	.asciz	"%d\n"
+	.size	.L.str, 4
+
+	.type	.L.str.1,@object        # @.str.1
+.L.str.1:
+	.asciz	"%d\t"
+	.size	.L.str.1, 4
+
+	.ident	"clang version 10.0.0-4ubuntu1 "
+	.section	".note.GNU-stack","",@progbits
+	.addrsig

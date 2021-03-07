@@ -1,0 +1,117 @@
+aspectdef CountArrayReadsWrites
+	output stats end
+
+	stats = new LaraObject();
+	var a;
+	var n;
+	var flag = 0;
+
+	select function{'sort'}.varref end
+	apply
+
+		if( !$varref.vardecl.isParam )
+			continue;
+		// println();
+		// println("Var Name: " + $varref.name);		
+		// println("Var Type: " + $varref.type.code);		
+		// println("Is Parameter: " + $varref.vardecl.isParam);		
+		// println();
+
+		if( $varref.type.isPointer )
+			a = $varref.name;
+		else
+			n = $varref.name;
+
+
+		// println($function.line + "," + $function.endLine);		
+		// println($function.body.line + "," + $function.body.endLine);
+		// stats.inc($function.name, $varref.useExpr.use, $varref.name);
+	end
+
+	select function{'sort'} end
+	apply
+		$function.body.insert replace "__gnu_parallel::sort(" + a + ", " + a + " + " + n + " );";
+		if (!flag) 
+		{
+			$function.insert before "#include <parallel/algorithm>";
+			flag = 1;
+		}
+	end
+
+
+
+	// max
+
+	select function{'max'}.varref end
+	apply
+
+		if( !$varref.vardecl.isParam )
+			continue;
+
+		// println();
+		// println("Var Name: " + $varref.name);		
+		// println("Var Type: " + $varref.type.code);		
+		// println("Is Parameter: " + $varref.vardecl.isParam);		
+		// println();
+		if( $varref.type.isPointer )
+			a = $varref.name;
+		else
+			n = $varref.name;
+			println(n);
+	end
+
+	select function{'max'} end
+	apply
+		$function.body.insert replace "return *__gnu_parallel::max_element(" + a + ", " + a + " + " + n + " );";
+		if (!flag) 
+		{
+			$function.insert before "#include <parallel/algorithm>";
+			flag = 1;
+		}
+	end
+
+	
+	// min
+
+	select function{'min'}.varref end
+	apply
+
+		if( !$varref.vardecl.isParam )
+			continue;
+		if( $varref.type.isPointer )
+			a = $varref.name;
+		else
+			n = $varref.name;
+	end
+
+	select function{'min'} end
+	apply
+		$function.body.insert replace "return *__gnu_parallel::min_element(" + a + ", " + a + " + " + n + " );";
+		if (!flag) 
+		{
+			$function.insert before "#include <parallel/algorithm>";
+			flag = 1;
+		}
+	end
+
+
+	// mean
+
+	select function{'mean'}.varref end
+	apply
+
+		if( !$varref.vardecl.isParam )
+			continue;
+		if( $varref.type.isPointer )
+			a = $varref.name;
+		else
+			n = $varref.name;
+	end
+
+	select function{'mean'} end
+	apply
+		$function.body.insert replace "double* s;\n__gnu_parallel::partial_sum( " + a + ", " + a + " + " + n + ", " + "s );\nreturn *s/" + n + ";";
+		$function.insert before "#include <parallel/numeric>";
+	end
+		
+end

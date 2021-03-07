@@ -1,0 +1,5 @@
+clang file.c -S -emit-llvm -o - -O3
+clang file.c -fsyntax-only (check for correctness)
+clang file.c -S -O3 -o - (output native machine code)
+
+clang -v -V -stats -internal-stats my_sort.c

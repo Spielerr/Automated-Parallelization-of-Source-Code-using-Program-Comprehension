@@ -48,27 +48,27 @@ void deVectorise(std::vector<ptr_t> v, ptr_t* array)
 struct Compare { int val; int index; };
 #pragma omp declare reduction( maximum : struct Compare : omp_out = omp_in.val > omp_out.val ? omp_in : omp_out )
 template <typename ptr_t>
-void my_sort(ptr_t* arr, int p, int r)
+void my_sort(ptr_t& arr, int p, int r)
 {
     for (int i = r - 1; i > 0; --i)
     {
         struct Compare max;
-        max.val = (*arr)[i];
+        max.val = arr[i];
         max.index = i;
 
         #pragma omp parallel for reduction( maximum : max )
 
         for (int j = i - 1; j >= 0; --j)
         {
-            if ((*arr)[j] > max.val)
+            if (arr[j] > max.val)
             {
-                max.val = (*arr)[j];
+                max.val = arr[j];
                 max.index = j;
             }
         }
-        int tmp = (*arr)[i];
-        (*arr)[i] = max.val;
-        (*arr)[max.index] = tmp;
+        int tmp = arr[i];
+        arr[i] = max.val;
+        arr[max.index] = tmp;
     }
 
 }

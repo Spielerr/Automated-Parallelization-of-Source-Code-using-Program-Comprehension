@@ -1,0 +1,9 @@
+Breakpoint 1 at 0x11e9: file my_sort1.c, line 7.
+
+Breakpoint 1, sort (n=0, a=0x7ffff7facb80 <main_arena>) at my_sort1.c:7
+7	{
+#0  sort (n=0, a=0x7ffff7facb80 <main_arena>) at my_sort1.c:7
+#1  0x000055555555530d in my_sort (n=50000, a=0x7ffff7d90010) at my_sort1.c:30
+#2  0x00005555555553da in main () at my_sort1.c:51
+757547896	1695630744	1945246242	94247549	2049268311	took 4076 ms
+[Inferior 1 (process 36064) exited normally]

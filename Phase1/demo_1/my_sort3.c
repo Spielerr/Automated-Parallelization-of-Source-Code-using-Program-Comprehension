@@ -1,22 +1,21 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/time.h>
 
+//bubble sort
 void sort(int n, int* a)
 {
-    for (int i = n - 1; i > 0; --i)
-    {
-        int max = i;
-        for (int j = i - 1; j >= 0; --j)
-        {
-            if ((a)[j] > (a)[max])
-            {
-                max = j;
-            }
-        }
-        int temp = a[i];
-        a[i] = a[max];
-        a[max] = temp;
-    }
+    int i, j; 
+   for (i = 0; i < n-1; i++)       
+  
+       // Last i elements are already in place    
+       for (j = 0; j < n-i-1; j++)  
+           if (a[j] > a[j+1])
+           {
+               int temp = a[j];
+               a[j] = a[j+1];
+               a[j+1] = temp;
+           }
 }
 
 void my_sort(int n, int *a)
@@ -44,7 +43,11 @@ int main()
         printf("%d\t", a[i]);
     }
     // printf("Array length = %d\n", n);
+    struct timeval stop, start;
+    gettimeofday(&start, NULL);
     my_sort(n, a);
+    gettimeofday(&stop, NULL);
+    printf("took %lu ms\n", ((stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec)/1000); 
     printf("\n");
     printf("\n");
     printf("\n");
