@@ -1,0 +1,37 @@
+aspectdef CountVariableDeclarations
+	output stats end
+
+	stats = new LaraObject();
+
+	select function.vardecl end
+	apply
+		println( $vardecl.name );
+		stats.inc( $function.name );
+	end
+
+	select function.call end
+	apply
+		println();
+		println($call.args);
+		var p = $call.args;
+		for( var i = 0; i < p.length; ++i)
+			println($function.signature + " " + $call.signature + " " + p[i].code);
+			// println(p[i].code.vardecl.name);
+		println();
+	end
+
+
+	select function.varref end
+	apply
+		if( !$varref.vardecl.isParam )
+			continue;
+		println();
+		println( $varref.name );
+		println( $varref.vardecl.name );
+		println( $varref.vardecl.chain.chainAncestor );
+		// println( $varref.ancestor );
+		// println( $varref.vardecl.astAncestor );
+		println();
+	end
+	
+end
