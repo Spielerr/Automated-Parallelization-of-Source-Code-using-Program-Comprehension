@@ -1,4 +1,4 @@
-aspectdef CountArrayReadsWrites
+aspectdef FunctionReplacer
 	output stats end
 
 	stats = new LaraObject();
