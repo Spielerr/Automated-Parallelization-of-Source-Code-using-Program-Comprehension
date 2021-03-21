@@ -110,10 +110,12 @@ apply
                 //pass by reference
                 if( $varref.type.isPointer )
                 {
-
+                    //println($varref.code + " " + $varref.type.unwrap.constant);
+                    //println("pointer" + $varref.code + "constant" + $varref.type.constant);
                     //variable is a constant - need not check for read write dependencies
-                    if($varref.type.constant)
+                    if($varref.type.unwrap.constant)
                     {
+                        println("constant " + $varref.code);
                         fn_arg_rw[$function.name][$varref.code] = 1;
                     }
 
