@@ -12,17 +12,20 @@ end
 select function.call end
 apply
 var p = $call.args;
+//println(p);
+
 for( var i = 0; i < p.length; ++i)
 {
-	//println($function.signature + " " + $call.signature + " " + p[i].code);
-	if( !($function.signature in data_dep) )
-		data_dep[$function.signature] = {};
+    //println($function.signature + " " + $call.signature + " " + p[i].code);
+    if( !($function.signature in data_dep) )
+        data_dep[$function.signature] = {};
 		
-	if( !(p[i].code in data_dep[$function.signature] ) )
-		data_dep[$function.signature][p[i].code] = {};
+    if( !(p[i].code in data_dep[$function.signature] ) )
+        //println(p[i].code);
+        data_dep[$function.signature][p[i].code] = {};
 	
-	data_dep[$function.signature][p[i].code][$call.signature] = 1;
-	// println(p[i].code.vardecl.name);
+    data_dep[$function.signature][p[i].code][$call.signature] = 1;
+    // println(p[i].code.vardecl.name);
 }
 //println(data_dep);
 
@@ -34,25 +37,34 @@ var fn_wise = {};
 end
 
 
+//i only takes the value main
 
 for(i in data_dep)
 {
     //println("1: "+i);
+
+    //j takes the values of all the variables that are being passed as arguments to 
+    //different functions being called in main
+
     for(j in data_dep[i])
     {
-       //println("2: "+j);
-       var count = 0;
-       var fn_name;
-       //println(data_dep[i][j].length);
+        //println("2: "+j);
+        var count = 0;
+        var fn_name;
+        //println(data_dep[i][j].length;
+
+        //k takes the values of all the functions which have j as its parameter
         for(k in data_dep[i][j])
         {
             count += 1;
             fn_name = k;
-          //println("3: "+ k);
+            //println("3: "+ k);
         }
         if(count == 1)
         {
             var_wise[j] = 1;
+            
+            //1 means that the function is independent
             fn_wise[fn_name] = 1;
         }
         else
@@ -61,6 +73,7 @@ for(i in data_dep)
             //fn_wise[fn_name] = 0;
             for(p in data_dep[i][j])
             {
+                //0 means that the function is dependent
                 fn_wise[p] = 0;
             }
         }
@@ -68,11 +81,16 @@ for(i in data_dep)
     //println();
 }
 
+//for(temp in var_wise)
+//{
+//    println(var_wise[temp]);
+//}
+
 var fn_arg_rw = {};
 select function.varref end
 apply
 
-	if($function.signature in fn_wise)
+    if($function.signature in fn_wise)
     {  
        
         if(fn_wise[$function.signature]==0)
@@ -88,16 +106,41 @@ apply
                 {
                     fn_arg_rw[$function.name][$varref.code] = 0;
                 }
+
+                //pass by reference
+                if( $varref.type.isPointer )
+                {
+
+                    //variable is a constant - need not check for read write dependencies
+                    if($varref.type.constant)
+                    {
+                        fn_arg_rw[$function.name][$varref.code] = 1;
+                    }
+
+                    //checking for read write dependencies
+                    else
+                    {
+                        if($varref.useExpr.use == 'read')
+                        {
+                            fn_arg_rw[$function.name][$varref.code] = 1;
+                        }
                
-                if($varref.useExpr.use == 'read')
+                        if($varref.useExpr.use == 'write')
+                        {
+                            fn_arg_rw[$function.name][$varref.code] = 0;
+                        }
+                    }
+
+                    
+                }
+
+                //pass by value
+                else
                 {
                     fn_arg_rw[$function.name][$varref.code] = 1;
                 }
                
-                if($varref.useExpr.use == 'write')
-                {
-                    fn_arg_rw[$function.name][$varref.code] = 0;
-                }
+                
             }
         }
     }
@@ -106,47 +149,47 @@ end
 
 select function{'main'} end
 apply
-	$function.insert before "\n#include <omp.h>\n";
-	$function.body.insert after "\n}\n";
+    $function.insert before "\n#include <omp.h>\n";
+    $function.body.insert after "\n}\n";
 end
 
 flag_first_func = 0;
 select function.call end
 apply
-	for(fn_name in fn_arg_rw)
-	{
-		var flag = 0;
-		for(param in fn_arg_rw[fn_name])
-		{
-			if(fn_arg_rw[fn_name][param])
-			{
-				flag = 1;
-			}
-			else
-			{
-				flag = 0;
-				break;
-			}
-		}
+    for(fn_name in fn_arg_rw)
+    {
+        var flag = 0;
+        for(param in fn_arg_rw[fn_name])
+        {
+            if(fn_arg_rw[fn_name][param])
+            {
+                flag = 1;
+            }
+            else
+            {
+                flag = 0;
+                break;
+            }
+        }
 	
-		if(flag)
-		{
-			if($call.name == fn_name)
-			{
-				println(fn_name);
-				if(!flag_first_func)
-				{
-					$call.insert before "\n#pragma omp parallel sections\n{\n#pragma omp section\n";
-					flag_first_func = 1;
-				}
-				else
-				{
-					$call.insert before "\n#pragma omp section\n";
-				}
-			}
-		}
+        if(flag)
+        {
+            if($call.name == fn_name)
+            {
+                println(fn_name);
+                if(!flag_first_func)
+                {
+                    $call.insert before "\n#pragma omp parallel sections\n{\n#pragma omp section\n";
+                    flag_first_func = 1;
+                }
+                else
+                {
+                    $call.insert before "\n#pragma omp section\n";
+                }
+            }
+        }
 		
-	}
+    }
 end
 
 for(fn_n1 in fn_wise)
