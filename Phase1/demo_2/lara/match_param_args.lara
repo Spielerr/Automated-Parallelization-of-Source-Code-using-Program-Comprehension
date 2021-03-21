@@ -80,9 +80,59 @@ for(fn_name in fn_args)
     }
     
     println();
-
-    
 }
 
 
+var changing_params = {};
+select function.varref end
+apply
+
+    if(!($function.name in changing_params))
+    {
+        changing_params[$function.name] = [];
+    }
+    
+    if($varref.useExpr.use == 'read')
+    {
+        //changing_params[$function.name].push($varref.code);
+    }
+
+    if($varref.useExpr.use == 'write')
+    {   
+        if($varref.vardecl.isParam && !(changing_params[$function.name].includes($varref.code)) )
+            changing_params[$function.name].push($varref.code);
+    }
+
 end
+
+
+
+
+
+select program.body end
+apply
+
+
+for(fn_name in changing_params)
+{
+    var no_of_args = changing_params[fn_name].length;
+    if(no_of_args)
+    {   
+        //println(fn_name);
+        for(var i = 0; i<no_of_args; ++i)
+        {
+            //println(changing_params[fn_name][i] + ":" + fn_args[fn_name][fn_param[fn_name].indexOf(changing_params[fn_name][i])]);
+            println(fn_name + "," + fn_args[fn_name][fn_param[fn_name].indexOf(changing_params[fn_name][i])]);
+
+            //$body.insert after "" + fn_name + "," + fn_args[fn_name][fn_param[fn_name].indexOf(changing_params[fn_name][i])];
+        }
+        println();
+    }
+    
+}
+end
+end
+
+
+
+
