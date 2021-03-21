@@ -1,0 +1,88 @@
+aspectdef test
+output stats end
+
+stats = new LaraObject();
+
+var fn_args = {};
+select function.call end
+apply
+    var arg_l = $call.args;
+    //println($call.name);
+    //println(arg_l);
+    fn_args[$call.name] = [];
+    for(i in arg_l)
+    {
+        fn_args[$call.name].push(arg_l[i].code);
+    }
+    
+end
+
+fn_param = {};
+
+select function.varref end
+apply
+
+    if(!($function.name in fn_param))
+    {
+        fn_param[$function.name] = [];
+    }
+
+    var all_par = $function.params;
+    var no_param = all_par.length;
+
+    for(var i = 0; i < no_param; ++i)
+    {
+        //println(p[i].name);
+        fn_param[$function.name].push(all_par[i].name);
+    }
+
+//    if($varref.vardecl.isParam)
+//    {
+//        var param_already_present = 0;
+//
+//        for(var i = 0; i < fn_param[$function.name].length; ++i)
+//        {
+//            if($varref.code == fn_param[$function.name][i])
+//            {
+//                param_already_present = 1;
+//                break;
+//            }
+//        }
+//
+//
+//        if(!(param_already_present))
+//        {
+//            fn_param[$function.name].push($varref.code);
+//        }
+//        
+//    }
+
+end
+
+//for(fn1 in fn_param)
+//{
+//    println(fn1);
+//    for(j in fn_param[fn1])
+//    {
+//        println(fn_param[fn1][j]);
+//    }
+//}
+
+for(fn_name in fn_args)
+{
+    println(fn_name);
+
+    var no_of_args = fn_args[fn_name].length;
+
+    for(var i = 0; i<no_of_args; ++i)
+    {
+        println(fn_args[fn_name][i] + ":" + fn_param[fn_name][i]);
+    }
+    
+    println();
+
+    
+}
+
+
+end
