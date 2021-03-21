@@ -87,6 +87,10 @@ for(i in data_dep)
 //}
 
 var fn_arg_rw = {};
+
+//dictionary that maps the global variables to the functions that are writing into it
+var global_var_fn = {};
+
 select function.varref end
 apply
 
@@ -144,10 +148,42 @@ apply
                
                 
             }
+
+            else if($varref.vardecl.isGlobal)
+            {
+                if($varref.useExpr.use == 'write')
+                {
+                    if(!($varref.code in global_var_fn))
+                    {
+                        global_var_fn[$varref.code] = {};
+                    }
+                    
+                    //println($varref.code + " " + $function.name);
+                    global_var_fn[$varref.code][$function.name] = 0;
+
+                }
+            }
         }
     }
 
 end
+
+//a4 : max, min
+
+for(glb_var in global_var_fn)
+{
+    for(fn in global_var_fn[glb_var])
+    {
+        //println(fn + " " + glb_var);
+        if(!(fn in fn_arg_rw))
+        {
+            fn_arg_rw[fn] = {};
+        }
+        fn_arg_rw[fn][glb_var] = 0;
+
+    }
+
+}
 
 select function{'main'} end
 apply
@@ -176,6 +212,7 @@ apply
 	
         if(flag)
         {
+
             if($call.name == fn_name)
             {
                 println(fn_name);
