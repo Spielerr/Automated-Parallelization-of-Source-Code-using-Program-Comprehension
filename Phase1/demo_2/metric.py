@@ -14,7 +14,7 @@ seqTime = {}
 parallelTime = {}
 
 
-for _ in range(3):
+for _ in range(10):
 
     begin = resource.getrusage(resource.RUSAGE_CHILDREN)
     seq = subprocess.Popen(
@@ -47,7 +47,7 @@ for _ in range(3):
     # para.stdin.close()
     parallelTime[str(testcase_size)] = end.ru_utime - begin.ru_utime
 
-    testcase_size *= 1000
+    testcase_size *= 100
 
 print(seqTime)
 print(parallelTime)
