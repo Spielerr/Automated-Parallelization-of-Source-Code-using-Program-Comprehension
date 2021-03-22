@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+
+#include <parallel/algorithm>
+#include <parallel/numeric>
 double mean(int *a1, int n1) {
     double mean = 0;
     for (int i = 0; i < n1; ++i) {
@@ -20,6 +23,8 @@ int max(int *a4, int n4) {
 
     return max;
 }
+
+void sort(int *arr, int arr_n) { __gnu_parallel::sort(arr, arr + arr_n); }
 
 int min(int *a4, int n4) {
     int min = a4[0];
@@ -44,16 +49,6 @@ int main(int argc, char *argv[]) {
     }
     double m1;
     int m2, m3, m4, k;
-
-#pragma omp parallel sections
-    {
-#pragma omp section
-        m1 = mean(array, array_size);
-
-#pragma omp section
-        m3 = max(array, array_size);
-
-#pragma omp section
-        m4 = min(array, array_size);
-    }
+    sort(array, array_size);
+    return 0;
 }

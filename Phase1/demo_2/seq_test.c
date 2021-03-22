@@ -9,23 +9,19 @@ double mean(int *a1, int n1) {
     return mean;
 }
 
-// void sort(int* arr, int arr_n)
-// {
-// for(int i = 0;i<arr_n-1;++i)
-// {
-// int min = i;
-// for(int j = i+1;j<arr_n;++j)
-// {
-// if(arr[j]<arr[min])
-// {
-// min = j;
-// }
-// }
-// int temp = arr[i];
-// arr[i] = arr[min];
-// arr[min] = temp;
-// }
-// }
+void sort(int *arr, int arr_n) {
+    for (int i = 0; i < arr_n - 1; ++i) {
+        int min = i;
+        for (int j = i + 1; j < arr_n; ++j) {
+            if (arr[j] < arr[min]) {
+                min = j;
+            }
+        }
+        int temp = arr[i];
+        arr[i] = arr[min];
+        arr[min] = temp;
+    }
+}
 
 // int median(int* a2, int n2)
 // {
@@ -89,10 +85,10 @@ int main(int argc, char *argv[]) {
     }
     double m1;
     int m2, m3, m4, k;
-    m1 = mean(array, array_size);
+    // m1 = mean(array, array_size);
     // m2 = median(array, array_size);
-    // sort(array, array_size);
-    m3 = max(array, array_size);
-    m4 = min(array, array_size);
+    sort(array, array_size);
+    // m3 = max(array, array_size);
+    // m4 = min(array, array_size);
     // k = search(array,array_size,4);
 }
