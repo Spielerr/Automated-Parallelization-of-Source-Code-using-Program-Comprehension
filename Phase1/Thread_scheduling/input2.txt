@@ -1,0 +1,6 @@
+my_sort,arr1,n
+min,arr1,n
+max,arr1,n
+my_sort,arr2,n
+min,arr2,n
+max,arr2,n
