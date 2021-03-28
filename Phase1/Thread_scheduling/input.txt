@@ -1,2 +1,2 @@
 my_sort,arr1
-my_sort,arr2
+my_sort,arr1

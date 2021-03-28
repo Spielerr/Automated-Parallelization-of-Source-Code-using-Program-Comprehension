@@ -7,6 +7,7 @@ using namespace std;
 
 bool check_key(map<string, int>& m, string& key) { return !(m.find(key) == m.end()); }
 
+// checks if function makes any write to the paramaters
 template <typename ptr_t1, typename ptr_t2>
 bool is_writing_fn(ptr_t1 order, ptr_t2 write_fns, int fn_num, int write_fn_num) {
     while (write_fn_num <= fn_num) {
@@ -16,7 +17,7 @@ bool is_writing_fn(ptr_t1 order, ptr_t2 write_fns, int fn_num, int write_fn_num)
     }
     return false;
 }
-
+// checks if no paramter of the function is written into
 bool no_write_params(pair<string, vector<string>>& item, map<string, int>& vars_write) {
     for (auto it = item.second.begin(); it != item.second.end(); ++it) {
         if (check_key(vars_write, *it) && vars_write[*it] > 0) {
@@ -79,9 +80,9 @@ int main() {
         order.push_back(temp);
     }
 
-    vector<pair<string, vector<string>>> my_order;
-    vector<pair<string, vector<string>>> temp_write_dep_order;
-    map<string, int> vars_write(var_write_count);
+    vector<pair<string, vector<string>>> my_order;              // reordered fn call
+    vector<pair<string, vector<string>>> temp_write_dep_order;  // temp to maintain order of fn that do not have write operations
+    map<string, int> vars_write(var_write_count);               // number of writes done on given variable
     auto iterator_my_order = my_order.begin();
     auto iterator_order = order.begin();
     auto iterator_write_order = vec_deps.begin();
@@ -89,16 +90,16 @@ int main() {
     int fn_num = 0;
     int write_fn_num = 0;
     while (iterator_order != order.end()) {
+        // if no paramter needs any write operations, then add to my_order as it can be executed
         if (no_write_params(*iterator_order, vars_write)) {
             my_order.push_back(*iterator_order);
         } else {
+            // maintain original order of fns that need write to occur in temp vector
             temp_write_dep_order.push_back(*iterator_order);
         }
+        // computes number of writes have occured to a given variable
         if (is_writing_fn(iterator_order, iterator_write_order, fn_num, write_fn_num)) {
-            // cout << "Create promise for\t";
-            for (auto it = iterator_write_order->second.begin();
-                 it != iterator_write_order->second.end(); ++it) {
-                // cout << *it << "\t";
+            for (auto it = iterator_write_order->second.begin(); it != iterator_write_order->second.end(); ++it) {
                 vars_write[*it] += 1;
             }
             cout << endl;
@@ -108,7 +109,9 @@ int main() {
         ++iterator_order;
         fn_num++;
     }
+    // insert the temp fn order into final reordered fn order
     my_order.insert(my_order.end(), temp_write_dep_order.begin(), temp_write_dep_order.end());
+
     auto iterator_order_of_exec = my_order.begin();
     iterator_write_order = vec_deps.begin();
     map<string, int> vars_for_future(var_write_count);
@@ -116,19 +119,18 @@ int main() {
     write_fn_num = 0;
 
     while (iterator_order_of_exec != my_order.end()) {
-        for (auto it = iterator_order_of_exec->second.begin();
-             it != iterator_order_of_exec->second.end(); ++it) {
+        // sets future (wait for write) for all variables needed for current function
+        for (auto it = iterator_order_of_exec->second.begin(); it != iterator_order_of_exec->second.end(); ++it) {
             if (var_write_count.find(*it) != var_write_count.end() && var_write_count[*it] != 0) {
-                cout << "Create a future (wait for write to happen), " << *it << "_"
-                     << var_write_count[*it] << " write\n";
+                cout << "std::future<void> f_" << *it << "_" << var_write_count[*it] << "= p_" << *it << "_" << var_write_count[*it] - 1
+                     << ".get_future();\n";
                 var_write_count[*it] -= 1;
             }
         }
+        // Create promise for all the variable the current function will write to
         if (is_writing_fn(iterator_order_of_exec, iterator_write_order, fn_num, write_fn_num)) {
-            cout << "Create promise for\t";
-            for (auto it = iterator_write_order->second.begin();
-                 it != iterator_write_order->second.end(); ++it) {
-                cout << *it << "\t";
+            for (auto it = iterator_write_order->second.begin(); it != iterator_write_order->second.end(); ++it) {
+                cout << "std::promise<void> p_" << *it << "_" << var_write_count[*it];
                 vars_for_future[*it] += 1;
                 var_write_count[*it] += 1;
             }
