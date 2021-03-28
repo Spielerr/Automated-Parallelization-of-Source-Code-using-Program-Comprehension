@@ -46,15 +46,20 @@ bool no_write_params(pair<string, vector<string>>& item, map<string, int>& vars_
 
 int main() 
 {
+    // stores only those functions which are writing to one or more of its arguments (multimap)
     multimap<string, vector<string>> deps;
 
+    // stores only those functions which are writing to one or more of its arguments (vector)
     vector<pair<string, vector<string>>> vec_deps;
 
-    multimap<string, vector<string>> fn_calls;
+    // number of times a variable is being written into
     map<string, int> var_write_count;
+
+    // temporaries to store strings when inputting from file
     string dependencies;
     string fn_call;
 
+    // reading in the write dependencies file
     ifstream MyReadFile1("input.txt");
     while (getline(MyReadFile1, dependencies)) 
     {
@@ -79,14 +84,21 @@ int main()
             }
         }
 
+        // pushing into the multimap
         deps.insert(temp);
+
+        // pushing into the vector
         vec_deps.push_back(temp);
     }
 
     // Close the file
     MyReadFile1.close();
 
+
+    // reading in the order of function calls
     ifstream MyReadFile2("input2.txt");
+
+    // vector to store the order of function calls
     vector<pair<string, vector<string>>> order;
     while (getline(MyReadFile2, fn_call)) 
     {
@@ -105,7 +117,6 @@ int main()
         {
             temp.second.push_back(result[i]);
         }
-
         order.push_back(temp);
     }
 
@@ -118,6 +129,7 @@ int main()
     // number of writes done on given variable
     map<string, int> vars_write(var_write_count);  
 
+    // iterators
     auto iterator_my_order = my_order.begin();
     auto iterator_order = order.begin();
     auto iterator_write_order = vec_deps.begin();
@@ -157,6 +169,14 @@ int main()
 
     // insert the temp fn order into final reordered fn order
     my_order.insert(my_order.end(), temp_write_dep_order.begin(), temp_write_dep_order.end());
+
+    /*
+    for(auto x:my_order)
+    {
+        cout << x.first << '\n';
+    }
+    cout << '\n';
+    */
 
     auto iterator_order_of_exec = my_order.begin();
     iterator_write_order = vec_deps.begin();
