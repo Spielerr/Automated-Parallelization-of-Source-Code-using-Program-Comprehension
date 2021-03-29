@@ -1,61 +1,80 @@
-#include <iostream>
-#include <vector>
-#include <string>
-#include <thread>
-#include <queue>
-#include <atomic>
 #include <bits/stdc++.h>
+#include "thread_pool/thread_pool.hpp"
+#include <thread>
+#include <atomic>
 #include "prog.cpp"
 
 using namespace std;
+
+//define your thread pool here
+int num_threads = thread::hardware_concurrency();
+thread_pool::ThreadPool thread_pool{};
+vector<future<void>> void_futures;
+vector<future<int>> int_futures;
 
 vector<pair<int, string>> special;
 vector<pair<int, atomic<bool>&>> thread_track;
 queue<pair<int, string>> ready_queue;
 queue<pair<int, string>> wait_queue;
-
-// vector<pair<int, int>> special_changed;
 atomic<int> special_changed(0);
-string add_remove;
+string remove_fn;
+
+
+class Find_special
+{
+	private:
+	int x_;
+
+	public:
+	Find_special(int x) : x_(x) {}
+	bool operator()(pair<int, string> i)
+	{
+		return i.first == x_;
+	}
+};
+
 
 // function to track execution of threads
 // whenever any thread finishes execution, update special vector
 void thread_track_fn()
 {
-	int index = 0;
 	while(true)
 	{
-		if(index == 6)
-		{
-			index = 0;
-		}
-		for(int i = 0; i<6; i++)
+		for(auto x:thread_track)
 		{
 			//update special
-			if(thread_track[i].second == true)
+			if(x.second == true)
 			{
-				auto iter_special = find(special.begin(), special.end(), thread_track[i].first);
-				add_remove = (*iter_special).second;
+				//should prolly call .get here - need to get the correct future through an iterator here
+				x.second = false;
+				auto iter_special = find_if(special.begin(), special.end(), Find_special(x.first));
+				remove_fn = (*iter_special).second;
 				special.erase(iter_special);
-				special_changed = 1;
+				special_changed = 1; //make it 1 only when i remove an arg from special
 			}
-		}	
+		}
 	}
 }
 
-// schedule threads from queue only when special list gets updated
+// schedule threads from queue only when special list gets updated(specifically when there's been a removal)
 void scheduling_fn()
 {
 	//special got updated
-	if(special_changed)
+	while(true)
 	{
-		//note all fns with same arguments as add_remove
-		//push these functions into ready queue
+		while(special_changed)
+		{
+			//check if there's something in ready queue
+			// if nothing is there, get stuff(if any, and only those that are dependent) from wait queue
 
-		//if threads are available, empty the ready queue
-		//assuming threads are available
+			// if ready queue contains some functions, get only those functions which are dependent on
+			// remove_fn which has just got updated
+			// how to check for these functions? refer the input data
 
-		special_changed = 0;
+			// emplace_back them into corresponding futures vector
+			// when do you call .get on these functions?
+			special_changed = 0;
+		}
 	}
 }
 
@@ -64,8 +83,6 @@ int main()
 	int arr1[]{2, 1, 3, 6, 5};
 	int arr2[]{2, 0, 3, 6, 5};
 	int n = sizeof(arr1) / sizeof(arr1[0]);
-
-	//define your thread pool here
 
 	//we know the number of fn calls
 	//initialise thread_track_changed to all 0 signifying that nothing has changed
@@ -81,13 +98,18 @@ int main()
 	// file write code for that
 	pair<int,string> p1_1(1,"arr1");
 	special.push_back(p1_1);
-	// thread th1 = thread(my_sort, arr1, n);
+
+	void_futures.emplace_back(thread_pool.Submit(thread_track_fn));
+	void_futures.emplace_back(thread_pool.Submit(scheduling_fn));
 	atomic<bool> done1(false);
-	thread t1([&] {
+
+	void_futures.emplace_back(thread_pool.Submit([&] {
         my_sort(arr1, n);
         done1 = true;
-    });
-	pair<int, atomic<bool>&> p1_2(1, done1); //problem here since i cannot store a reference in a pair
+    }));
+
+
+	pair<int, atomic<bool>&> p1_2(1, done1); 
 	thread_track.push_back(p1_2);
 	
 	int min1 = min(arr1, n);
