@@ -1,0 +1,66 @@
+/*
+sort(arr1)
+min(arr1)
+sort(arr2)
+max(arr2)
+fn_a(arr1, arr2)
+
+*/
+
+sort_wrapper(fn, arr,sh_var)
+{
+    sort(arr);
+    lock_acquire();
+    sh_var = 1;
+    lock_release();
+}
+
+min_wrapper(fn, arr, sh_var)
+{
+    while(!sh_var)
+        ;//busy waiting
+
+    int m = min(arr);
+    return m;
+    
+
+}
+
+max_wrapper(fn, arr, sh_var)
+{
+    while(!sh_var)
+        ;//busy waiting
+
+    int m = max(arr);
+    return m;
+    
+
+}
+
+fn_a_wrapper(fn, arr, sh_var)
+{
+    while(!sh_var[0] || !sh_var[1])
+        ;//busy waiting
+
+    int m = fn_a(arr[0],arr[1]);
+    return m;
+    
+
+}
+
+int main()
+{
+    shared_var_arr1 = 0;
+    shared_var_arr2 = 0;
+
+    thread th1(sort_wrapper(sort,arr1,shared_var_arr1));
+
+    thread th2(min_wrapper(min,arr1, shared_var_arr1));
+
+    thread th3(sort_wrapper(sort,arr2,shared_var_arr2));
+
+    thread th4(max_wrapper(max,arr2, shared_var_arr2));
+
+    thread th5(fn_a_wrapper(fn_a,arr, sh_var));
+
+}
