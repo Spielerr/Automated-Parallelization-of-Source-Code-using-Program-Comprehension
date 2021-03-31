@@ -4,16 +4,35 @@ output stats end
 stats = new LaraObject();
 
 var fn_args = {};
+
+println("order of function calls(input2.txt):");
+println();
+
 select function.call end
 apply
     var arg_l = $call.args;
-    //println($call.name);
+    
+    println($call.name);
     //println(arg_l);
-    fn_args[$call.name] = [];
+
+    if(!($call.name in fn_args))
+    {
+        fn_args[$call.name] = [];
+    }
+
+    var temp_l = [];
+    
     for(i in arg_l)
     {
-        fn_args[$call.name].push(arg_l[i].code);
+        //fn_args[$call.name].push(arg_l[i].code);
+        temp_l.push(arg_l[i].code);
+
+        println(arg_l[i].type.code + "  " + arg_l[i].code);
     }
+
+    fn_args[$call.name].push(temp_l);
+
+    println();
     
 end
 
@@ -68,19 +87,19 @@ end
 //    }
 //}
 
-for(fn_name in fn_args)
-{
-    println(fn_name);
-
-    var no_of_args = fn_args[fn_name].length;
-
-    for(var i = 0; i<no_of_args; ++i)
-    {
-        println(fn_args[fn_name][i] + ":" + fn_param[fn_name][i]);
-    }
-    
-    println();
-}
+//for(fn_name in fn_args)
+//{
+//    println(fn_name);
+//
+//    var no_of_args = fn_args[fn_name].length;
+//
+//    for(var i = 0; i<no_of_args; ++i)
+//    {
+//        println(fn_args[fn_name][i] + ":" + fn_param[fn_name][i]);
+//    }
+//    
+//    println();
+//}
 
 
 var changing_params = {};
@@ -109,9 +128,13 @@ end
 
 
 
-select program.body end
-apply
+//select function{'main'} end
+//apply
 
+println();
+println();
+println("functions where write is being performed along with the arguments being modified");
+println("(input.txt)");
 
 for(fn_name in changing_params)
 {
@@ -122,15 +145,26 @@ for(fn_name in changing_params)
         for(var i = 0; i<no_of_args; ++i)
         {
             //println(changing_params[fn_name][i] + ":" + fn_args[fn_name][fn_param[fn_name].indexOf(changing_params[fn_name][i])]);
-            println(fn_name + "," + fn_args[fn_name][fn_param[fn_name].indexOf(changing_params[fn_name][i])]);
-
+            //println(fn_name + "," + fn_args[fn_name][fn_param[fn_name].indexOf(changing_params[fn_name][i])]);
             //$body.insert after "" + fn_name + "," + fn_args[fn_name][fn_param[fn_name].indexOf(changing_params[fn_name][i])];
+
+            ind = fn_param[fn_name].indexOf(changing_params[fn_name][i]);
+            no_of_calls_fn = fn_args[fn_name].length;
+
+            for(var j = 0; j < no_of_calls_fn; ++j)
+            {
+                println(fn_name + "," + fn_args[fn_name][j][ind]);
+            }
+
         }
         println();
     }
     
 }
-end
+
+//end
+
+
 end
 
 
