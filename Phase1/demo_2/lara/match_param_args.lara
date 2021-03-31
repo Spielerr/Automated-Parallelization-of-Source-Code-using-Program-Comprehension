@@ -4,37 +4,11 @@ output stats end
 stats = new LaraObject();
 
 var fn_args = {};
+var fn_types = {};
 
 println("order of function calls(input2.txt):");
 println();
 
-select function.call end
-apply
-    var arg_l = $call.args;
-    
-    println($call.name);
-    //println(arg_l);
-
-    if(!($call.name in fn_args))
-    {
-        fn_args[$call.name] = [];
-    }
-
-    var temp_l = [];
-    
-    for(i in arg_l)
-    {
-        //fn_args[$call.name].push(arg_l[i].code);
-        temp_l.push(arg_l[i].code);
-
-        println(arg_l[i].type.code + "  " + arg_l[i].code);
-    }
-
-    fn_args[$call.name].push(temp_l);
-
-    println();
-    
-end
 
 fn_param = {};
 
@@ -49,11 +23,55 @@ apply
     var all_par = $function.params;
     var no_param = all_par.length;
 
+    fn_types[$function.name] = [];
+
     for(var i = 0; i < no_param; ++i)
     {
         //println(p[i].name);
         fn_param[$function.name].push(all_par[i].name);
+        //fn_types[$function.name]['param'][all_par[i].name] = all_par[i].type.code;
+        fn_types[$function.name].push(all_par[i].type.code);
     }
+
+end
+
+select function.call end
+apply
+    var arg_l = $call.args;
+    
+    
+    println($call.name);
+    //println(arg_l);
+
+    if(!($call.name in fn_args))
+    {
+        fn_args[$call.name] = [];
+    }
+
+    
+    var temp_l = [];
+    
+    
+    for(i in arg_l)
+    {
+        //fn_args[$call.name].push(arg_l[i].code);
+        temp_l.push(arg_l[i].code);
+
+        print(arg_l[i].type.code + " " + arg_l[i].code);
+        print(", " + fn_types[$call.name][i] + " " + fn_param[$call.name][i] + "; ");
+        
+        //temp_types[arg_l[i].code] = arg_l[i].type.code
+    }
+
+    fn_args[$call.name].push(temp_l);
+    
+
+    println();
+    println();
+    
+end
+
+
 
 //    if($varref.vardecl.isParam)
 //    {
@@ -75,8 +93,6 @@ apply
 //        }
 //        
 //    }
-
-end
 
 //for(fn1 in fn_param)
 //{
@@ -163,6 +179,7 @@ for(fn_name in changing_params)
 }
 
 //end
+
 
 
 end
