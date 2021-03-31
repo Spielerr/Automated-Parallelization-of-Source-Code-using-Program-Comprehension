@@ -5,20 +5,22 @@
 #include "prog.cpp"
 
 using namespace std;
+using namespace thread_pool;
 
 //define your thread pool here
-int num_threads = thread::hardware_concurrency();
-thread_pool::ThreadPool thread_pool{};
+// int num_threads = thread::hardware_concurrency();
+ThreadPool tp{};
+
 vector<future<void>> void_futures;
 vector<future<int>> int_futures;
 
+//stores the arguments for those functions which are changing them
 vector<pair<int, string>> special;
 vector<pair<int, atomic<bool>&>> thread_track;
-queue<pair<int, string>> ready_queue;
-queue<pair<int, string>> wait_queue;
+deque<pair<int, string>> ready_queue;
+deque<pair<int, string>> wait_queue;
 atomic<int> special_changed(0);
 string remove_fn;
-
 
 class Find_special
 {
@@ -33,6 +35,23 @@ class Find_special
 	}
 };
 
+class Find_special2
+{
+	private:
+	string x_;
+
+	public:
+	Find_special2(string x) : x_(x) {}
+	bool operator()(pair<int, string> i)
+	{
+		if(x_.compare(i.second) == 0)
+		{
+			return true;
+		}
+		return false;
+	}
+};
+
 
 // function to track execution of threads
 // whenever any thread finishes execution, update special vector
@@ -43,7 +62,7 @@ void thread_track_fn()
 		for(auto x:thread_track)
 		{
 			//update special
-			if(x.second == true)
+			if(x.second)
 			{
 				//should prolly call .get here - need to get the correct future through an iterator here
 				x.second = false;
@@ -59,20 +78,45 @@ void thread_track_fn()
 // schedule threads from queue only when special list gets updated(specifically when there's been a removal)
 void scheduling_fn()
 {
+
 	//special got updated
 	while(true)
 	{
+		// if(ready_queue is not empty)
+		// {
+		// 	push functions inside ready_queue into threadpool
+		// }
+		if(ready_queue.size() != 0)
+		{
+			for(auto x:ready_queue)
+			{
+				// int_futures.emplace_back(thread_pool.Submit(x.second));
+				//file output code
+				// fprintf("int_futures.emplace_back(thread_pool.Submit("+x.second+"));");
+				// output right here saldkfjsdalkfjsldkf fn_name
+				// int_futures.emplace_back(tp.Submit(min, cref(arr1), cref(n)));
+			}
+		}
 		while(special_changed)
 		{
 			//check if there's something in ready queue
 			// if nothing is there, get stuff(if any, and only those that are dependent) from wait queue
 
-			// if ready queue contains some functions, get only those functions which are dependent on
+			// if wait queue contains some functions, get only those functions which are dependent on
 			// remove_fn which has just got updated
 			// how to check for these functions? refer the input data
 
 			// emplace_back them into corresponding futures vector
 			// when do you call .get on these functions?
+
+			//push eligible elements from wait queue to ready queue
+			for(auto x:wait_queue)
+			{
+				//pick out every argument from func in x
+				//check if it exists in special
+				//if it doesnt
+				//	move it to ready queue
+			}
 			special_changed = 0;
 		}
 	}
@@ -99,11 +143,11 @@ int main()
 	pair<int,string> p1_1(1,"arr1");
 	special.push_back(p1_1);
 
-	void_futures.emplace_back(thread_pool.Submit(thread_track_fn));
-	void_futures.emplace_back(thread_pool.Submit(scheduling_fn));
+	void_futures.emplace_back(tp.Submit(thread_track_fn));
+	void_futures.emplace_back(tp.Submit(scheduling_fn));
 	atomic<bool> done1(false);
 
-	void_futures.emplace_back(thread_pool.Submit([&] {
+	void_futures.emplace_back(tp.Submit([&] {
         my_sort(arr1, n);
         done1 = true;
     }));
@@ -114,25 +158,25 @@ int main()
 	
 	int min1 = min(arr1, n);
 	//min does not change any of its arguments
-	if(find(begin(special), end(special), "arr1") != end(special))
+	if(find_if(begin(special), end(special), Find_special2("arr1")) != end(special))
 	{
 		//min to queue
-		wait_queue.push(pair<int, string>(2,"min"));
+		wait_queue.push_back(pair<int, string>(2,"min"));
 	}
 	else
 	{
-		ready_queue.push(pair<int, string>(2,"min"));
+		ready_queue.push_back(pair<int, string>(2,"min"));
 	}
 
 	int max1 = max(arr1, n);
-	if(find(begin(special), end(special), "arr1") != end(special))
+	if(find_if(begin(special), end(special), Find_special2("arr1")) != end(special))
 	{
 		//min to queue
-		wait_queue.push(pair<int, string>(3,"max"));
+		wait_queue.push_back(pair<int, string>(3,"max"));
 	}
 	else
 	{
-		ready_queue.push(pair<int, string>(3,"max"));
+		ready_queue.push_back(pair<int, string>(3,"max"));
 	}
 
 	my_sort(arr2, n);
@@ -140,35 +184,36 @@ int main()
 	special.push_back(p4_1);
 	// thread th1 = thread(my_sort, arr1, n);
 	atomic<bool> done4(false);
-	thread t4([&] {
+	void_futures.emplace_back(tp.Submit([&] {
         my_sort(arr2, n);
-        done1 = true;
-    });
+        done4 = true;
+    }));
 	pair<int, atomic<bool>&> p4_2(1, done1);
 	thread_track.push_back(p4_2);
 
 
 	int min2 = min(arr2, n);
-	if(find(begin(special), end(special), "arr2") != end(special))
+	// if arr2 is found in special vector
+	if(find_if(begin(special), end(special), Find_special2("arr2")) != end(special))
 	{
 		//min to queue
-		wait_queue.push(pair<int, string>(5,"min"));
+		wait_queue.push_back(pair<int, string>(5,"min"));
 	}
 	else
 	{
-		ready_queue.push(pair<int, string>(5,"min"));
+		ready_queue.push_back(pair<int, string>(5,"min"));
 	}
 
 
 	int max2 = max(arr2, n);
-	if(find(begin(special), end(special), "arr2") != end(special))
+	if(find_if(begin(special), end(special), Find_special2("arr2")) != end(special))
 	{
 		//min to queue
-		wait_queue.push(pair<int, string>(6,"min"));
+		wait_queue.push_back(pair<int, string>(6,"min"));
 	}
 	else
 	{
-		ready_queue.push(pair<int, string>(6,"min"));
+		ready_queue.push_back(pair<int, string>(6,"min"));
 	}
 
 	return 0;
