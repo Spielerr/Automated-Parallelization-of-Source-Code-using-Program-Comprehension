@@ -2,14 +2,16 @@
 #include "thread_pool/thread_pool.hpp"
 #include <thread>
 #include <atomic>
+#include <unistd.h>
 #include "prog.cpp"
-
+#include <functional>
 using namespace std;
 using namespace thread_pool;
 
 //define your thread pool here
-// int num_threads = thread::hardware_concurrency();
-ThreadPool tp{};
+int num_threads = thread::hardware_concurrency();
+ThreadPool tp(num_threads/4);
+// ThreadPool tp{};
 
 vector<future<void>> void_futures;
 vector<future<int>> int_futures;
@@ -17,8 +19,8 @@ vector<future<int>> int_futures;
 //stores the arguments for those functions which are changing them
 vector<pair<int, string>> special;
 vector<pair<int, atomic<bool>&>> thread_track;
-deque<pair<int, string>> ready_queue;
-deque<pair<int, string>> wait_queue;
+deque<pair<int, std::function<int()>>> ready_queue;
+deque<pair<int, std::function<int()>>> wait_queue;
 atomic<int> special_changed(0);
 string remove_fn;
 
@@ -52,11 +54,12 @@ class Find_special2
 	}
 };
 
-
+int i__ = 0;
 // function to track execution of threads
 // whenever any thread finishes execution, update special vector
 void thread_track_fn()
 {
+	cout << ++i__ << "\n\n";
 	while(true)
 	{
 		for(auto x:thread_track)
@@ -72,6 +75,8 @@ void thread_track_fn()
 				special_changed = 1; //make it 1 only when i remove an arg from special
 			}
 		}
+
+		break;
 	}
 }
 
@@ -88,9 +93,10 @@ void scheduling_fn()
 		// }
 		if(ready_queue.size() != 0)
 		{
-			for(auto x:ready_queue)
+			for(auto &x:ready_queue)
 			{
-				// int_futures.emplace_back(thread_pool.Submit(x.second));
+
+				int_futures.emplace_back(tp.Submit(x.second));
 				//file output code
 				// fprintf("int_futures.emplace_back(thread_pool.Submit("+x.second+"));");
 				// output right here saldkfjsdalkfjsldkf fn_name
@@ -119,14 +125,17 @@ void scheduling_fn()
 			}
 			special_changed = 0;
 		}
+		break;
 	}
 }
 
 int main()
 {
-	int arr1[]{2, 1, 3, 6, 5};
+	int arr1[]{1, 3, 6, -3213123, 5};
 	int arr2[]{2, 0, 3, 6, 5};
 	int n = sizeof(arr1) / sizeof(arr1[0]);
+
+	cout << num_threads << "\n\n";
 
 	//we know the number of fn calls
 	//initialise thread_track_changed to all 0 signifying that nothing has changed
@@ -148,7 +157,9 @@ int main()
 	atomic<bool> done1(false);
 
 	void_futures.emplace_back(tp.Submit([&] {
+		sleep(5);
         my_sort(arr1, n);
+		cout << "asdasd\n\n";
         done1 = true;
     }));
 
@@ -156,28 +167,31 @@ int main()
 	pair<int, atomic<bool>&> p1_2(1, done1); 
 	thread_track.push_back(p1_2);
 	
-	int min1 = min(arr1, n);
+	int min1 = -1;
+	auto fn1 =  bind(::min, arr1, n);
 	//min does not change any of its arguments
 	if(find_if(begin(special), end(special), Find_special2("arr1")) != end(special))
 	{
 		//min to queue
-		wait_queue.push_back(pair<int, string>(2,"min"));
+		ready_queue.push_back(pair<int, std::function<int()>>(2, fn1));
+		// ready_queue.push_back(pair<int, std::function<void()>>(2, [&](){ min1 = min(arr1, n); }));
 	}
 	else
 	{
-		ready_queue.push_back(pair<int, string>(2,"min"));
+		ready_queue.push_back(pair<int, std::function<int()>>(2, fn1));
+		// ready_queue.push_back(pair<int, std::function<void()>>(2, [&](){ min1 = min(arr1, n); } ));
 	}
 
 	int max1 = max(arr1, n);
-	if(find_if(begin(special), end(special), Find_special2("arr1")) != end(special))
-	{
-		//min to queue
-		wait_queue.push_back(pair<int, string>(3,"max"));
-	}
-	else
-	{
-		ready_queue.push_back(pair<int, string>(3,"max"));
-	}
+	// if(find_if(begin(special), end(special), Find_special2("arr1")) != end(special))
+	// {
+	// 	//min to queue
+	// 	wait_queue.push_back(pair<int, std::function<void()>>(3,[&]{ max(arr1, n); }));
+	// }
+	// else
+	// {
+	// 	ready_queue.push_back(pair<int, std::function<void()>>(3,[&]{ max(arr1, n); }));
+	// }
 
 	my_sort(arr2, n);
 	pair<int,string> p4_1(4,"arr2");
@@ -194,28 +208,37 @@ int main()
 
 	int min2 = min(arr2, n);
 	// if arr2 is found in special vector
-	if(find_if(begin(special), end(special), Find_special2("arr2")) != end(special))
-	{
-		//min to queue
-		wait_queue.push_back(pair<int, string>(5,"min"));
-	}
-	else
-	{
-		ready_queue.push_back(pair<int, string>(5,"min"));
-	}
+	// if(find_if(begin(special), end(special), Find_special2("arr2")) != end(special))
+	// {
+	// 	//min to queue
+	// 	wait_queue.push_back(pair<int, std::function<void()>>(5, [&]{ min(arr2, n); }));
+	// }
+	// else
+	// {
+	// 	ready_queue.push_back(pair<int, std::function<void()>>(5, [&]{ min(arr2, n); }));
+	// }
 
 
 	int max2 = max(arr2, n);
-	if(find_if(begin(special), end(special), Find_special2("arr2")) != end(special))
+	// if(find_if(begin(special), end(special), Find_special2("arr2")) != end(special))
+	// {
+	// 	//min to queue
+	// 	wait_queue.push_back(pair<int, std::function<void()>>(6, [&]{ max(arr2, n); }));
+	// }
+	// else
+	// {
+	// 	ready_queue.push_back(pair<int, std::function<void()>>(6, [&]{ max(arr2, n); }));
+	// }
+	for(auto &x:void_futures)
 	{
-		//min to queue
-		wait_queue.push_back(pair<int, string>(6,"min"));
-	}
-	else
-	{
-		ready_queue.push_back(pair<int, string>(6,"min"));
+		x.wait();
 	}
 
+	for(auto &x:int_futures)
+	{
+		cout << x.get() << "\n\n";
+	}
+	cout << min1 << "\n\n";
 	return 0;
 }
 
