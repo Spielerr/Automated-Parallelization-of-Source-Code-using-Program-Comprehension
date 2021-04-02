@@ -10,7 +10,7 @@ using namespace thread_pool;
 
 //define your thread pool here
 int num_threads = thread::hardware_concurrency();
-ThreadPool tp(num_threads/4);
+ThreadPool tp(num_threads);
 // ThreadPool tp{};
 
 vector<future<void>> void_futures;
@@ -54,13 +54,14 @@ class Find_special2
 	}
 };
 
-int i__ = 0;
+int i1 = 10;
+int i2 = 10;
 // function to track execution of threads
 // whenever any thread finishes execution, update special vector
 void thread_track_fn()
 {
-	cout << ++i__ << "\n\n";
-	while(true)
+	// cout << ++i__ << "\n\n";
+	while(--i1)
 	{
 		for(auto x:thread_track)
 		{
@@ -76,7 +77,7 @@ void thread_track_fn()
 			}
 		}
 
-		break;
+		// break;
 	}
 }
 
@@ -85,7 +86,7 @@ void scheduling_fn()
 {
 
 	//special got updated
-	while(true)
+	while(--i2)
 	{
 		// if(ready_queue is not empty)
 		// {
@@ -98,8 +99,6 @@ void scheduling_fn()
 
 				int_futures.emplace_back(tp.Submit(x.second));
 				//file output code
-				// fprintf("int_futures.emplace_back(thread_pool.Submit("+x.second+"));");
-				// output right here saldkfjsdalkfjsldkf fn_name
 				// int_futures.emplace_back(tp.Submit(min, cref(arr1), cref(n)));
 			}
 		}
@@ -125,28 +124,21 @@ void scheduling_fn()
 			}
 			special_changed = 0;
 		}
-		break;
+		// break;
 	}
 }
 
 int main()
 {
-	int arr1[]{1, 3, 6, -3213123, 5};
+	int arr1[]{1, 3, 6, -1, 5};
 	int arr2[]{2, 0, 3, 6, 5};
 	int n = sizeof(arr1) / sizeof(arr1[0]);
 
-	cout << num_threads << "\n\n";
-
-	//we know the number of fn calls
-	//initialise thread_track_changed to all 0 signifying that nothing has changed
-	// for(int i = 0; i<6;i++)
-	// {
-	// 	thread_track_changed[i] = 0;
-	// }
+	cout << "Number of hardware threads available on current system: " << num_threads << "\n\n";
 
 	using namespace std::chrono_literals;
 
-	my_sort(arr1, n);
+	// my_sort(arr1, n);
 	// if my_sort is writing into one or more of its arguments, add them to special
 	// file write code for that
 	pair<int,string> p1_1(1,"arr1");
@@ -157,9 +149,8 @@ int main()
 	atomic<bool> done1(false);
 
 	void_futures.emplace_back(tp.Submit([&] {
-		sleep(5);
+		// sleep(5);
         my_sort(arr1, n);
-		cout << "asdasd\n\n";
         done1 = true;
     }));
 
@@ -167,7 +158,7 @@ int main()
 	pair<int, atomic<bool>&> p1_2(1, done1); 
 	thread_track.push_back(p1_2);
 	
-	int min1 = -1;
+	// int min1 = -1;
 	auto fn1 =  bind(::min, arr1, n);
 	//min does not change any of its arguments
 	if(find_if(begin(special), end(special), Find_special2("arr1")) != end(special))
@@ -182,7 +173,7 @@ int main()
 		// ready_queue.push_back(pair<int, std::function<void()>>(2, [&](){ min1 = min(arr1, n); } ));
 	}
 
-	int max1 = max(arr1, n);
+	// int max1 = max(arr1, n);
 	// if(find_if(begin(special), end(special), Find_special2("arr1")) != end(special))
 	// {
 	// 	//min to queue
@@ -192,6 +183,18 @@ int main()
 	// {
 	// 	ready_queue.push_back(pair<int, std::function<void()>>(3,[&]{ max(arr1, n); }));
 	// }
+	auto fn2 =  bind(::max, arr1, n);
+	if(find_if(begin(special), end(special), Find_special2("arr1")) != end(special))
+	{
+		//min to queue
+		ready_queue.push_back(pair<int, std::function<int()>>(3, fn2));
+		// ready_queue.push_back(pair<int, std::function<void()>>(2, [&](){ min1 = min(arr1, n); }));
+	}
+	else
+	{
+		ready_queue.push_back(pair<int, std::function<int()>>(3, fn2));
+		// ready_queue.push_back(pair<int, std::function<void()>>(2, [&](){ min1 = min(arr1, n); } ));
+	}
 
 	my_sort(arr2, n);
 	pair<int,string> p4_1(4,"arr2");
@@ -217,6 +220,19 @@ int main()
 	// {
 	// 	ready_queue.push_back(pair<int, std::function<void()>>(5, [&]{ min(arr2, n); }));
 	// }
+	auto fn3 =  bind(::min, arr2, n);
+	//min does not change any of its arguments
+	if(find_if(begin(special), end(special), Find_special2("arr2")) != end(special))
+	{
+		//min to queue
+		ready_queue.push_back(pair<int, std::function<int()>>(5, fn3));
+		// ready_queue.push_back(pair<int, std::function<void()>>(2, [&](){ min1 = min(arr1, n); }));
+	}
+	else
+	{
+		ready_queue.push_back(pair<int, std::function<int()>>(5, fn3));
+		// ready_queue.push_back(pair<int, std::function<void()>>(2, [&](){ min1 = min(arr1, n); } ));
+	}
 
 
 	int max2 = max(arr2, n);
@@ -229,16 +245,30 @@ int main()
 	// {
 	// 	ready_queue.push_back(pair<int, std::function<void()>>(6, [&]{ max(arr2, n); }));
 	// }
+	auto fn4 =  bind(::max, arr2, n);
+	if(find_if(begin(special), end(special), Find_special2("arr2")) != end(special))
+	{
+		//min to queue
+		ready_queue.push_back(pair<int, std::function<int()>>(6, fn4));
+		// ready_queue.push_back(pair<int, std::function<void()>>(2, [&](){ min1 = min(arr1, n); }));
+	}
+	else
+	{
+		ready_queue.push_back(pair<int, std::function<int()>>(6, fn4));
+		// ready_queue.push_back(pair<int, std::function<void()>>(2, [&](){ min1 = min(arr1, n); } ));
+	}
+
 	for(auto &x:void_futures)
 	{
 		x.wait();
 	}
 
+	// min and max values (called twice after every sort)
 	for(auto &x:int_futures)
 	{
-		cout << x.get() << "\n\n";
+		cout << x.get() << "\n";
 	}
-	cout << min1 << "\n\n";
+	// cout << min1 << "\n\n";
 	return 0;
 }
 
