@@ -1,6 +1,10 @@
 #include <iostream>
 #include <string>
+#include <vector>
 using namespace std;
+
+vector<string> return_types;
+vector<vector<string>> all_fn_args;
 
 void gen_headers()
 {
@@ -24,17 +28,37 @@ void prologue()
     cout<<"int num_threads = thread::hardware_concurrency();\n";
     cout<<"ctpl::thread_pool tp(num_threads);\n";
 
-    // create future variables for all types of return values
-    cout<<"vector<future<void>> void_futures;\n";
-    cout<<"vector<future<int>> int_futures;\n";
+    for(auto x:return_types)
+    {
+        cout << "vector<future<" + x + ">> " + x + "_futures;\n";
+    }
     
     cout<<"vector<pair<int, string>> special;\n";
     cout<<"vector<pair<int, atomic<bool>&>> thread_track;\n";
 
     //change arr1 and n based on the output files from lara
-    cout<<"vector<vector<string>> args{{\"arr1\",\"n\"}, {\"arr1\",\"n\"}, {\"arr1\",\"n\"}, {\"arr2\",\"n\"}, {\"arr2\",\"n\"}, {\"arr2\",\"n\"}};\n";
+    // cout<<"vector<vector<string>> args{{\"arr1\",\"n\"}, {\"arr1\",\"n\"}, {\"arr1\",\"n\"}, {\"arr2\",\"n\"}, {\"arr2\",\"n\"}, {\"arr2\",\"n\"}};\n";
+    cout << "vector<vector<string>> args{";
+    for(int j = 0; j<all_fn_args.size(); j++)
+    {
+        auto x = all_fn_args[j];
+        cout << "{";
+        for(int i=0;i<x.size();i++)
+        {
+            if(i != x.size() - 1)
+                cout << "\"" + x[i] + ",";
+            else
+                cout << "\"" + x[i];
+        }
+        if(j != all_fn_args.size() - 1)
+            cout << "}, ";
+        else
+            cout << "}};\n";
+    }
 
     // change these according to the return values of those functions not changing their arguments (like min, max)
+    // we could have different function return types
+    // but should have only one ready queue and one wait queue
     cout<<"deque<pair<int, std::function<int(int)>>> ready_queue;\n";
     cout<<"deque<pair<int, std::function<int(int)>>> wait_queue;\n";
 
