@@ -40,7 +40,7 @@ apply
     var arg_l = $call.args;
     
     
-    println($call.name);
+    println($call.name + "," + $call.returnType.code);
     //println(arg_l);
 
     if(!($call.name in fn_args))
