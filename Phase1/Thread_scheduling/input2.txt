@@ -1,6 +1,6 @@
-my_sort,arr1,n
-min,arr1,n
-max,arr1,n
-my_sort,arr1,n
-min,arr2,n
-max,arr2,n
+sort,void;int[5],arr1,int *,arr;int,n,int const,arr_n;
+min,int;int[5],arr1,int * const,a4;int,n,int const,n4;
+max,int;int[5],arr1,int *,a4;int,n,int,n4;
+sort,void;int[5],arr2,int *,arr;int,n,int const,arr_n;
+min,int;int[5],arr2,int * const,a4;int,n,int const,n4;
+max,int;int[5],arr2,int *,a4;int,n,int,n4;
