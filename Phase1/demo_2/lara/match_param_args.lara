@@ -40,7 +40,7 @@ apply
     var arg_l = $call.args;
     
     
-    println($call.name + "," + $call.returnType.code);
+    print($call.name + "," + $call.returnType.code + ";");
     //println(arg_l);
 
     if(!($call.name in fn_args))
@@ -57,8 +57,8 @@ apply
         //fn_args[$call.name].push(arg_l[i].code);
         temp_l.push(arg_l[i].code);
 
-        print(arg_l[i].type.code + " " + arg_l[i].code);
-        print(", " + fn_types[$call.name][i] + " " + fn_param[$call.name][i] + "; ");
+        print(arg_l[i].type.code + "," + arg_l[i].code);
+        print("," + fn_types[$call.name][i] + "," + fn_param[$call.name][i] + ";");
         
         //temp_types[arg_l[i].code] = arg_l[i].type.code
     }
@@ -67,7 +67,7 @@ apply
     
 
     println();
-    println();
+    
     
 end
 
