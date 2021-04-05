@@ -1,10 +1,24 @@
-#include <bits/stdc++.h>
 #include "thread_pool/thread_pool.hpp"
 #include <thread>
 #include <atomic>
 #include <unistd.h>
 #include "prog.cpp"
+#include <sys/time.h>
+#include <iostream>
+#include <vector>
+#include <deque>
 #include <functional>
+#include <mutex>
+
+
+
+// {
+//   std::mutex m,
+//   std::lock_guard<std::mutex> lockGuard(m);
+//   sharedVariable= getVar();
+// }
+
+
 using namespace std;
 using namespace thread_pool;
 
@@ -12,6 +26,8 @@ using namespace thread_pool;
 int num_threads = thread::hardware_concurrency();
 ThreadPool tp(num_threads);
 // ThreadPool tp{};
+int sp_c = 0;
+int wr_q = 0;
 
 vector<future<void>> void_futures;
 vector<future<int>> int_futures;
@@ -55,6 +71,20 @@ class Find_special2
 	}
 };
 
+template< typename T>
+class Find_special3
+{
+	private:
+	int x_;
+
+	public:
+	Find_special3(int x) : x_(x) {}
+	bool operator()(T i)
+	{
+		return i.first == x_;
+	}
+};
+
 // class Find_special3
 // {
 // 	private:
@@ -79,27 +109,29 @@ class Find_special2
 void thread_track_fn()
 {
 	int flag = true;
-	while(flag)
+	while(sp_c)
 	{
 		// cout << "thread_track_fn\n";
 		for(auto x:thread_track)
 		{
 			//update special
+			//while(special_changed)cout << "Busy Waiting" << "\n";
 			if(x.second)
 			{
-				//should prolly call .get here - need to get the correct future through an iterator here
-				x.second = false;
-				auto iter_special = find_if(special.begin(), special.end(), Find_special(x.first));
-				remove_fn = (*iter_special).second;
-				special.erase(iter_special);
-				special_changed = 1; //make it 1 only when i remove an arg from special
-				// can also remove x from the thread_track vector, that way eliminate iteration through it everytime
-				if(x.first == 4)
-				{
-					flag = false;
-				}
+					//should prolly call .get here - need to get the correct future through an iterator here
+					x.second = false;
+					mutex m;
+					lock_guard<mutex> lockGuard(m);
+					auto iter_special = find_if(special.begin(), special.end(), Find_special(x.first));
+					remove_fn = (*iter_special).second;
+					special.erase(iter_special);
+					// cout << "Changing Special" << "\n";
+					special_changed = 1; //make it 1 only when i remove an arg from special
+					// can also remove x from the thread_track vector, that way eliminate iteration through it everytime
+					--sp_c;
 			}
 		}
+		// cout << "Special: " << special.size() << "\n";
 	}
 }
 
@@ -108,7 +140,7 @@ void scheduling_fn()
 {
 	bool flag = true;
 	//special got updated
-	while(flag)
+	while(wr_q)
 	{
 		// cout << "scheduling_fn\n";
 		while(special_changed)
@@ -118,6 +150,10 @@ void scheduling_fn()
 			// how to check for these functions? refer the input data
 
 			//push eligible elements from wait queue to ready queue
+
+			mutex m;
+			lock_guard<mutex> lockGuard(m);
+
 			for(auto x:wait_queue)
 			{
 				//pick out every argument from func in x
@@ -135,34 +171,74 @@ void scheduling_fn()
 				}
 				if(!is_found)
 				{
-					if(x.first == 6)
-					{
-						flag = false;
-					}
+					wait_queue.erase(find_if( begin(wait_queue), end(wait_queue), Find_special3<pair<int, std::function<int()>>>(x.first)));
 					ready_queue.push_back(x);
 				}
 			}
 			special_changed = 0;
 		}
+
 		if(ready_queue.size() != 0)
 		{
 			for(auto &x:ready_queue)
 			{
 				int_futures.emplace_back(tp.Submit(x.second));
+
+				auto iter = find_if( begin(ready_queue), end(ready_queue), Find_special3<pair<int, std::function<int()>>>(x.first));
+				ready_queue.erase(iter);
+				--wr_q;
 				//file output code
 				// int_futures.emplace_back(tp.Submit(min, cref(arr1), cref(n)));
 			}
 		}
+		// cout << "Ready Queue: " << ready_queue.size() << "\n";
+		// cout << "Special: " << special.size() << "\n";
+		// cout << "Wait Queue: " << wait_queue.size() << "\n";
 	}
 }
 
-int main()
+int main(int argc, char **argv)
 {
-	int arr1[]{1, 3, 6, -1, 5};
-	int arr2[]{2, 0, 3, 6, 5};
-	int n = sizeof(arr1) / sizeof(arr1[0]);
+	// int arr1[]{1, 3, 6, -1, 5};
+	// int arr2[]{2, 0, 3, 6, 5};
+	// int n = sizeof(arr1) / sizeof(arr1[0]);
+
+
+
+
+
+	int input_n = atoi(argv[1]);
+	int *arr1 = (int *)malloc(input_n * sizeof(int));
+    int array_size1 = input_n;
+    srand(8);
+    for(int i = 0; i < array_size1; ++i)
+    {    
+        arr1[i] = rand();
+    }
+
+	int *arr2 = (int *)malloc(input_n * sizeof(int));
+    int array_size2 = input_n;
+    srand(2);
+    for(int i = 0; i < array_size2; ++i)
+    {    
+        arr2[i] = rand();
+    }
+
+	int n = array_size1;
+
+
+
+
+
+
 
 	cout << "Number of hardware threads available on current system: " << num_threads << "\n\n";
+
+	struct timeval stop, start;
+    gettimeofday(&start, NULL);
+
+
+
 	void_futures.emplace_back(tp.Submit(thread_track_fn));
 	void_futures.emplace_back(tp.Submit(scheduling_fn));
 
@@ -173,6 +249,7 @@ int main()
 	// file write code for that
 	pair<int,string> p1_1(1,"arr1");
 	special.push_back(p1_1);
+	++sp_c;
 	// atomic bool variable to track the execution of my_sort(arr1, n)
 	atomic<bool> done1(false);
 
@@ -201,6 +278,7 @@ int main()
 		ready_queue.push_back(pair<int, std::function<int()>>(2, fn2));
 		// ready_queue.push_back(pair<int, std::function<void()>>(2, [&](){ min1 = min(arr1, n); } ));
 	}
+	++wr_q;
 
 	// int max1 = max(arr1, n);
 	auto fn3 = bind(::max, arr1, n);
@@ -214,10 +292,12 @@ int main()
 		ready_queue.push_back(pair<int, std::function<int()>>(3, fn3));
 		// ready_queue.push_back(pair<int, std::function<void()>>(2, [&](){ min1 = min(arr1, n); } ));
 	}
+	++wr_q;
 
 	// my_sort(arr2, n);
 	pair<int,string> p4_1(4,"arr2");
 	special.push_back(p4_1);
+	++sp_c;
 
 	atomic<bool> done4(false);
 	void_futures.emplace_back(tp.Submit([&] {
@@ -243,6 +323,7 @@ int main()
 		// ready_queue.push_back(pair<int, std::function<void()>>(2, [&](){ min1 = min(arr1, n); } ));
 	}
 
+	++wr_q;
 
 	// int max2 = max(arr2, n);
 	auto fn6 =  bind(::max, arr2, n);
@@ -257,6 +338,7 @@ int main()
 		ready_queue.push_back(pair<int, std::function<int()>>(6, fn6));
 		// ready_queue.push_back(pair<int, std::function<void()>>(2, [&](){ min1 = min(arr1, n); } ));
 	}
+	++wr_q;
 
 	for(auto &x:void_futures)
 	{
@@ -266,9 +348,19 @@ int main()
 	// min and max values (called twice after every sort)
 	for(auto &x:int_futures)
 	{
+		x.wait();
 		cout << x.get() << "\n";
 	}
 	// cout << min1 << "\n\n";
+
+	
+	gettimeofday(&stop, NULL);
+    printf("took %lu ms\n", ((stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec)/1000);
+
+	// cout << "TP THREADS : " << tp.thread_ids() << "\n";
+	// while ( wait_queue.size() || ready_queue.size() || special.size());
+	// tp.~ThreadPool();
+
 	return 0;
 }
 
