@@ -562,7 +562,7 @@ void prologue()
 
 	for(auto x:return_types)
 	{
-		cout << "vector<future<" + x + ">> " + x + "_futures;\n";
+		cout << "vector<shared_future<" + x + ">> " + x + "_futures;\n";
 	}
 	
 	cout<<"vector<pair<int, string>> special;\n";
@@ -590,8 +590,8 @@ void prologue()
 	// change these according to the return values of those functions not changing their arguments (like min, max)
 	// we could have different function return types
 	// but should have only one ready queue and one wait queue
-	cout<<"deque<pair<int, string>> ready_queue;\n";
-	cout<<"deque<pair<int, string>> wait_queue;\n";
+	cout<<"deque<pair<int, std::function<int()>>> ready_queue;\n";
+	cout<<"deque<pair<int, std::function<int()>>> wait_queue;\n";
 
 	cout<<"atomic<int> special_changed(0);\n";
 	cout<<"string remove_fn;\n\n";
