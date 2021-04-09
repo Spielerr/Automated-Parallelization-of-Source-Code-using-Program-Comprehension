@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <tuple>
+
 using namespace std;
 
 // NOTE FOR DD: I have numbered whatever data from Lara is required.
@@ -311,37 +312,102 @@ void mainfn()
 	void_futures.emplace_back(tp.Submit(thread_track_fn));
 	void_futures.emplace_back(tp.Submit(scheduling_fn));
 
-	using namespace std::chrono_literals;)";
+	using namespace std::chrono_literals;
+	vector<pair<int,string>>::iterator iter1, iter2;
+	)";
 	cout << temp << "\n\n";
 
 	// format of fn_call_info tuples
-	//("my_sort", 0, ["arr1", "n"])
+	//("my_sort", 0, ["arr1", "n"], ["arr1"])
 	int count = 1;
-	for(auto x: fn_call_info)
+	for(int k = 0; k < fn_call_info.size(); k++)
 	{
 		++count;
+
 		// for min, max n stuff
-		if(get<1>(x))
+		if(get<1>(fn_call_info[k]))
 		{
-			cout << "auto fn" + to_string(count) + " = bind(::" + get<0>(x) + ", ";
-			for(int i = 0; i < get<2>(x).size(); i++)
+			cout << "auto fn" + to_string(count) + " = bind(::" + get<0>(fn_call_info[k]) + ", ";
+			for(int i = 0; i < get<2>(fn_call_info[k]).size(); i++)
 			{
-				if(i == (get<2>(x).size() - 1))
+				if(i == (get<2>(fn_call_info[k]).size() - 1))
 				{
-					cout << get<2>(x)[i] << ");\n";
+					cout << get<2>(fn_call_info[k])[i] << ");\n";
 				}
 				else
 				{
-					cout << get<2>(x)[i] << ", ";
+					cout << get<2>(fn_call_info[k])[i] << ", ";
 				}
 			}
+			cout << "\t{\n\t\tlock_guard<mutex> lockGuard(m_sp);\n\t\titer1 = find_if(begin(special), end(special), Find_special2(\"";
+			cout << get<2>(fn_call_info[k])[0] + "\"));\n\t\titer2 = end(special);\n\t}\n";
+
+			cout << "\tif(iter1 != iter2)\n\t{\n\t\tlock_guard<mutex> lockGuard(m_wq);\nwait_queue.push_back(pair<int, std::function<int()>>(";
+			cout << to_string(k+1);
+			cout << ", fn" + to_string(k+1) + "));\n\t};\n";
+
+			cout << "else\n\t{\n\t\tlock_guard<mutex> lockGuard(m_wq);\nready_queue.push_back(pair<int, std::function<int()>>(";
+			cout << to_string(k+1);
+			cout << ", fn" + to_string(k+1) + "));\n\t};\n";	
 		}
 		// for my_sort n stuff
 		else
 		{
-
+			for(int i = 0; i < get<3>(fn_call_info[k]).size(); i++)
+			{
+				cout << "\tpair<int,string> p" + to_string(k+1) + "_" + to_string(i+1) + "(" + to_string(k+1) + ", " + "\"" + get<3>(fn_call_info[k])[i] + "\");\n";
+			}
+			cout << "\t{\n\t\tlock_guard<mutex> lockGuard(m_sp);\n";
+			for(int i = 0; i < get<3>(fn_call_info[k]).size(); i++)
+			{
+				cout << "\t\tspecial.push_back(p" + to_string(k+1) + "_" + to_string(i+1) + ");\n"
+			}
+			cout << "\t}\n"
+			cout << "\tatomic<bool> done" + to_string(k+1) + "(false);\n";
+			cout << "\tvoid_futures.emplace_back(tp.Submit([&] {\n\t\t " + get<0>(fn_call_info[k]) + "(";
+			for(int i = 0; i < get<2>(fn_call_info[k]).size(); i++)
+			{
+				if(i == (get<2>(fn_call_info[k]).size() - 1))
+				{
+					cout << get<2>(fn_call_info[k])[i] << ");\n";
+				}
+				else
+				{
+					cout << get<2>(fn_call_info[k])[i] << ", ";
+				}
+			}
+			cout << "\t\tdone" + to_string(k+1) + " = true;;}))\n";
+			string pair_temp = "p_th_" + to_string(k+1);
+			cout << "\tpair<int, atomic<bool>&> " + pair_temp + "(1, done" + to_string(k+1) + ");\n" 
+			cout << "\t{\n\t\tlock_guard<mutex> lockGuard(m_tt);\n\t\tthread_track.push_back(" + pair_temp + ");\n\t}\n\n";
+ 		}
+	}
+	for(auto x:return_types)
+	{
+		cout << "\tfor(auto &x:" + x + "_futures)";
+		if(!strcmp(x, "void"))
+		{
+			cout << "\n\t{\n\t\tx.wait();\n\t\tx.get();\n\t}\n";
+		}
+		else
+		{
+			string temp = R"({
+		x.wait();
+		cout << std::boolalpha;
+		cout << x.valid() << "\n";
+		if(x.valid())
+		cout << x.get() << "\n";
+	})";
+		cout << temp << "\n\n";
 		}
 	}
+	string finish = R"(gettimeofday(&stop, NULL);
+    printf("took %lu ms\n", ((stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec)/1000);
+
+	return 0;
+})";
+	cout << finish << "\n\n";
+}
 
 int main()
 {
