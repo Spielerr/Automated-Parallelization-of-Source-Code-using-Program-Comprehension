@@ -864,7 +864,7 @@ void mainfn()
 			}
 			cout << "\t\tdone" + to_string(k+1) + " = true;}));\n";
 			string pair_temp = "p_th_" + to_string(k+1);
-			cout << "\tpair<int, atomic<bool>&> " + pair_temp + "(1, done" + to_string(k+1) + ");\n";
+			cout << "\tpair<int, atomic<bool>&> " + pair_temp + "(" + to_string(k+1) +", done" + to_string(k+1) + ");\n";
 			cout << "\t{\n\t\tlock_guard<mutex> lockGuard(m_tt);\n\t\tthread_track.push_back(" + pair_temp + ");\n\t}\n\n";
  		}
 	}
