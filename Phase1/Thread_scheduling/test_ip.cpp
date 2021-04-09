@@ -281,22 +281,24 @@ int main()
     //DD1
     // all return types
     
-    vector<string> return_types_copy;
+    vector<string> return_types;
 
     for(auto i : order_fn_calls_types)
     {
         for(auto j: i.second)
         {
-            if(j.first.compare("ret_type")==0)
+            if(j.first.compare("ret_type")==0 && find(return_types.begin(),return_types.end(),j.second[0])==return_types.end())
             {
-                return_types_copy.push_back(j.second[0]);
+                return_types.push_back(j.second[0]);
             }
         }
     }
 
-    set<string> temp_rt_set(return_types_copy.begin(),return_types_copy.end());
+    //set<string> temp_rt_set(return_types_copy.begin(),return_types_copy.end());
 
-    vector<string> return_types(temp_rt_set.begin(),temp_rt_set.end());
+
+
+    //vector<string> return_types(temp_rt_set.begin(),temp_rt_set.end());
 
     //testing whether data is stored in return_types properly
     #if DEBUG
