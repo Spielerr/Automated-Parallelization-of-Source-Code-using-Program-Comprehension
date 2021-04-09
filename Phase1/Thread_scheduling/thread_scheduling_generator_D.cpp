@@ -319,24 +319,24 @@ void input_data()
     //DD1
     // all return types
     
-    vector<string> return_types_copy;
+    // vector<string> return_types;
 
     for(auto i : order_fn_calls_types)
     {
         for(auto j: i.second)
         {
-            if(j.first.compare("ret_type")==0)
+            if(j.first.compare("ret_type")==0 && find(return_types.begin(),return_types.end(),j.second[0])==return_types.end())
             {
-                return_types_copy.push_back(j.second[0]);
+                return_types.push_back(j.second[0]);
             }
         }
     }
 
-    set<string> temp_rt_set(return_types_copy.begin(),return_types_copy.end());
+    //set<string> temp_rt_set(return_types_copy.begin(),return_types_copy.end());
 
-	return_types.resize(temp_rt_set.size());
-	copy(temp_rt_set.begin(),temp_rt_set.end(), return_types.begin());
-    // return_types(temp_rt_set.begin(),temp_rt_set.end());
+
+
+    //vector<string> return_types(temp_rt_set.begin(),temp_rt_set.end());
 
     //testing whether data is stored in return_types properly
     #if DEBUG
@@ -663,7 +663,7 @@ void threadtrack()
 			lock_guard<mutex> lockGuard(m_tt);
 			for(auto x:thread_track)
 			{
-				while(special_changed)cout << "Busy Waiting" << "\n";
+				while(special_changed);
 				if(x.second)
 				{
 					x.second = false;
@@ -832,7 +832,7 @@ void mainfn()
 			cout << to_string(k+1);
 			cout << ", fn" + to_string(k+1) + "));\n\t}\n";
 
-			cout << "\telse\n\t{\n\t\tlock_guard<mutex> lockGuard(m_wq);\n\t\tready_queue.push_back(pair<int, std::function<int()>>(";
+			cout << "\telse\n\t{\n\t\tlock_guard<mutex> lockGuard(m_rq);\n\t\tready_queue.push_back(pair<int, std::function<int()>>(";
 			cout << to_string(k+1);
 			cout << ", fn" + to_string(k+1) + "));\n\t}\n";	
 		}
