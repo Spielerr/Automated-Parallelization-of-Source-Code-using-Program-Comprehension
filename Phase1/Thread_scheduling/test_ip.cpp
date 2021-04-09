@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <tuple>
+#include <set>
 #include <fstream>
 #include <sstream>
 #include <algorithm>
@@ -280,7 +281,7 @@ int main()
     //DD1
     // all return types
     
-    vector<string> return_types;
+    vector<string> return_types_copy;
 
     for(auto i : order_fn_calls_types)
     {
@@ -288,12 +289,15 @@ int main()
         {
             if(j.first.compare("ret_type")==0)
             {
-                return_types.push_back(j.second[0]);
+                return_types_copy.push_back(j.second[0]);
             }
         }
     }
 
-    
+    set<string> temp_rt_set(return_types_copy.begin(),return_types_copy.end());
+
+    vector<string> return_types(temp_rt_set.begin(),temp_rt_set.end());
+
     //testing whether data is stored in return_types properly
     #if DEBUG
     cout<<"\ntesting whether data is stored in return_types properly:\n";
@@ -302,6 +306,8 @@ int main()
         cout<<i<<"\n";
     }
     #endif
+
+
 
     //DD2
     // vector of vector of strings containing all fn args
