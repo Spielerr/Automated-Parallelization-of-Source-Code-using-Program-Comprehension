@@ -455,6 +455,12 @@ int main()
 
                 
             }
+
+            else
+            {
+                temp_v_changes_args.resize((*it_find_fn).second.size());
+                copy((*it_find_fn).second.begin(),(*it_find_fn).second.end(),temp_v_changes_args.begin());
+            }
         }
 
         
