@@ -87,6 +87,7 @@ void input_data()
 
     string dependencies_1, dependencies;
 
+    // ifstream file_1("input_large.txt");
     ifstream file_1("input.txt");
 
     //storing sort only once and adding all the arguments that it writes into as the vector associated with the pair
@@ -188,6 +189,7 @@ void input_data()
     //data structure that holds the data from input2.txt
     vector<pair<string,vector<pair<string, vector<string>>>>> order_fn_calls_types;
 
+    // ifstream file_2("input_large2.txt");
     ifstream file_2("input2.txt");
 
     while(getline(file_2,dependencies))
@@ -492,6 +494,11 @@ void input_data()
                 }
 
                 
+            }
+            else
+            {
+                temp_v_changes_args.resize((*it_find_fn).second.size());
+                copy((*it_find_fn).second.begin(),(*it_find_fn).second.end(),temp_v_changes_args.begin());
             }
         }
 
@@ -839,6 +846,7 @@ void mainfn()
 		// for my_sort n stuff
 		else
 		{
+            // cout << "********************" << get<3>(fn_call_info[k]).size() << "\n";
 			for(int i = 0; i < get<3>(fn_call_info[k]).size(); i++)
 			{
 				cout << "\tpair<int,string> p" + to_string(k+1) + "_" + to_string(i+1) + "(" + to_string(k+1) + ", " + "\"" + get<3>(fn_call_info[k])[i] + "\");\n";
