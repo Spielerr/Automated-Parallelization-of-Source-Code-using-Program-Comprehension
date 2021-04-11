@@ -6,8 +6,10 @@ stats = new LaraObject();
 var fn_args = {};
 var fn_types = {};
 
-println("order of function calls(input2.txt):");
-println();
+
+
+println("Start of Lara Output");
+println("input2.txt:");
 
 
 fn_param = {};
@@ -147,10 +149,8 @@ end
 //select function{'main'} end
 //apply
 
-println();
-println();
-println("functions where write is being performed along with the arguments being modified");
-println("(input.txt)");
+println("End of input2.txt");
+println("input.txt:");
 
 for(fn_name in changing_params)
 {
@@ -173,13 +173,14 @@ for(fn_name in changing_params)
             }
 
         }
-        println();
     }
     
 }
 
 //end
 
+println("End of input.txt");
+println("End of Lara Output");
 
 
 end
