@@ -1,0 +1,123 @@
+aspectdef test
+output stats end
+
+//lara code to print the function names, their return types 
+//and the variables in which the returned value is being stored
+
+stats = new LaraObject();
+
+var fn_calls = [];
+
+select function.call end
+apply
+    
+//    println();
+//    println($function.signature);
+//    println($varref.code);
+//    println($varref.vardecl.isGlobal);
+//    a[$varref.code] = [];
+//    a[$varref.code].push($function.name);
+//    println();
+//    println(a[$varref.code]);
+//    println();
+
+    //println($function.params);
+    
+//    var p = $function.params;
+//    var n = p.length;
+//    
+//    println($function.name);
+//    
+//    for(var i = 0; i < n; ++i)
+//    {
+//        println(p[i].name);
+//        println(p[i].type.code);
+//    }
+//    
+//    println();
+
+    if($call.returnType.code!= 'void')
+    {
+        var temp = [];
+        temp.push($call.name);
+        temp.push($call.returnType.code);
+        temp.push($call.line);
+        fn_calls.push(temp);
+    }
+
+    
+
+//    println($call.returnType.code);
+//    println($call.line);
+
+    
+
+end
+
+//println(fn_calls[0][0]);
+
+select function{'main'} end
+apply
+    
+//    var body_stmt = $function.children;
+//    println(body_stmt[0].code);
+//    
+//    var main_body = body_stmt[0].code;
+//    var line = main_body.split("\n");
+//    //println(line[2]);
+//    println(line[2].split("="));
+//    
+//    println($function.line);
+//    println($function.endLine);
+    
+    var body_stmt = $function.children;
+    //var main_body = body_stmt[0].code;
+    var lines = body_stmt[0].children;
+    //println(lines[3].code);
+    
+    for(var fn_i = 0; fn_i < fn_calls.length; ++fn_i)
+    {
+        for(var i = 0; i<lines.length; ++i)
+        {
+//            println(lines[i].line);
+//            println(lines[i].code);
+
+            if(fn_calls[fn_i][2] == lines[i].line)
+            {
+                var lhs = lines[i].code.split("=")[0];
+                var type_var = lhs.split(" ");
+                //println(type_var.length);
+                
+                if(type_var.length == 3)
+                {
+                    println(fn_calls[fn_i][0] + " " + type_var[0] + " " + type_var[1]);
+                    
+                }
+                
+                else if(type_var.length == 2)
+                {
+                    println(fn_calls[fn_i][0] + " " + fn_calls[fn_i][1] + " " + type_var[0]);
+                }
+                
+                
+            }
+        }
+    }
+    
+    
+//    var lines = main_body.split("\n");
+//    var start_line_body = $function.line;
+//    var end_line = $function.endLine;
+    
+    
+end
+
+//println(lines);
+//
+//for(var i = 0; i < fn_calls.length; ++i)
+//{
+//    var line_no = fn_calls[i][2] - start_line_body;
+//    println(line_no);
+//}
+
+end
