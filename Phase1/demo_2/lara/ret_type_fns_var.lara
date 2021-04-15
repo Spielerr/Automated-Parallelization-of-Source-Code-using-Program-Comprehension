@@ -1,9 +1,6 @@
 aspectdef test
 output stats end
 
-//lara code to print the function names, their return types 
-//and the variables in which the returned value is being stored
-
 stats = new LaraObject();
 
 var fn_calls = [];
@@ -69,11 +66,17 @@ apply
 //    
 //    println($function.line);
 //    println($function.endLine);
+
+    var start_line_body = $function.line;
+//    var end_line = $function.endLine;
     
     var body_stmt = $function.children;
     //var main_body = body_stmt[0].code;
+    
     var lines = body_stmt[0].children;
     //println(lines[3].code);
+    
+    println("Start of Input3.txt");
     
     for(var fn_i = 0; fn_i < fn_calls.length; ++fn_i)
     {
@@ -90,13 +93,15 @@ apply
                 
                 if(type_var.length == 3)
                 {
-                    println(fn_calls[fn_i][0] + " " + type_var[0] + " " + type_var[1]);
+                    var new_line = fn_calls[fn_i][2] - start_line_body;
+                    println(fn_calls[fn_i][0] + " " + type_var[0] + " " + type_var[1] + " " + new_line );
                     
                 }
                 
                 else if(type_var.length == 2)
                 {
-                    println(fn_calls[fn_i][0] + " " + fn_calls[fn_i][1] + " " + type_var[0]);
+                    var new_line = fn_calls[fn_i][2] - start_line_body;
+                    println(fn_calls[fn_i][0] + " " + fn_calls[fn_i][1] + " " + type_var[0]+ " " + new_line);
                 }
                 
                 
@@ -108,6 +113,8 @@ apply
 //    var lines = main_body.split("\n");
 //    var start_line_body = $function.line;
 //    var end_line = $function.endLine;
+
+    println("End of Input3.txt");
     
     
 end
