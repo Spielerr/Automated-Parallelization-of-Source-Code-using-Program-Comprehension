@@ -1,6 +1,6 @@
 import re
 
-file_ip = open("test_o_lara.txt_2",'r')
+file_ip = open("test_o_lara_2.txt",'r')
 
 ip_str = file_ip.read()
 
