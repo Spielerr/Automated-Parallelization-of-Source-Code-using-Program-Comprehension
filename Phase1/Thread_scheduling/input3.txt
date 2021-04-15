@@ -1,0 +1,4 @@
+min int min1 18
+max int max1 19
+min int min2 22
+max int max2 23
