@@ -10,6 +10,9 @@ pat = r"int main\(.*?\)(.*)"
 
 match = re.search(pat,ip,re.S)
 
+file_op = open("main_code_client.txt","w")
+
 if match:
-    print(match.group(1))
+    #print(match.group(1))
+    file_op.write(match.group(1))
 
