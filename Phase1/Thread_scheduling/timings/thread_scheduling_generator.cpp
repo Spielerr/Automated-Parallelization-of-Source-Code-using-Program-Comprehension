@@ -49,6 +49,12 @@ thank me later
 //DD5
 vector<tuple<string, int, vector<string>, vector<string>>> fn_call_info;
 
+//stores the line number of the first function call in main
+int first_line_no;
+
+//stores the line number of the last function call in main
+int last_line_no;
+
 class my_find_special
 {
     private:
@@ -317,6 +323,54 @@ void input_data()
 
     #endif
 
+    string dependencies_3;
+
+    ifstream file_3("input3.txt");
+
+    //data structure that stores the info from input3.txt
+    // stores it in the order of function calls
+    // vector consists of [function being called, line number of the function call]
+    vector<vector<string>> f3_ret_var_lineno;
+
+    while(getline(file_3, dependencies_3))
+    {
+        vector<string> result_3;
+        stringstream s_stream_3(dependencies_3);
+
+        while(s_stream_3.good())
+        {
+            string substr_3;
+            getline(s_stream_3,substr_3,' ');
+            result_3.push_back(substr_3);
+        }
+
+        f3_ret_var_lineno.push_back(result_3);
+
+    }
+
+    file_3.close();
+
+
+    first_line_no = stoi(f3_ret_var_lineno[0][1]);
+    last_line_no = stoi(f3_ret_var_lineno[f3_ret_var_lineno.size()-1][1]);
+
+    #if DEBUG
+
+    cout<<"testing whether data is stored in the f3_ret_var_lineno data structure properly\n";
+
+    for(auto i : f3_ret_var_lineno)
+    {
+        for(auto j : i)
+        {
+            cout<<j<<"\t";
+        }
+
+        cout<<"\n";
+    }    
+
+    cout<<"\n";
+    #endif
+
 
     //DD1
     // all return types
@@ -562,7 +616,7 @@ using namespace thread_pool;
 
 void prologue()
 {
-	cout<<"int num_threads = 12;\n";
+	cout<<"int num_threads = 3;\n";
 	cout<<"ThreadPool tp(num_threads);\n";
 	cout << "int sp_c = " << to_string(sp_c) << ";\n";
 	cout << "int wr_q = " << to_string(wr_q) << ";\n";
@@ -777,26 +831,49 @@ void schedulingfn()
 void mainfn()
 {
 	// gotta handle this part of code from client somehow
-	string temp = R"(int main(int argc, char **argv)
-{
-	int input_n = atoi(argv[1]);
-	int *arr1 = (int *)malloc(input_n * sizeof(int));
-    int array_size1 = input_n;
-    srand(8);
-    for(int i = 0; i < array_size1; ++i)
+
+    string dependencies;
+
+    ifstream file_ip_main("main_code_client.txt");
+
+    vector<string> main_ip;
+
+    int count_line = 0;
+
+    while(getline(file_ip_main, dependencies))
     {    
-        arr1[i] = rand();
+        if(count_line<first_line_no || count_line >last_line_no)
+        {
+            main_ip.push_back(dependencies);
+        }    
+        
+        ++count_line;
     }
 
-	int *arr2 = (int *)malloc(input_n * sizeof(int));
-    int array_size2 = input_n;
-    srand(2);
-    for(int i = 0; i < array_size2; ++i)
-    {    
-        arr2[i] = rand();
+    cout<<"int main(int argc, char **argv)\n";
+    for(int i = 0; i<first_line_no; ++i)
+    {
+        cout<<main_ip[i]<<"\n";
     }
 
-	int n = array_size1;
+	string temp = R"(// int input_n = atoi(argv[1]);
+	// int *arr1 = (int *)malloc(input_n * sizeof(int));
+    // int array_size1 = input_n;
+    // srand(8);
+    // for(int i = 0; i < array_size1; ++i)
+    // {    
+    //     arr1[i] = rand();
+    // }
+
+	// int *arr2 = (int *)malloc(input_n * sizeof(int));
+    // int array_size2 = input_n;
+    // srand(2);
+    // for(int i = 0; i < array_size2; ++i)
+    // {    
+    //     arr2[i] = rand();
+    // }
+
+	// int n = array_size1;
 
 	struct timeval stop, start;
     gettimeofday(&start, NULL);
@@ -896,7 +973,13 @@ void mainfn()
     free(arr2);
 	return 0;
 })";
-	cout << finish << "\n\n";
+	//cout << finish << "\n\n";
+
+    for(int i = first_line_no; i<main_ip.size(); ++i)
+    {
+        cout<<main_ip[i]<<"\n";
+    }
+    
 }
 
 int main()
