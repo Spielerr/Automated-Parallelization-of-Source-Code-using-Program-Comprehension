@@ -277,13 +277,59 @@ int main()
 
     #endif
 
+    // string dependencies_3;
+
+    // ifstream file_3("input3.txt");
+
+    // //data structure that stores the info from input3.txt
+    // // stores it in the order of function calls
+    // // vector consists of [function being called, return type of the function, variable to which the value is stored, line number of the function call]
+    // vector<vector<string>> f3_ret_var_lineno;
+
+    // while(getline(file_3, dependencies_3))
+    // {
+    //     vector<string> result_3;
+    //     stringstream s_stream_3(dependencies_3);
+
+    //     while(s_stream_3.good())
+    //     {
+    //         string substr_3;
+    //         getline(s_stream_3,substr_3,' ');
+    //         result_3.push_back(substr_3);
+    //     }
+
+    //     f3_ret_var_lineno.push_back(result_3);
+
+    // }
+
+    // file_3.close();
+
+    // #if DEBUG
+
+    // cout<<"testing whether data is stored in the f3_ret_var_lineno data structure properly\n";
+
+    // for(auto i : f3_ret_var_lineno)
+    // {
+    //     for(auto j : i)
+    //     {
+    //         cout<<j<<"\t";
+    //     }
+
+    //     cout<<"\n";
+    // }    
+
+    // cout<<"\n";
+    // #endif
+
+
+
     string dependencies_3;
 
     ifstream file_3("input3.txt");
 
     //data structure that stores the info from input3.txt
     // stores it in the order of function calls
-    // vector consists of [function being called, return type of the function, variable to which the value is stored, line number of the function call]
+    // vector consists of [function being called, line number of the function call]
     vector<vector<string>> f3_ret_var_lineno;
 
     while(getline(file_3, dependencies_3))
