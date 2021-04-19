@@ -5,6 +5,8 @@ stats = new LaraObject();
 
 var fn_calls = [];
 
+var avoid_inbuilt_fn = {"malloc":0, "free":0, "calloc":0, "realloc":0, "printf":0, "atoi":0, "srand":0,"rand":0};
+
 select function.call end
 apply
     
@@ -42,13 +44,14 @@ apply
 //        fn_calls.push(temp);
 //    }
 
-
-        var temp = [];
-        temp.push($call.name);
-        temp.push($call.returnType.code);
-        temp.push($call.line);
-        fn_calls.push(temp);
-
+        if(!($call.name in avoid_inbuilt_fn))
+        {
+            var temp = [];
+            temp.push($call.name);
+            temp.push($call.returnType.code);
+            temp.push($call.line);
+            fn_calls.push(temp);
+        }
     
 
 //    println($call.returnType.code);
