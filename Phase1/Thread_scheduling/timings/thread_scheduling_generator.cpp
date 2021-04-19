@@ -617,7 +617,7 @@ using namespace thread_pool;
 
     while(getline(file_ip_client, dependencies))
     {    
-        cout<<dependencies;
+        cout<<dependencies<<"\n";
     }
 
 	
