@@ -600,7 +600,6 @@ void gen_headers()
 #include <thread>
 #include <atomic>
 #include <unistd.h>
-#include "prog.cpp"
 #include <sys/time.h>
 #include <iostream>
 #include <vector>
@@ -611,6 +610,16 @@ using namespace std;
 using namespace thread_pool;
 	)";
 	cout << temp << '\n';
+
+    string dependencies;
+
+    ifstream file_ip_client("testfile_demo_3.cpp");
+
+    while(getline(file_ip_client, dependencies))
+    {    
+        cout<<dependencies;
+    }
+
 	
 }
 
@@ -979,7 +988,7 @@ void mainfn()
     {
         cout<<main_ip[i]<<"\n";
     }
-    
+
 }
 
 int main()
