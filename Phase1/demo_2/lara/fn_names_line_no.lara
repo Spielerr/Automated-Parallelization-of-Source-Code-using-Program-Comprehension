@@ -5,7 +5,7 @@ stats = new LaraObject();
 
 var fn_calls = [];
 
-var avoid_inbuilt_fn = {"malloc":0, "free":0, "calloc":0, "realloc":0, "printf":0, "atoi":0, "srand":0,"rand":0};
+var avoid_inbuilt_fn = {"malloc":0, "free":0, "calloc":0, "realloc":0, "printf":0, "atoi":0, "srand":0,"rand":0,"gettimeofday":0};
 
 select function.call end
 apply

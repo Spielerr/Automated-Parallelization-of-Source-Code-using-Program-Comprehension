@@ -7,7 +7,7 @@ var fn_args = {};
 var fn_types = {};
 
 
-var avoid_inbuilt_fn = {"malloc":0, "free":0, "calloc":0, "realloc":0, "printf":0, "atoi":0, "srand":0,"rand":0};
+var avoid_inbuilt_fn = {"malloc":0, "free":0, "calloc":0, "realloc":0, "printf":0, "atoi":0, "srand":0,"rand":0,"gettimeofday":0};
 
 println("Start of Lara Output");
 println("input2.txt:");
