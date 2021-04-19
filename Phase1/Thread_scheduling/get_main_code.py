@@ -16,3 +16,9 @@ if match:
     #print(match.group(1))
     file_op.write(match.group(1))
 
+file_op.close()
+
+new_client = re.sub(pat,"",ip,flags=re.S)
+file_ip = open("client.cpp","w")
+file_ip.write(new_client)
+file_ip.close()
