@@ -1,0 +1,12 @@
+
+
+std::promise<void> p_arr1_0
+thread ti(sort, params);
+std::promise<void> p_arr2_0
+thread ti(sort, params);
+std::future<void> f_arr1_1= p_arr1_0.get_future();
+thread ti(min, params);
+thread ti(max, params);
+std::future<void> f_arr2_1= p_arr2_0.get_future();
+thread ti(min, params);
+thread ti(max, params);

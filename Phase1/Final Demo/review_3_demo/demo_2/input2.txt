@@ -1,0 +1,6 @@
+sort,arr1,n
+min,arr1,n
+max,arr1,n
+sort,arr2,n
+min,arr2,n
+max,arr2,n
