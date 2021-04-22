@@ -1,9 +1,8 @@
-
 #include <stdio.h>
 #include <sys/time.h>
 #include <stdlib.h>
 
-double mean(const int* a1, int n1)
+double mean(const int* a1, int n1, int fn_call_no)
 {
 	double mean = 0;
 	for(int i = 0;i < n1;++i)
@@ -14,7 +13,25 @@ double mean(const int* a1, int n1)
 	return mean;
 }
 
-void sort(int* arr,const int arr_n)
+int binarySearch(int arr[], int l, int r, int x,  int fn_call_no)
+{
+    while (l <= r) {
+        int m = l + (r - l) / 2;
+        if (arr[m] == x)
+        {
+			printf("%d: Index : %d\n",fn_call_no, m);
+			return 1;
+		}
+        if (arr[m] < x)
+            l = m + 1;
+        else
+            r = m - 1;
+    }
+    return -1;
+}
+
+
+void sort(int* arr,const int arr_n, int fn_call_no)
 {
 	for(int i = 0;i < arr_n-1;++i)
 	{
@@ -33,7 +50,7 @@ void sort(int* arr,const int arr_n)
 }
 
 
-int my_max(int* a4, int n4)
+int my_max(int* a4, int n4, int fn_call_no)
 {
 	int max = a4[0];
 	for(int i = 1; i < n4; ++i)
@@ -44,11 +61,11 @@ int my_max(int* a4, int n4)
 		}
 	}
 
-	printf("Max : %d\n", max);
+	printf("%d: Max : %d\n",fn_call_no, max);
 	return 1;
 }
 
-int my_min(int* a4, int n4)
+int my_min(int* a4, int n4, int fn_call_no)
 {
 	int min = a4[0];
 	for(int i = 1; i<n4; ++i)
@@ -59,84 +76,91 @@ int my_min(int* a4, int n4)
 		}
 	}
 
-	printf("Min : %d\n", min);
+	printf("%d: Min : %d\n",fn_call_no, min);
 	return 1;
 }
 
 
+int countOccurrences(int arr[], int n, int x)
+{
+    int res = 0;
+    for (int i=0; i<n; i++)
+        if (x == arr[i])
+          res++;
+    return res;
+}
 
-int main(int argc, char** argv)
+
+int ceilSearch(int arr[], int low, int high, int x)
+{
+     
+    int i;
+    if(x <= arr[low])
+        return low;
+     
+    for(i = low; i < high; i++)
+    {
+        if(arr[i] == x)
+        return i;
+     
+        if(arr[i] < x && arr[i+1] >= x)
+        return i+1;
+    }    
+    return -1;
+}
+
+
+int main(int argc, const char** argv)
 {
 
 	struct timeval stop, start;
-    gettimeofday(&start, NULL);
+	gettimeofday(&start, NULL);
 
 	int input_n = 30000;
 	int *arr1 = (int *)malloc(input_n * sizeof(int));
-    int array_size1 = input_n;
-    srand(8);
-    for(int i = 0; i < array_size1; ++i)
-    {    
-        arr1[i] = rand();
-    }
+	int array_size1 = input_n;
+	srand(8);
+	for(int i = 0; i < array_size1; ++i)
+	{    
+		arr1[i] = rand();
+	}
 
 	int *arr2 = (int *)malloc(input_n * sizeof(int));
-    int array_size2 = input_n;
-    srand(2);
-    for(int i = 0; i < array_size2; ++i)
-    {    
-        arr2[i] = rand();
-    }
+	int array_size2 = input_n;
+	srand(2);
+	for(int i = 0; i < array_size2; ++i)
+	{    
+		arr2[i] = rand();
+	}
 
 	int n = array_size1;
 
-	sort(arr1, n);
-	my_min(arr1, n);
-	my_max(arr1, n);
-    sort(arr2, n);
-	my_min(arr2, n);
-	my_max(arr2, n);
+	int no_fn_calls = 12;
 
-    sort(arr1, n);
-	my_min(arr1, n);
-	my_max(arr1, n);
-    sort(arr2, n);
-	my_min(arr2, n);
-	my_max(arr2, n);
+	int* arr_fn_calls_nos = (int*)malloc(no_fn_calls*sizeof(int));
 
-    sort(arr1, n);
-	my_min(arr1, n);
-	my_max(arr1, n);
-    sort(arr2, n);
-	my_min(arr2, n);
-	my_max(arr2, n);
+	for(int i = 0; i < no_fn_calls; ++i)
+	{
+		arr_fn_calls_nos[i] = i;
+	}
 
-    sort(arr1, n);
-	my_min(arr1, n);
-	my_max(arr1, n);
-    sort(arr2, n);
-	my_min(arr2, n);
-	my_max(arr2, n);
 
-    sort(arr1, n);
-	my_min(arr1, n);
-	my_max(arr1, n);
-    sort(arr2, n);
-	my_min(arr2, n);
-	my_max(arr2, n);
+	sort(arr1, n, arr_fn_calls_nos[0]);
+	my_min(arr1, n, arr_fn_calls_nos[1]);
+	my_max(arr1, n, arr_fn_calls_nos[2]);
+	sort(arr2, n, arr_fn_calls_nos[3]);
+	my_min(arr2, n, arr_fn_calls_nos[4]);
+	my_max(arr2, n, arr_fn_calls_nos[5]);
 
-    sort(arr1, n);
-	my_min(arr1, n);
-	my_max(arr1, n);
-    sort(arr2, n);
-	my_min(arr2, n);
-	my_max(arr2, n);
+	sort(arr1, n, arr_fn_calls_nos[6]);
+	my_min(arr1, n, arr_fn_calls_nos[7]);
+	my_max(arr1, n, arr_fn_calls_nos[8]);
+	sort(arr2, n, arr_fn_calls_nos[9]);
+	my_min(arr2, n, arr_fn_calls_nos[10]);
+	my_max(arr2, n, arr_fn_calls_nos[11]);
 
+	
 	gettimeofday(&stop, NULL);
-    printf("Time Taken : %lu\n", ((stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec)/1000);
+	printf("Time Taken : %lu\n", ((stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec)/1000);
 
 }
-
-		
-		
-	

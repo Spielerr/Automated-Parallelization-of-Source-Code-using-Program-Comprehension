@@ -1,6 +1,58 @@
+
+
 #include <stdio.h>
 #include <sys/time.h>
 #include <stdlib.h>
+
+
+int binarySearch(int arr[], int l, int r, int x)
+// int binarySearch(int arr[], int l, int r, int x,  int fn_call_no)
+{
+    while (l <= r) {
+        int m = l + (r - l) / 2;
+        if (arr[m] == x)
+        {
+			printf("Index : %d\n", m);
+			return 1;
+		}
+        if (arr[m] < x)
+            l = m + 1;
+        else
+            r = m - 1;
+    }
+    return -1;
+}
+
+
+int countOccurrences(int arr[], int n, int x)
+// int countOccurrences(int arr[], int n, int x, int fn_call_no)
+{
+    int res = 0;
+    for (int i=0; i<n; i++)
+        if (x == arr[i])
+          res++;
+	printf("Min Occurence of %d : %d\n", x, res);
+    return 1;
+}
+
+
+int ceilSearch(int arr[], int low, int high, int x)
+{
+     
+    int i;
+    if(x <= arr[low])
+        return low;
+     
+    for(i = low; i < high; i++)
+    {
+        if(arr[i] == x)
+        return i;
+     
+        if(arr[i] < x && arr[i+1] >= x)
+        return i+1;
+    }    
+    return -1;
+}
 
 double mean(const int* a1, int n1, int fn_call_no)
 {
@@ -13,24 +65,7 @@ double mean(const int* a1, int n1, int fn_call_no)
 	return mean;
 }
 
-int binarySearch(int arr[], int l, int r, int x,  int fn_call_no)
-{
-    while (l <= r) {
-        int m = l + (r - l) / 2;
-        if (arr[m] == x)
-        {
-			printf("%d: Index : %d\n",fn_call_no, m);
-			return 1;
-		}
-        if (arr[m] < x)
-            l = m + 1;
-        else
-            r = m - 1;
-    }
-    return -1;
-}
-
-void sort(int* arr,const int arr_n, int fn_call_no)
+void sort(int* arr,const int arr_n)
 {
 	for(int i = 0;i < arr_n-1;++i)
 	{
@@ -49,7 +84,7 @@ void sort(int* arr,const int arr_n, int fn_call_no)
 }
 
 
-int my_max(int* a4, int n4, int fn_call_no)
+int my_max(int* a4, int n4)
 {
 	int max = a4[0];
 	for(int i = 1; i < n4; ++i)
@@ -60,11 +95,11 @@ int my_max(int* a4, int n4, int fn_call_no)
 		}
 	}
 
-	printf("%d: Max : %d\n",fn_call_no, max);
+	printf("Max : %d\n", max);
 	return 1;
 }
 
-int my_min(int* a4, int n4, int fn_call_no)
+int my_min(int* a4, int n4)
 {
 	int min = a4[0];
 	for(int i = 1; i<n4; ++i)
@@ -75,38 +110,11 @@ int my_min(int* a4, int n4, int fn_call_no)
 		}
 	}
 
-	printf("%d: Min : %d\n",fn_call_no, min);
+	printf("Min : %d\n", min);
 	return 1;
 }
 
-int countOccurrences(int arr[], int n, int x, int fn_call_no)
-{
-    int res = 0;
-    for (int i=0; i<n; i++)
-        if (x == arr[i])
-          res++;
-	printf("%d: Min Occurence of %d : %d\n",fn_call_no, x, res);
-    return 1;
-}
 
-
-int ceilSearch(int arr[], int low, int high, int x, int fn_call_no)
-{
-     
-    int i;
-    if(x <= arr[low])
-        return low;
-     
-    for(i = low; i < high; i++)
-    {
-        if(arr[i] == x)
-        return i;
-     
-        if(arr[i] < x && arr[i+1] >= x)
-        return i+1;
-    }    
-    return -1;
-}
 
 int main(int argc, const char** argv)
 {
@@ -143,9 +151,24 @@ int main(int argc, const char** argv)
 	}
 
 
-	sort(arr1, n, arr_fn_calls_nos[0]);
-	my_min(arr1, n, arr_fn_calls_nos[1]);
-	my_max(arr1, n, arr_fn_calls_nos[2]);
-
+	sort(arr1, n);
+	my_min(arr1, n);
+	my_max(arr1, n);
+	ceilSearch(arr1, 0, 30000, 2147483484);
+	countOccurrences(arr1, 30000, 2147483484);
+	binarySearch(arr1, 0, 30000, 2147483484);
+	
 
 }
+
+					
+					
+				
+			
+			
+			
+			
+
+		
+		
+	

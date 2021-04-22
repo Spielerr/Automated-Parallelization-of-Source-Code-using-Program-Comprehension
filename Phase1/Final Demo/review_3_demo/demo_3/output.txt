@@ -12,11 +12,12 @@ using namespace std;
 using namespace thread_pool;
 	
 
+
 #include <stdio.h>
 #include <sys/time.h>
 #include <stdlib.h>
 
-double mean(const int* a1, int n1)
+double mean(const int* a1, int n1, int fn_call_no)
 {
 	double mean = 0;
 	for(int i = 0;i < n1;++i)
@@ -27,7 +28,7 @@ double mean(const int* a1, int n1)
 	return mean;
 }
 
-void sort(int* arr,const int arr_n)
+void sort(int* arr,const int arr_n, int fn_call_no)
 {
 	for(int i = 0;i < arr_n-1;++i)
 	{
@@ -46,7 +47,7 @@ void sort(int* arr,const int arr_n)
 }
 
 
-int my_max(int* a4, int n4)
+int my_max(int* a4, int n4, int fn_call_no)
 {
 	int max = a4[0];
 	for(int i = 1; i < n4; ++i)
@@ -57,11 +58,11 @@ int my_max(int* a4, int n4)
 		}
 	}
 
-	printf("Max : %d\n", max);
+	printf("%d: Max : %d\n",fn_call_no, max);
 	return 1;
 }
 
-int my_min(int* a4, int n4)
+int my_min(int* a4, int n4, int fn_call_no)
 {
 	int min = a4[0];
 	for(int i = 1; i<n4; ++i)
@@ -72,7 +73,7 @@ int my_min(int* a4, int n4)
 		}
 	}
 
-	printf("Min : %d\n", min);
+	printf("%d: Min : %d\n",fn_call_no, min);
 	return 1;
 }
 
@@ -80,13 +81,13 @@ int my_min(int* a4, int n4)
 
 int num_threads = thread::hardware_concurrency();
 ThreadPool tp(num_threads);
-int sp_c = 12;
-int wr_q = 24;
+int sp_c = 4;
+int wr_q = 8;
 vector<shared_future<void>> void_futures;
 vector<shared_future<int>> int_futures;
 vector<pair<int, string>> special;
 vector<pair<int, atomic<bool>&>> thread_track;
-vector<vector<string>> args{{"arr1","n"}, {"arr1","n"}, {"arr1","n"}, {"arr2","n"}, {"arr2","n"}, {"arr2","n"}, {"arr1","n"}, {"arr1","n"}, {"arr1","n"}, {"arr2","n"}, {"arr2","n"}, {"arr2","n"}, {"arr1","n"}, {"arr1","n"}, {"arr1","n"}, {"arr2","n"}, {"arr2","n"}, {"arr2","n"}, {"arr1","n"}, {"arr1","n"}, {"arr1","n"}, {"arr2","n"}, {"arr2","n"}, {"arr2","n"}, {"arr1","n"}, {"arr1","n"}, {"arr1","n"}, {"arr2","n"}, {"arr2","n"}, {"arr2","n"}, {"arr1","n"}, {"arr1","n"}, {"arr1","n"}, {"arr2","n"}, {"arr2","n"}, {"arr2","n"}};
+vector<vector<string>> args{{"arr1","n","arr_fn_calls_nos[0]"}, {"arr1","n","arr_fn_calls_nos[1]"}, {"arr1","n","arr_fn_calls_nos[2]"}, {"arr2","n","arr_fn_calls_nos[3]"}, {"arr2","n","arr_fn_calls_nos[4]"}, {"arr2","n","arr_fn_calls_nos[5]"}, {"arr1","n","arr_fn_calls_nos[6]"}, {"arr1","n","arr_fn_calls_nos[7]"}, {"arr1","n","arr_fn_calls_nos[8]"}, {"arr2","n","arr_fn_calls_nos[9]"}, {"arr2","n","arr_fn_calls_nos[10]"}, {"arr2","n","arr_fn_calls_nos[11]"}};
 deque<pair<int, std::function<int()>>> ready_queue;
 deque<pair<int, std::function<int()>>> wait_queue;
 atomic<int> special_changed(0);
@@ -254,26 +255,36 @@ int main(int argc, char **argv)
 {
 
 	struct timeval stop, start;
-    gettimeofday(&start, NULL);
+	gettimeofday(&start, NULL);
 
 	int input_n = 30000;
 	int *arr1 = (int *)malloc(input_n * sizeof(int));
-    int array_size1 = input_n;
-    srand(8);
-    for(int i = 0; i < array_size1; ++i)
-    {    
-        arr1[i] = rand();
-    }
+	int array_size1 = input_n;
+	srand(8);
+	for(int i = 0; i < array_size1; ++i)
+	{    
+		arr1[i] = rand();
+	}
 
 	int *arr2 = (int *)malloc(input_n * sizeof(int));
-    int array_size2 = input_n;
-    srand(2);
-    for(int i = 0; i < array_size2; ++i)
-    {    
-        arr2[i] = rand();
-    }
+	int array_size2 = input_n;
+	srand(2);
+	for(int i = 0; i < array_size2; ++i)
+	{    
+		arr2[i] = rand();
+	}
 
 	int n = array_size1;
+
+	int no_fn_calls = 12;
+
+	int* arr_fn_calls_nos = (int*)malloc(no_fn_calls*sizeof(int));
+
+	for(int i = 0; i < no_fn_calls; ++i)
+	{
+		arr_fn_calls_nos[i] = i;
+	}
+
 
 // int input_n = atoi(argv[1]);
 	// int *arr1 = (int *)malloc(input_n * sizeof(int));
@@ -311,7 +322,7 @@ int main(int argc, char **argv)
 	}
 	atomic<bool> done1(false);
 	void_futures.emplace_back(tp.Submit([&] {
-		 sort(arr1, n);
+		 sort(arr1, n, arr_fn_calls_nos[0]);
 		done1 = true;}));
 	pair<int, atomic<bool>&> p_th_1(1, done1);
 	{
@@ -319,7 +330,7 @@ int main(int argc, char **argv)
 		thread_track.push_back(p_th_1);
 	}
 
-	auto fn2 = bind(::my_min, arr1, n);
+	auto fn2 = bind(::my_min, arr1, n, arr_fn_calls_nos[1]);
 	{
 		lock_guard<mutex> lockGuard(m_sp);
 		iter1 = find_if(begin(special), end(special), Find_special2("arr1"));
@@ -335,7 +346,7 @@ int main(int argc, char **argv)
 		lock_guard<mutex> lockGuard(m_rq);
 		ready_queue.push_back(pair<int, std::function<int()>>(2, fn2));
 	}
-	auto fn3 = bind(::my_max, arr1, n);
+	auto fn3 = bind(::my_max, arr1, n, arr_fn_calls_nos[2]);
 	{
 		lock_guard<mutex> lockGuard(m_sp);
 		iter1 = find_if(begin(special), end(special), Find_special2("arr1"));
@@ -358,7 +369,7 @@ int main(int argc, char **argv)
 	}
 	atomic<bool> done4(false);
 	void_futures.emplace_back(tp.Submit([&] {
-		 sort(arr2, n);
+		 sort(arr2, n, arr_fn_calls_nos[3]);
 		done4 = true;}));
 	pair<int, atomic<bool>&> p_th_4(4, done4);
 	{
@@ -366,7 +377,7 @@ int main(int argc, char **argv)
 		thread_track.push_back(p_th_4);
 	}
 
-	auto fn5 = bind(::my_min, arr2, n);
+	auto fn5 = bind(::my_min, arr2, n, arr_fn_calls_nos[4]);
 	{
 		lock_guard<mutex> lockGuard(m_sp);
 		iter1 = find_if(begin(special), end(special), Find_special2("arr2"));
@@ -382,7 +393,7 @@ int main(int argc, char **argv)
 		lock_guard<mutex> lockGuard(m_rq);
 		ready_queue.push_back(pair<int, std::function<int()>>(5, fn5));
 	}
-	auto fn6 = bind(::my_max, arr2, n);
+	auto fn6 = bind(::my_max, arr2, n, arr_fn_calls_nos[5]);
 	{
 		lock_guard<mutex> lockGuard(m_sp);
 		iter1 = find_if(begin(special), end(special), Find_special2("arr2"));
@@ -405,7 +416,7 @@ int main(int argc, char **argv)
 	}
 	atomic<bool> done7(false);
 	void_futures.emplace_back(tp.Submit([&] {
-		 sort(arr1, n);
+		 sort(arr1, n, arr_fn_calls_nos[6]);
 		done7 = true;}));
 	pair<int, atomic<bool>&> p_th_7(7, done7);
 	{
@@ -413,7 +424,7 @@ int main(int argc, char **argv)
 		thread_track.push_back(p_th_7);
 	}
 
-	auto fn8 = bind(::my_min, arr1, n);
+	auto fn8 = bind(::my_min, arr1, n, arr_fn_calls_nos[7]);
 	{
 		lock_guard<mutex> lockGuard(m_sp);
 		iter1 = find_if(begin(special), end(special), Find_special2("arr1"));
@@ -429,7 +440,7 @@ int main(int argc, char **argv)
 		lock_guard<mutex> lockGuard(m_rq);
 		ready_queue.push_back(pair<int, std::function<int()>>(8, fn8));
 	}
-	auto fn9 = bind(::my_max, arr1, n);
+	auto fn9 = bind(::my_max, arr1, n, arr_fn_calls_nos[8]);
 	{
 		lock_guard<mutex> lockGuard(m_sp);
 		iter1 = find_if(begin(special), end(special), Find_special2("arr1"));
@@ -452,7 +463,7 @@ int main(int argc, char **argv)
 	}
 	atomic<bool> done10(false);
 	void_futures.emplace_back(tp.Submit([&] {
-		 sort(arr2, n);
+		 sort(arr2, n, arr_fn_calls_nos[9]);
 		done10 = true;}));
 	pair<int, atomic<bool>&> p_th_10(10, done10);
 	{
@@ -460,7 +471,7 @@ int main(int argc, char **argv)
 		thread_track.push_back(p_th_10);
 	}
 
-	auto fn11 = bind(::my_min, arr2, n);
+	auto fn11 = bind(::my_min, arr2, n, arr_fn_calls_nos[10]);
 	{
 		lock_guard<mutex> lockGuard(m_sp);
 		iter1 = find_if(begin(special), end(special), Find_special2("arr2"));
@@ -476,7 +487,7 @@ int main(int argc, char **argv)
 		lock_guard<mutex> lockGuard(m_rq);
 		ready_queue.push_back(pair<int, std::function<int()>>(11, fn11));
 	}
-	auto fn12 = bind(::my_max, arr2, n);
+	auto fn12 = bind(::my_max, arr2, n, arr_fn_calls_nos[11]);
 	{
 		lock_guard<mutex> lockGuard(m_sp);
 		iter1 = find_if(begin(special), end(special), Find_special2("arr2"));
@@ -492,382 +503,6 @@ int main(int argc, char **argv)
 		lock_guard<mutex> lockGuard(m_rq);
 		ready_queue.push_back(pair<int, std::function<int()>>(12, fn12));
 	}
-	pair<int,string> p13_1(13, "arr1");
-	{
-		lock_guard<mutex> lockGuard(m_sp);
-		special.push_back(p13_1);
-	}
-	atomic<bool> done13(false);
-	void_futures.emplace_back(tp.Submit([&] {
-		 sort(arr1, n);
-		done13 = true;}));
-	pair<int, atomic<bool>&> p_th_13(13, done13);
-	{
-		lock_guard<mutex> lockGuard(m_tt);
-		thread_track.push_back(p_th_13);
-	}
-
-	auto fn14 = bind(::my_min, arr1, n);
-	{
-		lock_guard<mutex> lockGuard(m_sp);
-		iter1 = find_if(begin(special), end(special), Find_special2("arr1"));
-		iter2 = end(special);
-	}
-	if(iter1 != iter2)
-	{
-		lock_guard<mutex> lockGuard(m_wq);
-		wait_queue.push_back(pair<int, std::function<int()>>(14, fn14));
-	}
-	else
-	{
-		lock_guard<mutex> lockGuard(m_rq);
-		ready_queue.push_back(pair<int, std::function<int()>>(14, fn14));
-	}
-	auto fn15 = bind(::my_max, arr1, n);
-	{
-		lock_guard<mutex> lockGuard(m_sp);
-		iter1 = find_if(begin(special), end(special), Find_special2("arr1"));
-		iter2 = end(special);
-	}
-	if(iter1 != iter2)
-	{
-		lock_guard<mutex> lockGuard(m_wq);
-		wait_queue.push_back(pair<int, std::function<int()>>(15, fn15));
-	}
-	else
-	{
-		lock_guard<mutex> lockGuard(m_rq);
-		ready_queue.push_back(pair<int, std::function<int()>>(15, fn15));
-	}
-	pair<int,string> p16_1(16, "arr2");
-	{
-		lock_guard<mutex> lockGuard(m_sp);
-		special.push_back(p16_1);
-	}
-	atomic<bool> done16(false);
-	void_futures.emplace_back(tp.Submit([&] {
-		 sort(arr2, n);
-		done16 = true;}));
-	pair<int, atomic<bool>&> p_th_16(16, done16);
-	{
-		lock_guard<mutex> lockGuard(m_tt);
-		thread_track.push_back(p_th_16);
-	}
-
-	auto fn17 = bind(::my_min, arr2, n);
-	{
-		lock_guard<mutex> lockGuard(m_sp);
-		iter1 = find_if(begin(special), end(special), Find_special2("arr2"));
-		iter2 = end(special);
-	}
-	if(iter1 != iter2)
-	{
-		lock_guard<mutex> lockGuard(m_wq);
-		wait_queue.push_back(pair<int, std::function<int()>>(17, fn17));
-	}
-	else
-	{
-		lock_guard<mutex> lockGuard(m_rq);
-		ready_queue.push_back(pair<int, std::function<int()>>(17, fn17));
-	}
-	auto fn18 = bind(::my_max, arr2, n);
-	{
-		lock_guard<mutex> lockGuard(m_sp);
-		iter1 = find_if(begin(special), end(special), Find_special2("arr2"));
-		iter2 = end(special);
-	}
-	if(iter1 != iter2)
-	{
-		lock_guard<mutex> lockGuard(m_wq);
-		wait_queue.push_back(pair<int, std::function<int()>>(18, fn18));
-	}
-	else
-	{
-		lock_guard<mutex> lockGuard(m_rq);
-		ready_queue.push_back(pair<int, std::function<int()>>(18, fn18));
-	}
-	pair<int,string> p19_1(19, "arr1");
-	{
-		lock_guard<mutex> lockGuard(m_sp);
-		special.push_back(p19_1);
-	}
-	atomic<bool> done19(false);
-	void_futures.emplace_back(tp.Submit([&] {
-		 sort(arr1, n);
-		done19 = true;}));
-	pair<int, atomic<bool>&> p_th_19(19, done19);
-	{
-		lock_guard<mutex> lockGuard(m_tt);
-		thread_track.push_back(p_th_19);
-	}
-
-	auto fn20 = bind(::my_min, arr1, n);
-	{
-		lock_guard<mutex> lockGuard(m_sp);
-		iter1 = find_if(begin(special), end(special), Find_special2("arr1"));
-		iter2 = end(special);
-	}
-	if(iter1 != iter2)
-	{
-		lock_guard<mutex> lockGuard(m_wq);
-		wait_queue.push_back(pair<int, std::function<int()>>(20, fn20));
-	}
-	else
-	{
-		lock_guard<mutex> lockGuard(m_rq);
-		ready_queue.push_back(pair<int, std::function<int()>>(20, fn20));
-	}
-	auto fn21 = bind(::my_max, arr1, n);
-	{
-		lock_guard<mutex> lockGuard(m_sp);
-		iter1 = find_if(begin(special), end(special), Find_special2("arr1"));
-		iter2 = end(special);
-	}
-	if(iter1 != iter2)
-	{
-		lock_guard<mutex> lockGuard(m_wq);
-		wait_queue.push_back(pair<int, std::function<int()>>(21, fn21));
-	}
-	else
-	{
-		lock_guard<mutex> lockGuard(m_rq);
-		ready_queue.push_back(pair<int, std::function<int()>>(21, fn21));
-	}
-	pair<int,string> p22_1(22, "arr2");
-	{
-		lock_guard<mutex> lockGuard(m_sp);
-		special.push_back(p22_1);
-	}
-	atomic<bool> done22(false);
-	void_futures.emplace_back(tp.Submit([&] {
-		 sort(arr2, n);
-		done22 = true;}));
-	pair<int, atomic<bool>&> p_th_22(22, done22);
-	{
-		lock_guard<mutex> lockGuard(m_tt);
-		thread_track.push_back(p_th_22);
-	}
-
-	auto fn23 = bind(::my_min, arr2, n);
-	{
-		lock_guard<mutex> lockGuard(m_sp);
-		iter1 = find_if(begin(special), end(special), Find_special2("arr2"));
-		iter2 = end(special);
-	}
-	if(iter1 != iter2)
-	{
-		lock_guard<mutex> lockGuard(m_wq);
-		wait_queue.push_back(pair<int, std::function<int()>>(23, fn23));
-	}
-	else
-	{
-		lock_guard<mutex> lockGuard(m_rq);
-		ready_queue.push_back(pair<int, std::function<int()>>(23, fn23));
-	}
-	auto fn24 = bind(::my_max, arr2, n);
-	{
-		lock_guard<mutex> lockGuard(m_sp);
-		iter1 = find_if(begin(special), end(special), Find_special2("arr2"));
-		iter2 = end(special);
-	}
-	if(iter1 != iter2)
-	{
-		lock_guard<mutex> lockGuard(m_wq);
-		wait_queue.push_back(pair<int, std::function<int()>>(24, fn24));
-	}
-	else
-	{
-		lock_guard<mutex> lockGuard(m_rq);
-		ready_queue.push_back(pair<int, std::function<int()>>(24, fn24));
-	}
-	pair<int,string> p25_1(25, "arr1");
-	{
-		lock_guard<mutex> lockGuard(m_sp);
-		special.push_back(p25_1);
-	}
-	atomic<bool> done25(false);
-	void_futures.emplace_back(tp.Submit([&] {
-		 sort(arr1, n);
-		done25 = true;}));
-	pair<int, atomic<bool>&> p_th_25(25, done25);
-	{
-		lock_guard<mutex> lockGuard(m_tt);
-		thread_track.push_back(p_th_25);
-	}
-
-	auto fn26 = bind(::my_min, arr1, n);
-	{
-		lock_guard<mutex> lockGuard(m_sp);
-		iter1 = find_if(begin(special), end(special), Find_special2("arr1"));
-		iter2 = end(special);
-	}
-	if(iter1 != iter2)
-	{
-		lock_guard<mutex> lockGuard(m_wq);
-		wait_queue.push_back(pair<int, std::function<int()>>(26, fn26));
-	}
-	else
-	{
-		lock_guard<mutex> lockGuard(m_rq);
-		ready_queue.push_back(pair<int, std::function<int()>>(26, fn26));
-	}
-	auto fn27 = bind(::my_max, arr1, n);
-	{
-		lock_guard<mutex> lockGuard(m_sp);
-		iter1 = find_if(begin(special), end(special), Find_special2("arr1"));
-		iter2 = end(special);
-	}
-	if(iter1 != iter2)
-	{
-		lock_guard<mutex> lockGuard(m_wq);
-		wait_queue.push_back(pair<int, std::function<int()>>(27, fn27));
-	}
-	else
-	{
-		lock_guard<mutex> lockGuard(m_rq);
-		ready_queue.push_back(pair<int, std::function<int()>>(27, fn27));
-	}
-	pair<int,string> p28_1(28, "arr2");
-	{
-		lock_guard<mutex> lockGuard(m_sp);
-		special.push_back(p28_1);
-	}
-	atomic<bool> done28(false);
-	void_futures.emplace_back(tp.Submit([&] {
-		 sort(arr2, n);
-		done28 = true;}));
-	pair<int, atomic<bool>&> p_th_28(28, done28);
-	{
-		lock_guard<mutex> lockGuard(m_tt);
-		thread_track.push_back(p_th_28);
-	}
-
-	auto fn29 = bind(::my_min, arr2, n);
-	{
-		lock_guard<mutex> lockGuard(m_sp);
-		iter1 = find_if(begin(special), end(special), Find_special2("arr2"));
-		iter2 = end(special);
-	}
-	if(iter1 != iter2)
-	{
-		lock_guard<mutex> lockGuard(m_wq);
-		wait_queue.push_back(pair<int, std::function<int()>>(29, fn29));
-	}
-	else
-	{
-		lock_guard<mutex> lockGuard(m_rq);
-		ready_queue.push_back(pair<int, std::function<int()>>(29, fn29));
-	}
-	auto fn30 = bind(::my_max, arr2, n);
-	{
-		lock_guard<mutex> lockGuard(m_sp);
-		iter1 = find_if(begin(special), end(special), Find_special2("arr2"));
-		iter2 = end(special);
-	}
-	if(iter1 != iter2)
-	{
-		lock_guard<mutex> lockGuard(m_wq);
-		wait_queue.push_back(pair<int, std::function<int()>>(30, fn30));
-	}
-	else
-	{
-		lock_guard<mutex> lockGuard(m_rq);
-		ready_queue.push_back(pair<int, std::function<int()>>(30, fn30));
-	}
-	pair<int,string> p31_1(31, "arr1");
-	{
-		lock_guard<mutex> lockGuard(m_sp);
-		special.push_back(p31_1);
-	}
-	atomic<bool> done31(false);
-	void_futures.emplace_back(tp.Submit([&] {
-		 sort(arr1, n);
-		done31 = true;}));
-	pair<int, atomic<bool>&> p_th_31(31, done31);
-	{
-		lock_guard<mutex> lockGuard(m_tt);
-		thread_track.push_back(p_th_31);
-	}
-
-	auto fn32 = bind(::my_min, arr1, n);
-	{
-		lock_guard<mutex> lockGuard(m_sp);
-		iter1 = find_if(begin(special), end(special), Find_special2("arr1"));
-		iter2 = end(special);
-	}
-	if(iter1 != iter2)
-	{
-		lock_guard<mutex> lockGuard(m_wq);
-		wait_queue.push_back(pair<int, std::function<int()>>(32, fn32));
-	}
-	else
-	{
-		lock_guard<mutex> lockGuard(m_rq);
-		ready_queue.push_back(pair<int, std::function<int()>>(32, fn32));
-	}
-	auto fn33 = bind(::my_max, arr1, n);
-	{
-		lock_guard<mutex> lockGuard(m_sp);
-		iter1 = find_if(begin(special), end(special), Find_special2("arr1"));
-		iter2 = end(special);
-	}
-	if(iter1 != iter2)
-	{
-		lock_guard<mutex> lockGuard(m_wq);
-		wait_queue.push_back(pair<int, std::function<int()>>(33, fn33));
-	}
-	else
-	{
-		lock_guard<mutex> lockGuard(m_rq);
-		ready_queue.push_back(pair<int, std::function<int()>>(33, fn33));
-	}
-	pair<int,string> p34_1(34, "arr2");
-	{
-		lock_guard<mutex> lockGuard(m_sp);
-		special.push_back(p34_1);
-	}
-	atomic<bool> done34(false);
-	void_futures.emplace_back(tp.Submit([&] {
-		 sort(arr2, n);
-		done34 = true;}));
-	pair<int, atomic<bool>&> p_th_34(34, done34);
-	{
-		lock_guard<mutex> lockGuard(m_tt);
-		thread_track.push_back(p_th_34);
-	}
-
-	auto fn35 = bind(::my_min, arr2, n);
-	{
-		lock_guard<mutex> lockGuard(m_sp);
-		iter1 = find_if(begin(special), end(special), Find_special2("arr2"));
-		iter2 = end(special);
-	}
-	if(iter1 != iter2)
-	{
-		lock_guard<mutex> lockGuard(m_wq);
-		wait_queue.push_back(pair<int, std::function<int()>>(35, fn35));
-	}
-	else
-	{
-		lock_guard<mutex> lockGuard(m_rq);
-		ready_queue.push_back(pair<int, std::function<int()>>(35, fn35));
-	}
-	auto fn36 = bind(::my_max, arr2, n);
-	{
-		lock_guard<mutex> lockGuard(m_sp);
-		iter1 = find_if(begin(special), end(special), Find_special2("arr2"));
-		iter2 = end(special);
-	}
-	if(iter1 != iter2)
-	{
-		lock_guard<mutex> lockGuard(m_wq);
-		wait_queue.push_back(pair<int, std::function<int()>>(36, fn36));
-	}
-	else
-	{
-		lock_guard<mutex> lockGuard(m_rq);
-		ready_queue.push_back(pair<int, std::function<int()>>(36, fn36));
-	}
 	for(auto &x:void_futures)
 	{
 		x.wait();
@@ -879,10 +514,19 @@ int main(int argc, char **argv)
 	}
 
 
+	
 	gettimeofday(&stop, NULL);
-    printf("Time Taken : %lu\n", ((stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec)/1000);
+	printf("Time Taken : %lu\n", ((stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec)/1000);
 
 }
+
+					
+					
+				
+			
+			
+			
+			
 
 		
 		

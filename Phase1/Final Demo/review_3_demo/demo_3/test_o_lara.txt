@@ -985,79 +985,48 @@ Unzipping '/tmp/clang_ast_exe_www-data/clang_includes/3-6.3.0_backward/hash_set'
 Unzipping '/tmp/clang_ast_exe_www-data/clang_includes/3-6.3.0_backward/strstream'
 Found 1 source files
 Parsing '/mnt/c/Users/mayur/Desktop/PES/PES - 6/Capstone Project/Capstone_Project/Phase1/Final Demo/review_3_demo/demo_3/testfile_demo_3.cpp' (1/1)
-[ClavaMetrics] Code to AST: 745ms
-[ClavaMetrics] AST Processing: 91ms
+[ClavaMetrics] Code to AST: 838ms
+[ClavaMetrics] AST Processing: 83ms
 [ClavaMetrics] Current memory used (Java):18 MiB
 --- AST parsing report ---
  -==================================================-
-  Elapsed Time: 9460ms
+  Elapsed Time: 11059ms
  -==================================================-
  -==================================================-
   4. Interpreting Aspects
  -==================================================-
  -==================================================-
-  Elapsed Time: 44ms
+  Elapsed Time: 41ms
  -==================================================-
  -==================================================-
   5. Executing Main Aspect
  -==================================================-
 Start of Lara Output
 input2.txt:
-sort,void;int *,arr1,int *,arr;int,n,int const,arr_n;
-my_min,int;int *,arr1,int *,a4;int,n,int,n4;
-my_max,int;int *,arr1,int *,a4;int,n,int,n4;
-sort,void;int *,arr2,int *,arr;int,n,int const,arr_n;
-my_min,int;int *,arr2,int *,a4;int,n,int,n4;
-my_max,int;int *,arr2,int *,a4;int,n,int,n4;
-sort,void;int *,arr1,int *,arr;int,n,int const,arr_n;
-my_min,int;int *,arr1,int *,a4;int,n,int,n4;
-my_max,int;int *,arr1,int *,a4;int,n,int,n4;
-sort,void;int *,arr2,int *,arr;int,n,int const,arr_n;
-my_min,int;int *,arr2,int *,a4;int,n,int,n4;
-my_max,int;int *,arr2,int *,a4;int,n,int,n4;
-sort,void;int *,arr1,int *,arr;int,n,int const,arr_n;
-my_min,int;int *,arr1,int *,a4;int,n,int,n4;
-my_max,int;int *,arr1,int *,a4;int,n,int,n4;
-sort,void;int *,arr2,int *,arr;int,n,int const,arr_n;
-my_min,int;int *,arr2,int *,a4;int,n,int,n4;
-my_max,int;int *,arr2,int *,a4;int,n,int,n4;
-sort,void;int *,arr1,int *,arr;int,n,int const,arr_n;
-my_min,int;int *,arr1,int *,a4;int,n,int,n4;
-my_max,int;int *,arr1,int *,a4;int,n,int,n4;
-sort,void;int *,arr2,int *,arr;int,n,int const,arr_n;
-my_min,int;int *,arr2,int *,a4;int,n,int,n4;
-my_max,int;int *,arr2,int *,a4;int,n,int,n4;
-sort,void;int *,arr1,int *,arr;int,n,int const,arr_n;
-my_min,int;int *,arr1,int *,a4;int,n,int,n4;
-my_max,int;int *,arr1,int *,a4;int,n,int,n4;
-sort,void;int *,arr2,int *,arr;int,n,int const,arr_n;
-my_min,int;int *,arr2,int *,a4;int,n,int,n4;
-my_max,int;int *,arr2,int *,a4;int,n,int,n4;
-sort,void;int *,arr1,int *,arr;int,n,int const,arr_n;
-my_min,int;int *,arr1,int *,a4;int,n,int,n4;
-my_max,int;int *,arr1,int *,a4;int,n,int,n4;
-sort,void;int *,arr2,int *,arr;int,n,int const,arr_n;
-my_min,int;int *,arr2,int *,a4;int,n,int,n4;
-my_max,int;int *,arr2,int *,a4;int,n,int,n4;
+sort,void;int *,arr1,int *,arr;int,n,int const,arr_n;int,arr_fn_calls_nos[0],int,fn_call_no;
+my_min,int;int *,arr1,int *,a4;int,n,int,n4;int,arr_fn_calls_nos[1],int,fn_call_no;
+my_max,int;int *,arr1,int *,a4;int,n,int,n4;int,arr_fn_calls_nos[2],int,fn_call_no;
+sort,void;int *,arr2,int *,arr;int,n,int const,arr_n;int,arr_fn_calls_nos[3],int,fn_call_no;
+my_min,int;int *,arr2,int *,a4;int,n,int,n4;int,arr_fn_calls_nos[4],int,fn_call_no;
+my_max,int;int *,arr2,int *,a4;int,n,int,n4;int,arr_fn_calls_nos[5],int,fn_call_no;
+sort,void;int *,arr1,int *,arr;int,n,int const,arr_n;int,arr_fn_calls_nos[6],int,fn_call_no;
+my_min,int;int *,arr1,int *,a4;int,n,int,n4;int,arr_fn_calls_nos[7],int,fn_call_no;
+my_max,int;int *,arr1,int *,a4;int,n,int,n4;int,arr_fn_calls_nos[8],int,fn_call_no;
+sort,void;int *,arr2,int *,arr;int,n,int const,arr_n;int,arr_fn_calls_nos[9],int,fn_call_no;
+my_min,int;int *,arr2,int *,a4;int,n,int,n4;int,arr_fn_calls_nos[10],int,fn_call_no;
+my_max,int;int *,arr2,int *,a4;int,n,int,n4;int,arr_fn_calls_nos[11],int,fn_call_no;
 End of input2.txt
 input.txt:
 sort,arr1
 sort,arr2
 sort,arr1
 sort,arr2
-sort,arr1
-sort,arr2
-sort,arr1
-sort,arr2
-sort,arr1
-sort,arr2
-sort,arr1
-sort,arr2
 End of input.txt
 End of Lara Output
+Changes in file './woven_code/testfile_demo_3.cpp'
  -==================================================-
-  Elapsed Time: 1234ms
+  Elapsed Time: 1254ms
  -==================================================-
  -==================================================-
-  LARA total time: 14453ms
+  LARA total time: 16597ms
  -==================================================-
