@@ -780,14 +780,15 @@ void schedulingfn()
 
 				{
 					lock_guard<mutex> lockGuard(m_wq);
-					for(auto x:wait_queue)
+					auto x = wait_queue.begin();
+					while(x != wait_queue.end())
 					{
 						//pick out every argument from func in x
 						//check if it exists in special
 						//if it doesnt
 						//	move it to ready queue
 						bool is_found = false;
-						for(auto y:args[x.first - 1])
+						for(auto y:args[x->first - 1])
 						{
 							lock_guard<mutex> lockGuard(m_sp);
 							if(find_if(begin(special), end(special), Find_special2(y)) != end(special))
@@ -798,10 +799,16 @@ void schedulingfn()
 						}
 						if(!is_found)
 						{
-							wait_queue.erase(find_if( begin(wait_queue), end(wait_queue), Find_special3<pair<int, std::function<int()>>>(x.first)));
-							lock_guard<mutex> lockGuard(m_rq);
-							ready_queue.push_back(x);
+							{
+                                lock_guard<mutex> lockGuard(m_rq);
+                                ready_queue.push_back(*x);
+                            }
+                            x = wait_queue.erase(x);
 						}
+                        else
+                        {
+                            ++x;
+                        }
 					}
 				}
 				special_changed = 0;
@@ -812,12 +819,11 @@ void schedulingfn()
 			lock_guard<mutex> lockGuard(m_rq);
 			if(ready_queue.size() != 0)
 			{
-				for(auto &x:ready_queue)
+				auto x = ready_queue.begin();
+				while(x != ready_queue.end())
 				{
-					int_futures.emplace_back(tp.Submit(x.second));
-
-					auto iter = find_if( begin(ready_queue), end(ready_queue), Find_special3<pair<int, std::function<int()>>>(x.first));
-					ready_queue.erase(iter);
+					int_futures.emplace_back(tp.Submit(x->second));
+					x = ready_queue.erase(x);
 					++wr_done_c;
 					//file output code
 					// int_futures.emplace_back(tp.Submit(min, cref(arr1), cref(n)));
@@ -865,27 +871,7 @@ void mainfn()
         cout<<main_ip[i]<<"\n";
     }
 
-	string temp = R"(// int input_n = atoi(argv[1]);
-	// int *arr1 = (int *)malloc(input_n * sizeof(int));
-    // int array_size1 = input_n;
-    // srand(8);
-    // for(int i = 0; i < array_size1; ++i)
-    // {    
-    //     arr1[i] = rand();
-    // }
-
-	// int *arr2 = (int *)malloc(input_n * sizeof(int));
-    // int array_size2 = input_n;
-    // srand(2);
-    // for(int i = 0; i < array_size2; ++i)
-    // {    
-    //     arr2[i] = rand();
-    // }
-
-	// int n = array_size1;
-
-	// struct timeval stop, start;
-    // gettimeofday(&start, NULL);
+	string temp = R"(
 
 	void_futures.emplace_back(tp.Submit(thread_track_fn));
 	void_futures.emplace_back(tp.Submit(scheduling_fn));
