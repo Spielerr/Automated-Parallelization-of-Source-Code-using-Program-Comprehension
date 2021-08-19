@@ -1,0 +1,58 @@
+aspectdef test
+output stats end
+
+stats = new LaraObject();
+
+select function{'main'} end
+apply
+
+    println("Inside Main");
+//    println($function.body);
+//    println($function.body.astNumChildren);
+//    println($function.body.astChildren);
+
+    var n = $function.body.astNumChildren;
+    var fun_body = $function.body.astChildren;
+    for(var i = 0; i<n; ++i)
+    {
+        println("Code " + i);
+//        println("Loop or Conditional block: " + fun_body[i].astName);
+        println(fun_body[i].code);
+        println("Line range" + fun_body[i].line + ", " + fun_body[i].endLine);
+        if(fun_body[i].astName == "IfStmt")
+        {
+            println("If Block");
+        }
+        else if(fun_body[i].astName == "ForStmt")
+        {
+            println("For Block");
+        }
+        
+        println();
+        
+    }
+
+end
+
+//var avoid_inbuilt_fn = {"malloc":0, "free":0, "calloc":0, "realloc":0, "printf":0, "atoi":0, "srand":0,"rand":0,"gettimeofday":0};
+//
+//select function.call end
+//apply
+//
+//    if(!($call.name in avoid_inbuilt_fn))
+//    {
+//        println($call.name + ", " +  $call.line);
+//        println($call.isInsideHeader);
+//    }
+//
+//end
+
+
+//println("Test output");
+
+
+end
+
+
+
+
