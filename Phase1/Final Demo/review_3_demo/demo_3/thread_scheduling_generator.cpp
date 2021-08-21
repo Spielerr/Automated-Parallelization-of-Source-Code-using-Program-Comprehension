@@ -55,6 +55,10 @@ int first_line_no;
 //stores the line number of the last function call in main
 int last_line_no;
 
+//stores line numbers (relative to main) of all fn calls
+//DD6
+vector<int> fn_line_nos;
+
 class my_find_special
 {
     private:
@@ -67,7 +71,6 @@ class my_find_special
     {
         return i.first == x_;
     }
-
 };
 
 class my_find_2
@@ -354,6 +357,11 @@ void input_data()
     first_line_no = stoi(f3_ret_var_lineno[0][1]);
     last_line_no = stoi(f3_ret_var_lineno[f3_ret_var_lineno.size()-1][1]);
 
+    for(int i = 0; i < f3_ret_var_lineno.size(); ++i)
+    {
+        fn_line_nos.push_back(stoi(f3_ret_var_lineno[i][1]));
+    }
+
     #if DEBUG
 
     cout<<"testing whether data is stored in the f3_ret_var_lineno data structure properly\n";
@@ -619,8 +627,6 @@ using namespace thread_pool;
     {    
         cout<<dependencies<<"\n";
     }
-
-	
 }
 
 void prologue()
@@ -847,29 +853,29 @@ void mainfn()
 {
 	// gotta handle this part of code from client somehow
 
-    string dependencies;
+    string line;
 
     ifstream file_ip_main("main_code_client.txt");
 
     vector<string> main_ip;
 
-    int count_line = 0;
+    // int count_line = 0;
 
-    while(getline(file_ip_main, dependencies))
+    while(getline(file_ip_main, line))
     {    
-        if(count_line<first_line_no || count_line >last_line_no)
-        {
-            main_ip.push_back(dependencies);
-        }    
+        // if(count_line<first_line_no || count_line >last_line_no)
+        // {
+            main_ip.push_back(line);
+        // }
         
-        ++count_line;
+        // ++count_line;
     }
 
     cout<<"int main(int argc, char **argv)\n";
-    for(int i = 0; i<first_line_no; ++i)
-    {
-        cout<<main_ip[i]<<"\n";
-    }
+    // for(int i = 0; i<first_line_no; ++i)
+    // {
+    //     cout<<main_ip[i]<<"\n";
+    // }
 
 	string temp = R"(
 
@@ -881,11 +887,21 @@ void mainfn()
 	)";
 	cout << temp << "\n\n";
 
+    int line_no_index = 0;
+
 	// format of fn_call_info tuples
 	//("my_sort", 0, ["arr1", "n"], ["arr1"])
 	// cout << fn_call_info.size() << endl;
 	for(int k = 0; k < fn_call_info.size(); k++)
 	{
+
+        // printing client code up until present iteration function call
+        
+        for(int i = line_no_index; i < fn_line_nos[k]; ++i)
+        {
+            cout << main_ip[i] << '\n';
+        }
+        ++line_no_index;
 
 		// for min, max n stuff
 		if(get<1>(fn_call_info[k]))
@@ -946,6 +962,13 @@ void mainfn()
 			cout << "\t{\n\t\tlock_guard<mutex> lockGuard(m_tt);\n\t\tthread_track.push_back(" + pair_temp + ");\n\t}\n\n";
  		}
 	}
+
+    //printing client code after last fn call
+    for(int i = line_no_index; i < main_ip.size(); ++i)
+    {
+        cout << main_ip[i] << '\n';
+    }
+
 	for(auto x:return_types)
 	{
 		cout << "\tfor(auto &x:" + x + "_futures)";
