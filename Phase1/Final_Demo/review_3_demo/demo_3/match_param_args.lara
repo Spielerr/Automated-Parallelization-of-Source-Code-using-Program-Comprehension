@@ -139,9 +139,11 @@ apply
 
     if(!($function.name in avoid_inbuilt_fn))
     {
+        
 
         if(!($function.name in changing_params))
         {
+            
             changing_params[$function.name] = [];
         }
         
@@ -151,7 +153,11 @@ apply
         }
     
         if($varref.useExpr.use == 'write')
-        {   
+        
+        {  
+            //println($function.name);
+            //println($varref.code + " " + $varref.vardecl.isParam);
+            //println(changing_params[$function.name].includes($varref.code));
             if($varref.vardecl.isParam && !(changing_params[$function.name].includes($varref.code)) )
                 changing_params[$function.name].push($varref.code);
         }
@@ -172,6 +178,7 @@ println("input.txt:");
 
 for(fn_name in changing_params)
 {
+    //println(fn_name + " " + changing_params[fn_name].length);
     var no_of_args = changing_params[fn_name].length;
     if(no_of_args)
     {   
@@ -181,13 +188,16 @@ for(fn_name in changing_params)
             //println(changing_params[fn_name][i] + ":" + fn_args[fn_name][fn_param[fn_name].indexOf(changing_params[fn_name][i])]);
             //println(fn_name + "," + fn_args[fn_name][fn_param[fn_name].indexOf(changing_params[fn_name][i])]);
             //$body.insert after "" + fn_name + "," + fn_args[fn_name][fn_param[fn_name].indexOf(changing_params[fn_name][i])];
-
-            ind = fn_param[fn_name].indexOf(changing_params[fn_name][i]);
-            no_of_calls_fn = fn_args[fn_name].length;
-
-            for(var j = 0; j < no_of_calls_fn; ++j)
+            
+            if(fn_name in fn_args)
             {
-                println(fn_name + "," + fn_args[fn_name][j][ind]);
+                ind = fn_param[fn_name].indexOf(changing_params[fn_name][i]);
+                no_of_calls_fn = fn_args[fn_name].length;
+    
+                for(var j = 0; j < no_of_calls_fn; ++j)
+                {
+                    println(fn_name + "," + fn_args[fn_name][j][ind]);
+                }
             }
 
         }

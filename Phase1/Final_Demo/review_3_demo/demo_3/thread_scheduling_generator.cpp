@@ -877,6 +877,8 @@ void mainfn()
     //     cout<<main_ip[i]<<"\n";
     // }
 
+    cout<<main_ip[1]<<"\n";
+
 	string temp = R"(
 
 	void_futures.emplace_back(tp.Submit(thread_track_fn));
@@ -887,7 +889,7 @@ void mainfn()
 	)";
 	cout << temp << "\n\n";
 
-    int line_no_index = 0;
+    int line_no_index = 2;
 
 	// format of fn_call_info tuples
 	//("my_sort", 0, ["arr1", "n"], ["arr1"])
@@ -901,7 +903,7 @@ void mainfn()
         {
             cout << main_ip[i] << '\n';
         }
-        ++line_no_index;
+        line_no_index = fn_line_nos[k] + 1;
 
 		// for min, max n stuff
 		if(get<1>(fn_call_info[k]))
@@ -964,7 +966,7 @@ void mainfn()
 	}
 
     //printing client code after last fn call
-    for(int i = line_no_index; i < main_ip.size(); ++i)
+    for(int i = line_no_index; i < main_ip.size()-2; ++i)
     {
         cout << main_ip[i] << '\n';
     }
@@ -993,11 +995,11 @@ void mainfn()
 })";
 	//cout << finish << "\n\n";
 
-    for(int i = first_line_no; i<main_ip.size(); ++i)
-    {
-        cout<<main_ip[i]<<"\n";
-    }
-
+    // for(int i = first_line_no; i<main_ip.size(); ++i)
+    // {
+    //     cout<<main_ip[i]<<"\n";
+    // }
+    cout<<main_ip[main_ip.size()-2]<<"\n";
 }
 
 int main()

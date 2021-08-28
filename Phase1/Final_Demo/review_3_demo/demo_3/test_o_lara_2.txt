@@ -985,39 +985,35 @@ Unzipping '/tmp/clang_ast_exe_www-data/clang_includes/3-6.3.0_backward/hash_set'
 Unzipping '/tmp/clang_ast_exe_www-data/clang_includes/3-6.3.0_backward/strstream'
 Found 1 source files
 Parsing '/mnt/c/Users/mayur/Desktop/PES/PES - 6/Capstone Project/Capstone_Project/Phase1/Final Demo/review_3_demo/demo_3/testfile_demo_3.cpp' (1/1)
-[ClavaMetrics] Code to AST: 680ms
-[ClavaMetrics] AST Processing: 76ms
+[ClavaMetrics] Code to AST: 756ms
+[ClavaMetrics] AST Processing: 91ms
 [ClavaMetrics] Current memory used (Java):18 MiB
 --- AST parsing report ---
  -==================================================-
-  Elapsed Time: 8772ms
+  Elapsed Time: 7161ms
  -==================================================-
  -==================================================-
   4. Interpreting Aspects
  -==================================================-
  -==================================================-
-  Elapsed Time: 31ms
+  Elapsed Time: 29ms
  -==================================================-
  -==================================================-
   5. Executing Main Aspect
  -==================================================-
 Start of Input3.txt
-sort 35
-my_min 36
-my_max 37
-sort 38
-my_min 39
-my_max 40
-sort 42
-my_min 43
-my_max 44
-sort 45
-my_min 46
-my_max 47
+sort 29
+ceilSearch 30
+countOccurrences 31
+binarySearch 32
+sort 36
+ceilSearch 37
+countOccurrences 38
+binarySearch 39
 End of Input3.txt
  -==================================================-
-  Elapsed Time: 500ms
+  Elapsed Time: 533ms
  -==================================================-
  -==================================================-
-  LARA total time: 12553ms
+  LARA total time: 10875ms
  -==================================================-

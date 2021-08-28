@@ -34,9 +34,17 @@ int main(int argc, char **argv)
 	my_sort(arr2, n);
 	my_min(arr2, n);
 	my_max(arr2, n);
+    
+	my_sort(arr1, n);
+	my_min(arr1, n);
+	my_max(arr1, n);
+	my_sort(arr2, n);
+	my_min(arr2, n);
+	my_max(arr2, n);
 
 	gettimeofday(&stop, NULL);
-    printf("took %lu ms\n", ((stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec)/1000);
-
+    printf("%lu\n", ((stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec)/1000);
+    free(arr1);
+    free(arr2);
 	return 0;
 }

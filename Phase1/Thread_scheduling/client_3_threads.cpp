@@ -18,13 +18,17 @@ mutex m_tt;
 mutex m_tf;
 mutex m_sf;
 mutex m_sp_c;
+mutex m_vf;
+mutex m_if;
+mutex m_m1;
+mutex m_m2;
 
 // {
 //   std::mutex m,
 //   std::lock_guard<std::mutex> lockGuard(m_sp);
 //   sharedVariable= getVar();
 // }
-
+atomic<bool> dones[2];
 
 using namespace std;
 using namespace thread_pool;
@@ -115,7 +119,9 @@ class Find_special3
 // whenever any thread finishes execution, update special vector
 void thread_track_fn()
 {
+	lock_guard<mutex> lockGuard1(m_m1);
 	int flag = true;
+		cout << "thread_track_fn\n";
 	int sp_done_c = 0;
 	while(true)
 	{
@@ -125,7 +131,7 @@ void thread_track_fn()
 			for(auto x:thread_track)
 			{
 				//update special
-				while(special_changed)cout << "Busy Waiting" << "\n";
+				// while(special_changed)cout << "Busy Waiting" << "\n";
 				if(x.second)
 				{
 						//should prolly call .get here - need to get the correct future through an iterator here
@@ -143,7 +149,7 @@ void thread_track_fn()
 		}
 		if(sp_done_c == sp_c) 
 		{
-			cout << "EXITING TTF\n";
+			// cout << "EXITING TTF\n";
 			break;
 		}
 		// cout << "Special: " << special.size() << "\n";
@@ -153,8 +159,11 @@ void thread_track_fn()
 // schedule threads from queue only when special list gets updated(specifically when there's been a removal)
 void scheduling_fn()
 {
+	lock_guard<mutex> lockGuard1(m_m2);
+	// lock_guard<mutex> lockGuard(m_sf);
 	bool flag = true;
 	int wr_done_c = 0;
+		cout << "scheduling_fn\n";
 	//special got updated
 	while(true)
 	{
@@ -205,7 +214,10 @@ void scheduling_fn()
 			{
 				for(auto &x:ready_queue)
 				{
-					int_futures.emplace_back(tp.Submit(x.second));
+					{
+						lock_guard<mutex> lockGuard(m_if);
+						int_futures.emplace_back(tp.Submit(x.second));
+					}
 
 					auto iter = find_if( begin(ready_queue), end(ready_queue), Find_special3<pair<int, std::function<int()>>>(x.first));
 					ready_queue.erase(iter);
@@ -220,7 +232,7 @@ void scheduling_fn()
 		// cout << "Wait Queue: " << wait_queue.size() << "\n";
 		if(wr_done_c == wr_q) 
 		{
-			cout << "EXITING SF\n";
+			// cout << "EXITING SF\n";
 			break;
 		}
 	}
@@ -233,7 +245,8 @@ int main(int argc, char **argv)
 	// int n = sizeof(arr1) / sizeof(arr1[0]);
 
 
-
+	lock_guard<mutex> lockGuard1(m_m1);
+	lock_guard<mutex> lockGuard2(m_m2);
 
 
 	int input_n = atoi(argv[1]);
@@ -267,9 +280,11 @@ int main(int argc, char **argv)
     gettimeofday(&start, NULL);
 
 
-
-	void_futures.emplace_back(tp.Submit(thread_track_fn));
-	void_futures.emplace_back(tp.Submit(scheduling_fn));
+	{
+		lock_guard<mutex> lockGuard(m_vf);
+		void_futures.emplace_back(tp.Submit(thread_track_fn));
+		void_futures.emplace_back(tp.Submit(scheduling_fn));
+	}
 
 	using namespace std::chrono_literals;
 
@@ -282,14 +297,18 @@ int main(int argc, char **argv)
 		special.push_back(p1_1);
 	}
 	// atomic bool variable to track the execution of my_sort(arr1, n)
-	atomic<bool> done1(false);
+	dones[0] = false;
 
-	void_futures.emplace_back(tp.Submit([&] {
-        my_sort(arr1, n);
-        done1 = true;
-    }));
+	{
+		lock_guard<mutex> lockGuard(m_vf);
+		void_futures.emplace_back(tp.Submit([&] {
+			my_sort(arr1, n);
+			dones[0] = true;
+		}));
+	}
+	// cout<<tp.thread_ids()[1]<<"\n";
 
-	pair<int, atomic<bool>&> p1_2(1, done1); 
+	pair<int, atomic<bool>&> p1_2(1, dones[0]); 
 
 	{
 		lock_guard<mutex> lockGuard(m_tt);
@@ -298,6 +317,7 @@ int main(int argc, char **argv)
 	
 	
 	// int min1 = min(arr1, n);
+	int min1 = -1;
 	//min does not change any of its arguments
 	auto fn2 =  bind(::min, arr1, n);
 
@@ -312,18 +332,21 @@ int main(int argc, char **argv)
 	if( iter1 != iter2 )
 	{
 		lock_guard<mutex> lockGuard(m_wq);
-		wait_queue.push_back(pair<int, std::function<int()>>(2, fn2));
-		// ready_queue.push_back(pair<int, std::function<void()>>(2, [&](){ min1 = min(arr1, n); }));
+		// wait_queue.push_back(pair<int, std::function<int()>>(2, fn2));
+		// wait_queue.push_back(pair<int, std::function<void()>>(2, [&](){ min1 = min(arr1, n); } ));
+		wait_queue.push_back(pair<int, std::function<int()>>(2, [&]()->int{ return min(arr1, n); } ));
 	}
 	// push to wait queue
 	else
 	{
 		lock_guard<mutex> lockGuard(m_rq);
-		ready_queue.push_back(pair<int, std::function<int()>>(2, fn2));
+		// ready_queue.push_back(pair<int, std::function<int()>>(2, fn2));
 		// ready_queue.push_back(pair<int, std::function<void()>>(2, [&](){ min1 = min(arr1, n); } ));
+		ready_queue.push_back(pair<int, std::function<int()>>(2, [&]()->int{ return min(arr1, n); } ));
 	}
 
 	// int max1 = max(arr1, n);
+	int max1 = -1;
 	auto fn3 = bind(::max, arr1, n);
 	
 	{
@@ -335,14 +358,16 @@ int main(int argc, char **argv)
 	if(iter1 != iter2)
 	{
 		lock_guard<mutex> lockGuard(m_wq);
-		wait_queue.push_back(pair<int, std::function<int()>>(3, fn3));
-		// ready_queue.push_back(pair<int, std::function<void()>>(2, [&](){ min1 = min(arr1, n); }));
+		// wait_queue.push_back(pair<int, std::function<int()>>(3, fn3));
+		// wait_queue.push_back(pair<int, std::function<void()>>(3, [&](){ max1 = max(arr1, n); } ));
+		wait_queue.push_back(pair<int, std::function<int()>>(3, [&]()->int{ return max(arr1, n); } ));
 	}
 	else
 	{
 		lock_guard<mutex> lockGuard(m_rq);
-		ready_queue.push_back(pair<int, std::function<int()>>(3, fn3));
-		// ready_queue.push_back(pair<int, std::function<void()>>(2, [&](){ min1 = min(arr1, n); } ));
+		// ready_queue.push_back(pair<int, std::function<int()>>(3, fn3));
+		// ready_queue.push_back(pair<int, std::function<void()>>(3, [&](){ max1 = max(arr1, n); } ));
+		ready_queue.push_back(pair<int, std::function<int()>>(3, [&]()->int{ return max(arr1, n); } ));
 	}
 
 	// my_sort(arr2, n);
@@ -353,12 +378,15 @@ int main(int argc, char **argv)
 		special.push_back(p4_1);
 	}
 
-	atomic<bool> done4(false);
-	void_futures.emplace_back(tp.Submit([&] {
-        my_sort(arr2, n);
-        done4 = true;
-    }));
-	pair<int, atomic<bool>&> p4_2(4, done4);
+	dones[1] = false;
+	{
+		lock_guard<mutex> lockGuard(m_vf);
+		void_futures.emplace_back(tp.Submit([&] {
+			my_sort(arr2, n);
+			dones[1] = true;
+		}));
+	}
+	pair<int, atomic<bool>&> p4_2(4, dones[1]);
 		
 	{
 		lock_guard<mutex> lockGuard(m_tt);
@@ -367,6 +395,7 @@ int main(int argc, char **argv)
 
 
 	// int min2 = min(arr2, n);
+	int min2 = -1;
 	// if arr2 is found in special vector
 	auto fn5 =  bind(::min, arr2, n);
 
@@ -380,18 +409,21 @@ int main(int argc, char **argv)
 	{
 		//min to queue
 		lock_guard<mutex> lockGuard(m_wq);
-		wait_queue.push_back(pair<int, std::function<int()>>(5, fn5));
-		// ready_queue.push_back(pair<int, std::function<void()>>(2, [&](){ min1 = min(arr1, n); }));
+		// wait_queue.push_back(pair<int, std::function<int()>>(5, fn5));
+		// wait_queue.push_back(pair<int, std::function<void()>>(5, [&](){ min2 = min(arr2, n); } ));
+		wait_queue.push_back(pair<int, std::function<int()>>(5, [&]()->int{ return min(arr2, n); } ));
 	}
 	else
 	{
 		lock_guard<mutex> lockGuard(m_rq);
-		ready_queue.push_back(pair<int, std::function<int()>>(5, fn5));
-		// ready_queue.push_back(pair<int, std::function<void()>>(2, [&](){ min1 = min(arr1, n); } ));
+		// ready_queue.push_back(pair<int, std::function<int()>>(5, fn5));
+		// ready_queue.push_back(pair<int, std::function<void()>>(5, [&](){ min2 = min(arr2, n); } ));
+		ready_queue.push_back(pair<int, std::function<int()>>(5, [&]()->int{ return min(arr2, n); } ));
 	}
 
 
 	// int max2 = max(arr2, n);
+	int max2 = -1;
 	auto fn6 =  bind(::max, arr2, n);
 
 	{
@@ -404,14 +436,16 @@ int main(int argc, char **argv)
 	{
 		//min to queue
 		lock_guard<mutex> lockGuard(m_wq);
-		wait_queue.push_back(pair<int, std::function<int()>>(6, fn6));
-		// ready_queue.push_back(pair<int, std::function<void()>>(2, [&](){ min1 = min(arr1, n); }));
+		// wait_queue.push_back(pair<int, std::function<int()>>(6, fn6));
+		// wait_queue.push_back(pair<int, std::function<void()>>(6, [&](){ max2 = max(arr2, n); } ));
+		wait_queue.push_back(pair<int, std::function<int()>>(6, [&]()->int{ return max(arr2, n); } ));
 	}
 	else
 	{
 		lock_guard<mutex> lockGuard(m_rq);
-		ready_queue.push_back(pair<int, std::function<int()>>(6, fn6));
-		// ready_queue.push_back(pair<int, std::function<void()>>(2, [&](){ min1 = min(arr1, n); } ));
+		// ready_queue.push_back(pair<int, std::function<int()>>(6, fn6));
+		// ready_queue.push_back(pair<int, std::function<void()>>(6, [&](){ max2 = max(arr2, n); } ));
+		ready_queue.push_back(pair<int, std::function<int()>>(6, [&]()->int{ return max(arr2, n); } ));
 	}
 
 
@@ -508,6 +542,10 @@ int main(int argc, char **argv)
 
 
 
+	cout<<"DELETING M"<<"\n";
+
+	lockGuard1.~lock_guard();
+	lockGuard2.~lock_guard();
 
 
 
@@ -518,25 +556,40 @@ int main(int argc, char **argv)
 
 
 
-
-
-
-
-	for(auto &x:void_futures)
 	{
-		x.wait();
-		x.get();
+		// lock_guard<mutex> lockGuard(m_sf);
+		for(auto &x:void_futures)
+		{
+			// cout << std::boolalpha;
+			// cout << x.valid() << "\n";
+			// if(x.valid())
+			x.wait();
+			//x.get();
+		}
 	}
 	// min and max values (called twice after every sort)
+
+	lock_guard<mutex> lockGuard(m_if);
 	for(auto &x:int_futures)
 	{
-		x.wait();
-		cout << std::boolalpha;
-		cout << x.valid() << "\n";
-		if(x.valid())
-		cout << x.get() << "\n";
+		// cout << x.valid() << "\n";
+		// if(x.valid())
+		// x.wait();
+		try
+		{
+			cout << x.get() << "\n";
+		}
+		catch(...)
+		{
+			cout<<"error\n";
+			x.wait();
+			continue;
+		}
 	}
 	// cout << min1 << "\n\n";
+	// cout << max1 << "\n\n";
+	// cout << min2 << "\n\n";
+	// cout << max2 << "\n\n";
 
 	
 	gettimeofday(&stop, NULL);

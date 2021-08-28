@@ -10,7 +10,9 @@
 	// echo shell_exec("echo here");
 	// echo shell_exec(escapeshellcmd("g++ -pthread testfile.cpp -o thread1 -lboost_thread -lboost_system && echo here"));
 	// echo shell_exec("gcc testfile.c -o test1");
-	$op = shell_exec("g++ -fopenmp testfile.cpp && ./a.out");
+	shell_exec("python3 py_replace_m1.py testfile.cpp");
+	shell_exec("g++ -fopenmp testfile.cpp && ./a.out > print_output_gen_pgm.txt");
+	$op = shell_exec("python3 py_sort_output_order_fn_calls.py");
 	echo $op;
 	// $output = fopen("generated_thread.cpp","w") or die("Unable to open the file!");
 
