@@ -604,7 +604,7 @@ void input_data()
 
 void gen_headers()
 {
-	string temp = R"(#include "thread_pool/thread_pool.hpp"
+	string temp = R"(#include "thread_pool.hpp"
 #include <thread>
 #include <atomic>
 #include <unistd.h>
@@ -640,6 +640,7 @@ void prologue()
 	{
 		cout << "vector<shared_future<" + x + ">> " + x + "_futures;\n";
 	}
+    cout << "vector<shared_future<void>> void_futures_scheduler;\n";
 	
 	cout<<"vector<pair<int, string>> special;\n";
 	cout<<"vector<pair<int, atomic<bool>&>> thread_track;\n";
@@ -679,6 +680,12 @@ mutex m_tt;
 mutex m_tf;
 mutex m_sf;
 mutex m_sp_c;
+
+// to mark the end of thread_track and scheduling_fn threads
+bool done_01 = false;
+bool done_02 = false;
+
+
 class Find_special
 {
 	private:
@@ -731,9 +738,7 @@ void threadtrack()
 {
 	string temp = R"(void thread_track_fn()
 {
-	int flag = true;
-	int sp_done_c = 0;
-	while(true)
+	while(!done_01)
 	{
 		{
 			lock_guard<mutex> lockGuard(m_tt);
@@ -750,13 +755,8 @@ void threadtrack()
 					// cout << "Changing Special" << "\n";
 					special_changed = 1; //make it 1 only when i remove an arg from special
 					// can also remove x from the thread_track vector, that way eliminate iteration through it everytime
-					++sp_done_c;
 				}
 			}
-		}
-		if(sp_done_c == sp_c) 
-		{
-			break;
 		}
 	}
 })";
@@ -768,22 +768,18 @@ void schedulingfn()
 {
 	string temp = R"(void scheduling_fn()
 {
-	bool flag = true;
-	int wr_done_c = 0;
 	//special got updated
-	while(true)
+	while(!done_02)
 	{
 		// cout << "scheduling_fn\n";
 		{
-			while(special_changed)
+			if(special_changed)
 			{
 				// if wait queue contains some functions, get only those functions which are dependent on
 				// remove_fn which has just got updated
 				// how to check for these functions? refer the input data
 
 				//push eligible elements from wait queue to ready queue
-
-
 				{
 					lock_guard<mutex> lockGuard(m_wq);
 					auto x = wait_queue.begin();
@@ -830,18 +826,10 @@ void schedulingfn()
 				{
 					int_futures.emplace_back(tp.Submit(x->second));
 					x = ready_queue.erase(x);
-					++wr_done_c;
 					//file output code
 					// int_futures.emplace_back(tp.Submit(min, cref(arr1), cref(n)));
 				}
 			}
-		}
-		// cout << "Ready Queue: " << ready_queue.size() << "\n";
-		// cout << "Special: " << special.size() << "\n";
-		// cout << "Wait Queue: " << wait_queue.size() << "\n";
-		if(wr_done_c == wr_q) 
-		{
-			break;
 		}
 	}
 })";
@@ -881,8 +869,8 @@ void mainfn()
 
 	string temp = R"(
 
-	void_futures.emplace_back(tp.Submit(thread_track_fn));
-	void_futures.emplace_back(tp.Submit(scheduling_fn));
+	void_futures_scheduler.emplace_back(tp.Submit(thread_track_fn));
+	void_futures_scheduler.emplace_back(tp.Submit(scheduling_fn));
 
 	using namespace std::chrono_literals;
 	vector<pair<int,string>>::iterator iter1, iter2;
@@ -981,12 +969,23 @@ void mainfn()
 		else
 		{
 			string temp = R"({
-		//cout << x.get() << "\n";
         x.wait();
 	})";
 		cout << temp << "\n\n";
 		}
 	}
+
+    string futures_scheduler = R"(
+    done_01 = true;
+    done_02 = true;
+    for(auto &x:void_futures_scheduler)
+    {
+        x.wait();
+    }
+    )";
+
+    cout << futures_scheduler << endl;
+
 	string finish = R"(	// gettimeofday(&stop, NULL);
     // printf("%lu\n", ((stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec)/1000);
     free(arr1);
@@ -999,7 +998,8 @@ void mainfn()
     // {
     //     cout<<main_ip[i]<<"\n";
     // }
-    cout<<main_ip[main_ip.size()-2]<<"\n";
+    // cout<<main_ip[main_ip.size()-2]<<"\n";
+    cout << "}\n";
 }
 
 int main()

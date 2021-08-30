@@ -10,40 +10,6 @@ var avoid_inbuilt_fn = {"malloc":0, "free":0, "calloc":0, "realloc":0, "printf":
 select function.call end
 apply
     
-//    println();
-//    println($function.signature);
-//    println($varref.code);
-//    println($varref.vardecl.isGlobal);
-//    a[$varref.code] = [];
-//    a[$varref.code].push($function.name);
-//    println();
-//    println(a[$varref.code]);
-//    println();
-
-    //println($function.params);
-    
-//    var p = $function.params;
-//    var n = p.length;
-//    
-//    println($function.name);
-//    
-//    for(var i = 0; i < n; ++i)
-//    {
-//        println(p[i].name);
-//        println(p[i].type.code);
-//    }
-//    
-//    println();
-
-//    if($call.returnType.code!= 'void')
-//    {
-//        var temp = [];
-//        temp.push($call.name);
-//        temp.push($call.returnType.code);
-//        temp.push($call.line);
-//        fn_calls.push(temp);
-//    }
-
         if(!($call.name in avoid_inbuilt_fn))
         {
             var temp = [];
@@ -53,122 +19,29 @@ apply
             fn_calls.push(temp);
         }
     
-
-//    println($call.returnType.code);
-//    println($call.line);
-
-    
-
 end
-
-//println(fn_calls[0][0]);
-
-//for(var i = 0; i<fn_calls.length; ++i)
-//{
-//    println(fn_calls[i][0] + " " + fn_calls[i][1] + " " + fn_calls[i][2]);
-//}
 
 select function{'main'} end
 apply
     
-//    var body_stmt = $function.children;
-//    println(body_stmt[0].code);
-//    
-//    var main_body = body_stmt[0].code;
-//    var line = main_body.split("\n");
-//    //println(line[2]);
-//    println(line[2].split("="));
-//    
-//    println($function.line);
-//    println($function.endLine);
-
     var start_line_body = $function.line;
-//    var end_line = $function.endLine;
-    
-    var body_stmt = $function.children;
-//    println(body_stmt);
-//    println(body_stmt[0].code);
-//    println(body_stmt.length);
-
-    var lines;
-    if(body_stmt.length==1)
-    {
-        lines = body_stmt[0].children;
-    }
-    else
-    {
-        lines = body_stmt[body_stmt.length - 1].children;
-    }
-    
-    //println(lines);
-    
-    //println(body_stmt[2]);
-
-//    for(var i_body = 0; i_body < body_stmt.length; i_body++)
-//    {
-//        
-//        lines = body_stmt[i_body].children;
-//    }
-
-
-    //var main_body = body_stmt[0].code;
-    //println(lines);
-    //println(lines[3].code);
+    var end_line = $function.endLine;
     
     println("Start of Input3.txt");
     
     for(var fn_i = 0; fn_i < fn_calls.length; ++fn_i)
     {
-        for(var i = 0; i<lines.length; ++i)
+        if(fn_calls[fn_i][2] >= start_line_body && fn_calls[fn_i][2] <= end_line)
         {
-//            println(lines[i].line);
-//            println(lines[i].code);
-
-            if(fn_calls[fn_i][2] == lines[i].line)
-            {
-                
-//                println("testing inside fn_calls");
-//                var lhs = lines[i].code.split("=")[0];
-//                var type_var = lhs.split(" ");
-//                //println(type_var.length);
-//                
-//                if(type_var.length == 3)
-//                {
-//                    var new_line = fn_calls[fn_i][2] - start_line_body;
-//                    println(fn_calls[fn_i][0] + " " + type_var[0] + " " + type_var[1] + " " + new_line );
-//                    
-//                }
-//                
-//                else if(type_var.length == 2)
-//                {
-//                    var new_line = fn_calls[fn_i][2] - start_line_body;
-//                    println(fn_calls[fn_i][0] + " " + fn_calls[fn_i][1] + " " + type_var[0]+ " " + new_line);
-//                }
-
-                var new_line = fn_calls[fn_i][2] - start_line_body;
-                println(fn_calls[fn_i][0] + " " + new_line);
-                
-                
-            }
+            var new_line = fn_calls[fn_i][2] - start_line_body;
+            println(fn_calls[fn_i][0] + " " + new_line);
         }
+        
     }
     
-    
-//    var lines = main_body.split("\n");
-//    var start_line_body = $function.line;
-//    var end_line = $function.endLine;
-
     println("End of Input3.txt");
     
     
 end
-
-//println(lines);
-//
-//for(var i = 0; i < fn_calls.length; ++i)
-//{
-//    var line_no = fn_calls[i][2] - start_line_body;
-//    println(line_no);
-//}
 
 end
