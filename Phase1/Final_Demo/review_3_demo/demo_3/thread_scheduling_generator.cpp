@@ -954,7 +954,7 @@ void mainfn()
 	}
 
     //printing client code after last fn call
-    for(int i = line_no_index; i < main_ip.size()-2; ++i)
+    for(int i = line_no_index; i < main_ip.size()-1; ++i)
     {
         cout << main_ip[i] << '\n';
     }
