@@ -562,7 +562,7 @@ using namespace thread_pool;
 
 void prologue()
 {
-	cout<<"int num_threads = thread::hardware_concurrency();\n";
+	cout<<"int num_threads = 12;\n";
 	cout<<"ThreadPool tp(num_threads);\n";
 	cout << "int sp_c = " << to_string(sp_c) << ";\n";
 	cout << "int wr_q = " << to_string(wr_q) << ";\n";
@@ -879,7 +879,7 @@ void mainfn()
 		cout << "\tfor(auto &x:" + x + "_futures)";
 		if(x.compare("void") == 0)
 		{
-			cout << "\n\t{\n\t\tx.wait();\n\t\tx.get();\n\t}\n";
+			cout << "\n\t{\n\t\tx.wait();\n\t\t//x.get();\n\t}\n";
 		}
 		else
 		{
@@ -892,7 +892,8 @@ void mainfn()
 	}
 	string finish = R"(	gettimeofday(&stop, NULL);
     printf("%lu\n", ((stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec)/1000);
-
+    free(arr1);
+    free(arr2);
 	return 0;
 })";
 	cout << finish << "\n\n";

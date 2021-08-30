@@ -1,0 +1,19 @@
+7: Index : 49998
+6: Count of 2147470276 : 1
+5: Ceil of 2147470276 : 2147470276
+5: Ceil of 2147470276 : 2147470276
+6: Count of 2147470276 : 1
+7: Index : 49998
+5: Ceil of 2147470276 : 2147470276
+6: Count of 2147470276 : 1
+7: Index : 49998
+3: Index : -1
+2: Count of 2147483484 : 0
+3: Index : -1
+1: Ceil of 2147483484 : -1
+1: Ceil of 2147483484 : -1
+2: Count of 2147483484 : 0
+3: Index : -1
+1: Ceil of 2147483484 : -1
+2: Count of 2147483484 : 0
+Time Taken : 26 ms

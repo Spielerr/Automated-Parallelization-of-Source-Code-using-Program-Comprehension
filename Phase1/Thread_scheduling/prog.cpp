@@ -54,8 +54,8 @@ void quickSort(int arr[], int low, int high)
 
 void my_sort(int* arr, int n)
 {
-	// sort(arr, arr + n);
-	quickSort(arr, 0, n-1);
+	sort(arr, arr + n);
+	// quickSort(arr, 0, n-1);
 }
 
 int my_min(int* arr, int n)

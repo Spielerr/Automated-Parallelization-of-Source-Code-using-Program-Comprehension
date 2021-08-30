@@ -1,0 +1,43 @@
+
+{
+
+	struct timeval stop, start;
+	gettimeofday(&start, NULL);
+
+	int input_n = 50000;
+	int no_fn_calls = 24;
+	int array_size1 = input_n;
+	int n = array_size1;
+
+	int* arr_fn_calls_nos = (int*) malloc( no_fn_calls * sizeof(int) );
+
+	for(int i = 0; i < no_fn_calls; ++i)
+	{
+		arr_fn_calls_nos[i] = i;
+	}
+
+	int *arr1 = (int*)malloc( sizeof(int) * n );
+	int *arr2 = (int*)malloc( sizeof(int) * n );
+
+	srand(8);
+
+	for(int i = 0; i < n; ++i)
+	{    
+		arr1[i] = rand();
+		arr2[i] = rand();
+	}
+
+	sort(arr1, n, arr_fn_calls_nos[0]);
+	ceilSearch(arr1, 0, n, 2147483484, arr_fn_calls_nos[1]);
+	countOccurrences(arr1, n, 2147483484, arr_fn_calls_nos[2]);
+	binarySearch(arr1, 0, n, 2147483484, arr_fn_calls_nos[3]);
+
+	int f1 = 10;
+
+	sort(arr2, n, arr_fn_calls_nos[4]);
+	ceilSearch(arr2, 0, n, 2147470276, arr_fn_calls_nos[5]);
+	countOccurrences(arr2, n, 2147470276, arr_fn_calls_nos[6]);
+	binarySearch(arr2, 0, n, 2147470276, arr_fn_calls_nos[7]);
+
+}
+

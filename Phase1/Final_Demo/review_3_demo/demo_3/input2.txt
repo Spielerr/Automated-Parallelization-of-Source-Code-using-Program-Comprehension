@@ -1,0 +1,8 @@
+sort,void;int *,arr1,int *,arr;int,n,int const,arr_n;int,arr_fn_calls_nos[0],int,fn_call_no;
+ceilSearch,int;int *,arr1,int[],arr;int,0,int,low;int,n,int,high;int,2147483484,int,x;int,arr_fn_calls_nos[1],int,fn_call_no;
+countOccurrences,int;int *,arr1,int[],arr;int,n,int,n;int,2147483484,int,x;int,arr_fn_calls_nos[2],int,fn_call_no;
+binarySearch,int;int *,arr1,int[],arr;int,0,int,l;int,n,int,r;int,2147483484,int,x;int,arr_fn_calls_nos[3],int,fn_call_no;
+sort,void;int *,arr2,int *,arr;int,n,int const,arr_n;int,arr_fn_calls_nos[4],int,fn_call_no;
+ceilSearch,int;int *,arr2,int[],arr;int,0,int,low;int,n,int,high;int,2147470276,int,x;int,arr_fn_calls_nos[5],int,fn_call_no;
+countOccurrences,int;int *,arr2,int[],arr;int,n,int,n;int,2147470276,int,x;int,arr_fn_calls_nos[6],int,fn_call_no;
+binarySearch,int;int *,arr2,int[],arr;int,0,int,l;int,n,int,r;int,2147470276,int,x;int,arr_fn_calls_nos[7],int,fn_call_no;

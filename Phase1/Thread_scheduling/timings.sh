@@ -16,7 +16,7 @@ n_values=(1000 10000 100000 500000 750000 1000000)
 num=6
 i=0
 j=0
-iter=10
+iter=20
 n_fn_call=$1
 
 while [ $i -lt $num ]
@@ -33,7 +33,7 @@ do
         ((j++))
     done
     # avg=`expr $sum/10`
-    avg=$(($sum/10))
+    avg=$(($sum/$iter))
     echo "$avg"
     # i=$[$i+1]
     ((i++))
