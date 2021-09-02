@@ -52,11 +52,12 @@ end
 
 
 var fn_call_ref_line_no = {};
+var fn_ret_type = {};
 
 select function.call end
 apply
 
-    if(!($call.name in avoid_inbuilt_fn))
+    if(!($call.name in avoid_inbuilt_fn) && $call.line >= main_first_line && $call.line <= main_last_line)
     {
     
         var arg_l = $call.args;
@@ -81,6 +82,49 @@ apply
             fn_call_ref_line_no[$call.name] = [];
         }
         fn_call_ref_line_no[$call.name].push(-1);
+        
+        
+        if(!($call.returnType.code == 'void'))
+        {
+            if(!($call.name in fn_ret_type))
+            {
+                fn_ret_type[$call.name] = [];
+            }
+            
+            var temp_ret_line = [];
+            //return type, line number, variable name, declaration statement (yes or no)
+            temp_ret_line.push($call.returnType.code);
+            temp_ret_line.push($call.line);
+            
+            //ex: int res1 = add(1,2)
+            if($call.astParent.astName == 'VarDecl')
+            {
+                var fn_call_stmt = $call.astParent.astParent.code;
+                var variable_name = ((fn_call_stmt.split('=')[0]).split(' ')[1]).trim();
+                temp_ret_line.push(variable_name);
+                temp_ret_line.push(1);
+                
+    //            println(variable_name);
+    //            println($call.astParent.astParent.code.split('='));
+            }
+            
+            //ex: res1 = add(1,2)
+            else if($call.astParent.astName == 'BinaryOperator')
+            {
+                println('hello world, everything');
+                var fn_call_stmt = $call.astParent.astParent.code;
+                var variable_name = (fn_call_stmt.split('=')[0]).trim();
+                temp_ret_line.push(variable_name);
+                temp_ret_line.push(0);
+                println(variable_name);
+                println($call.line);
+    //            println($call.astParent.astParent.code);
+            }
+            
+            fn_ret_type[$call.name].push(temp_ret_line);
+        }
+        
+        
     
         
         var temp_l = [];
@@ -245,6 +289,29 @@ apply
 //                            println($varref.line);
 //                            println($varref.useExpr.use);
                             
+                        }
+                        
+                        if(fn_name in fn_ret_type && $function.name == 'main')
+                        {
+            
+                            var ret_var_name = fn_ret_type[fn_name][j][2];
+                            var curr_line = fn_ret_type[fn_name][j][1];
+//                            println(ret_var_name + ', ' + curr_line + ',' + $varref.name + ', ' + $varref.line );
+                            if($varref.name == ret_var_name && $varref.line > curr_line)
+                            {
+                                println("test1");
+                                if(fn_call_ref_line_no[fn_name][j] == -1)
+                                {
+                                    println("test2");
+                                    fn_call_ref_line_no[fn_name][j] = $varref.line; 
+                                }
+                                
+                                else if($varref.line < fn_call_ref_line_no[fn_name][j])
+                                {
+                                    println("test3");
+                                    fn_call_ref_line_no[fn_name][j] = $varref.line; 
+                                }
+                            }
                         }
                         
                     }
