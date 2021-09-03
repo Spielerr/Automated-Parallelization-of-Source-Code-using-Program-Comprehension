@@ -614,6 +614,7 @@ void gen_headers()
 #include <deque>
 #include <functional>
 #include <mutex>
+#include <variant>
 using namespace std;
 using namespace thread_pool;
 	)";
@@ -636,10 +637,19 @@ void prologue()
 	cout << "int sp_c = " << to_string(sp_c) << ";\n";
 	cout << "int wr_q = " << to_string(wr_q) << ";\n";
 
-	for(auto x:return_types)
+    cout << "vector<variant<";
+	for(int i = 0; i < return_types.size(); ++i)
 	{
-		cout << "vector<shared_future<" + x + ">> " + x + "_futures;\n";
+        if(i != return_types.size() - 1)
+        {
+            cout << "shared_future<" << return_types[i] << ">, ";
+        }
+        else
+        {
+            cout << "shared_future<" << return_types[i] << ">";
+        }
 	}
+    cout << ">> futures;\n";
     cout << "vector<shared_future<void>> void_futures_scheduler;\n";
 	
 	cout<<"vector<pair<int, string>> special;\n";
@@ -664,11 +674,22 @@ void prologue()
 			cout << "}};\n";
 	}
 
-	// change these according to the return values of those functions not changing their arguments (like min, max)
-	// we could have different function return types
-	// but should have only one ready queue and one wait queue
-	cout<<"deque<pair<int, std::function<int()>>> ready_queue;\n";
-	cout<<"deque<pair<int, std::function<int()>>> wait_queue;\n";
+    string variant_text = "variant<";
+    for(int i = 0; i < return_types.size(); ++i)
+	{
+        if(i != return_types.size() - 1)
+        {
+            variant_text += "function<" + return_types[i] + "()>, ";
+        }
+        else
+        {
+            variant_text += "function<" + return_types[i] + "()>";
+        }
+	}
+    variant_text += ">";
+
+    cout << "deque<pair<int, " << variant_text << ">> ready_queue;\n";
+    cout << "deque<pair<int, " << variant_text << ">> wait_queue;";
 
 	cout<<"atomic<int> special_changed(0);\n";
 	cout<<"string remove_fn;\n\n";
@@ -824,7 +845,10 @@ void schedulingfn()
 				auto x = ready_queue.begin();
 				while(x != ready_queue.end())
 				{
-					int_futures.emplace_back(tp.Submit(x->second));
+					// int_futures.emplace_back(tp.Submit(x->second));
+                    visit([](auto n)
+						  { futures.emplace_back(tp.Submit(n)); },
+						  x->second);
 					x = ready_queue.erase(x);
 					//file output code
 					// int_futures.emplace_back(tp.Submit(min, cref(arr1), cref(n)));
@@ -934,7 +958,7 @@ void mainfn()
 			}
 			cout << "\t}\n";
 			cout << "\tatomic<bool> done" + to_string(k+1) + "(false);\n";
-			cout << "\tvoid_futures.emplace_back(tp.Submit([&] {\n\t\t " + get<0>(fn_call_info[k]) + "(";
+			cout << "\tfutures.emplace_back(tp.Submit([&] {\n\t\t " + get<0>(fn_call_info[k]) + "(";
 			for(int i = 0; i < get<2>(fn_call_info[k]).size(); i++)
 			{
 				if(i == (get<2>(fn_call_info[k]).size() - 1))
@@ -959,21 +983,14 @@ void mainfn()
         cout << main_ip[i] << '\n';
     }
 
-	for(auto x:return_types)
+	string wait_on_futures = R"(
+    for (auto &x : futures)
 	{
-		cout << "\tfor(auto &x:" + x + "_futures)";
-		if(x.compare("void") == 0)
-		{
-			cout << "\n\t{\n\t\tx.wait();\n\t\t//x.get();\n\t}\n";
-		}
-		else
-		{
-			string temp = R"({
-        x.wait();
-	})";
-		cout << temp << "\n\n";
-		}
+		visit([](auto n) { n.wait();}, x);
 	}
+    )";
+
+    cout << wait_on_futures << endl;
 
     string futures_scheduler = R"(
     done_01 = true;
