@@ -35,7 +35,8 @@ int wr_q;
 string is for the fn name
 int is a flag variable to signify the type of fn call
 	0 for those fns which change their argument (like my_sort)
-	1 for the others (like min, max)
+	1 for the others (like min, max) - which don't change their arguments
+
 vector<string> is to store all the arguments(and not parameters) of the fn calls
 the second vector<string> stores the arguments which are getting changed from those functions changing their arguments
 if fn doesnt change anything (for cases of 1) just store an empty vector if possible, or just store 
@@ -58,6 +59,11 @@ int last_line_no;
 //stores line numbers (relative to main) of all fn calls
 //DD6
 vector<int> fn_line_nos;
+
+// stores the fn name, the return value variable name, and its type, fn call line no, next usage line no
+// if no return value, then store empty string
+// maintain order of fn calls as it is, and every fn call should be present
+vector<tuple<string, string, string, int, int>> return_vars;
 
 class my_find_special
 {
@@ -917,7 +923,7 @@ void mainfn()
         }
         line_no_index = fn_line_nos[k] + 1;
 
-		// for min, max n stuff
+		// for min, max n stuff (functions not changing any of their arguments)
 		if(get<1>(fn_call_info[k]))
 		{
 			cout << "\tauto fn" + to_string(k+1) + " = bind(::" + get<0>(fn_call_info[k]) + ", ";
@@ -943,7 +949,7 @@ void mainfn()
 			cout << to_string(k+1);
 			cout << ", fn" + to_string(k+1) + "));\n\t}\n";	
 		}
-		// for my_sort n stuff
+		// for my_sort n stuff (fns changing one or more of their arguments)
 		else
 		{
             // cout << "********************" << get<3>(fn_call_info[k]).size() << "\n";
