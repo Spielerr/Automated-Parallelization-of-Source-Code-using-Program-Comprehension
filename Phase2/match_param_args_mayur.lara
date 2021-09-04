@@ -1,0 +1,409 @@
+aspectdef test
+output stats end
+
+stats = new LaraObject();
+
+var fn_args = {};
+var fn_types = {};
+var fn_calls_line_no = {};
+
+var avoid_inbuilt_fn = {"malloc":0, "free":0, "calloc":0, "realloc":0, "printf":0, "atoi":0, "srand":0,"rand":0,"gettimeofday":0};
+
+println("Start of Lara Output");
+println("input2.txt:");
+
+
+fn_param = {};
+
+select function{'main'} end
+apply
+    var main_first_line = $function.line;
+    var main_last_line = $function.endLine;
+end
+
+
+select function.varref end
+apply
+
+    if(!($function.name in avoid_inbuilt_fn))
+    {
+
+        if(!($function.name in fn_param))
+        {
+            fn_param[$function.name] = [];
+        }
+    
+        var all_par = $function.params;
+        var no_param = all_par.length;
+    
+        fn_types[$function.name] = [];
+    
+        for(var i = 0; i < no_param; ++i)
+        {
+            //println(p[i].name);
+            fn_param[$function.name].push(all_par[i].name);
+            //fn_types[$function.name]['param'][all_par[i].name] = all_par[i].type.code;
+            fn_types[$function.name].push(all_par[i].type.code);
+        }
+    }
+    
+
+end
+
+
+var fn_call_ref_line_no = {};
+var fn_ret_type = {};
+
+select function.call end
+apply
+
+    if(!($call.name in avoid_inbuilt_fn) && $call.line >= main_first_line && $call.line <= main_last_line)
+    {
+    
+        var arg_l = $call.args;
+        
+        
+        print($call.name + "," + $call.returnType.code + ";");
+        //println(arg_l);
+    
+        if(!($call.name in fn_args))
+        {
+            fn_args[$call.name] = [];
+        }
+        
+        if(!($call.name in fn_calls_line_no))
+        {
+            fn_calls_line_no[$call.name] = [];
+        }
+        fn_calls_line_no[$call.name].push($call.line - main_first_line);
+        
+        if(!($call.name in fn_call_ref_line_no))
+        {
+            fn_call_ref_line_no[$call.name] = [];
+        }
+        fn_call_ref_line_no[$call.name].push(-1);
+        
+        if(!($call.returnType.code == 'void'))
+        {
+            
+            if(!($call.name in fn_ret_type))
+            {
+                fn_ret_type[$call.name] = [];
+            }
+            
+            var temp_ret_line = [];
+            //return type, line number, variable name, declaration statement (yes or no)
+            temp_ret_line.push($call.returnType.code);
+            temp_ret_line.push($call.line - main_first_line);
+            temp_ret_line.push(0);
+            
+            //ex: int res1 = add(1,2)
+            if($call.astParent.astName == 'VarDecl')
+            {
+                
+                // println();
+                // println();
+                // println();
+                // println("here mayur 1");
+                // println(temp_ret_line[2] + " " + $call.name);
+                // println();
+                // println();
+
+                temp_ret_line[2] = 1;
+                var fn_call_stmt = $call.astParent.astParent.code;
+                var variable_name = ((fn_call_stmt.split('=')[0]).split(' ')[1]).trim();
+                var variable_type = ((fn_call_stmt.split('=')[0]).split(' ')[0]).trim();
+                temp_ret_line.push(variable_name);
+                temp_ret_line.push(1);
+                temp_ret_line.push(variable_type);
+                
+    //            println(variable_name);
+    //            println($call.astParent.astParent.code.split('='));
+            }
+            
+            //ex: res1 = add(1,2)
+            else if($call.astParent.astName == 'BinaryOperator')
+            {
+                temp_ret_line[2] = 1;
+                println('hello world, everything');
+                var fn_call_stmt = $call.astParent.astParent.code;
+                var variable_name = (fn_call_stmt.split('=')[0]).trim();
+                var variable_type = ((fn_call_stmt.split('=')[0]).split(' ')[0]).trim();
+                temp_ret_line.push(variable_name);
+                temp_ret_line.push(0);
+                temp_ret_line.push(variable_type);
+                println(variable_name);
+                println($call.line - main_first_line);
+    //            println($call.astParent.astParent.code);
+            }
+            
+            fn_ret_type[$call.name].push(temp_ret_line);
+        }
+        
+        
+    
+        
+        var temp_l = [];
+        
+        
+        for(i in arg_l)
+        {
+            //fn_args[$call.name].push(arg_l[i].code);
+            temp_l.push(arg_l[i].code);
+    
+            print(arg_l[i].type.code + "," + arg_l[i].code);
+            print("," + fn_types[$call.name][i] + "," + fn_param[$call.name][i] + ";");
+            
+            //temp_types[arg_l[i].code] = arg_l[i].type.code
+        }
+    
+        fn_args[$call.name].push(temp_l);
+        
+    
+        println();
+    
+    }
+    
+    
+end
+
+
+
+//    if($varref.vardecl.isParam)
+//    {
+//        var param_already_present = 0;
+//
+//        for(var i = 0; i < fn_param[$function.name].length; ++i)
+//        {
+//            if($varref.code == fn_param[$function.name][i])
+//            {
+//                param_already_present = 1;
+//                break;
+//            }
+//        }
+//
+//
+//        if(!(param_already_present))
+//        {
+//            fn_param[$function.name].push($varref.code);
+//        }
+//        
+//    }
+
+//for(fn1 in fn_param)
+//{
+//    println(fn1);
+//    for(j in fn_param[fn1])
+//    {
+//        println(fn_param[fn1][j]);
+//    }
+//}
+
+//for(fn_name in fn_args)
+//{
+//    println(fn_name);
+//
+//    var no_of_args = fn_args[fn_name].length;
+//
+//    for(var i = 0; i<no_of_args; ++i)
+//    {
+//        println(fn_args[fn_name][i] + ":" + fn_param[fn_name][i]);
+//    }
+//    
+//    println();
+//}
+
+
+var changing_params = {};
+select function.varref end
+apply
+
+    if(!($function.name in avoid_inbuilt_fn))
+    {
+        
+
+        if(!($function.name in changing_params))
+        {
+            
+            changing_params[$function.name] = [];
+        }
+        
+        if($varref.useExpr.use == 'read')
+        {
+            //changing_params[$function.name].push($varref.code);
+        }
+    
+        if($varref.useExpr.use == 'write')
+        
+        {  
+            //println($function.name);
+            //println($varref.code + " " + $varref.vardecl.isParam);
+            //println(changing_params[$function.name].includes($varref.code));
+            if($varref.vardecl.isParam && !(changing_params[$function.name].includes($varref.code)) )
+                changing_params[$function.name].push($varref.code);
+        }
+    
+    }
+
+end
+
+
+
+
+
+
+//select function{'main'} end
+//apply
+
+println("End of input2.txt");
+println("input.txt:");
+
+select function.varref end
+apply
+    for(fn_name in changing_params)
+    {
+        //println(fn_name + " " + changing_params[fn_name].length);
+        var no_of_args = changing_params[fn_name].length;
+        
+        if(fn_name in fn_ret_type && $function.name == 'main')
+        {
+            for(var k = 0; k<fn_ret_type[fn_name].length; ++k)
+            {   
+                if(fn_ret_type[fn_name][k][2])
+                {
+                    var ret_var_name = fn_ret_type[fn_name][k][3];
+                    var ret_var_type = fn_ret_type[fn_name][k][5];
+                    var curr_line = fn_ret_type[fn_name][k][1];
+                    if($varref.name == ret_var_name && $varref.line > curr_line)
+                    {
+                        println("2," + fn_name + "," + ret_var_name + ','  + ret_var_type + ',' + curr_line + ',' + ($varref.line - main_first_line));
+                        fn_ret_type[fn_name][k][2] = 0;
+                    }
+                }
+            }
+        }
+
+        if(no_of_args)
+        {   
+            //println(fn_name);
+            for(var i = 0; i<no_of_args; ++i)
+            {
+                //println(changing_params[fn_name][i] + ":" + fn_args[fn_name][fn_param[fn_name].indexOf(changing_params[fn_name][i])]);
+                //println(fn_name + "," + fn_args[fn_name][fn_param[fn_name].indexOf(changing_params[fn_name][i])]);
+                //$body.insert after "" + fn_name + "," + fn_args[fn_name][fn_param[fn_name].indexOf(changing_params[fn_name][i])];
+                
+                if(fn_name in fn_args)
+                {
+                    ind = fn_param[fn_name].indexOf(changing_params[fn_name][i]);
+                    no_of_calls_fn = fn_args[fn_name].length;
+        
+                    for(var j = 0; j < no_of_calls_fn; ++j)
+                    {
+//                        println(fn_name + "," + fn_args[fn_name][j][ind] + "," + fn_calls_line_no[fn_name][j]);
+                        
+                        var arg_name = fn_args[fn_name][j][ind];
+                        
+                        if($function.name == 'main' && arg_name == $varref.name)
+                        {
+                            var curr_line = main_first_line + fn_calls_line_no[fn_name][j];
+                            
+                            if($varref.line > curr_line)
+                            {
+                                if(fn_call_ref_line_no[fn_name][j] == -1)
+                                {
+                                    fn_call_ref_line_no[fn_name][j] = $varref.line; 
+                                }
+                                
+                                else if($varref.line < fn_call_ref_line_no[fn_name][j])
+                                {
+                                    fn_call_ref_line_no[fn_name][j] = $varref.line; 
+                                }
+                            }
+                            
+//                            println($varref.name);
+//                            println($varref.line);
+//                            println($varref.useExpr.use);
+                            
+                        }
+
+
+                        if(fn_name in fn_ret_type && $function.name == 'main')
+                        {
+            
+                            var ret_var_name = fn_ret_type[fn_name][j][3];
+                            var curr_line = fn_ret_type[fn_name][j][1];
+//                            println(ret_var_name + ', ' + curr_line + ',' + $varref.name + ', ' + $varref.line );
+                            if($varref.name == ret_var_name && $varref.line > curr_line)
+                            {
+                                // println("test1");
+                                if(fn_call_ref_line_no[fn_name][j] == -1)
+                                {
+                                    // println("test2");
+                                    fn_call_ref_line_no[fn_name][j] = $varref.line; 
+                                }
+                                
+                                else if($varref.line < fn_call_ref_line_no[fn_name][j])
+                                {
+                                    // println("test3");
+                                    fn_call_ref_line_no[fn_name][j] = $varref.line; 
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+end
+
+
+for(fn_name in changing_params)
+    {
+        //println(fn_name + " " + changing_params[fn_name].length);
+        var no_of_args = changing_params[fn_name].length;
+        if(no_of_args)
+        {   
+            //println(fn_name);
+            for(var i = 0; i<no_of_args; ++i)
+            {
+                //println(changing_params[fn_name][i] + ":" + fn_args[fn_name][fn_param[fn_name].indexOf(changing_params[fn_name][i])]);
+                //println(fn_name + "," + fn_args[fn_name][fn_param[fn_name].indexOf(changing_params[fn_name][i])]);
+                //$body.insert after "" + fn_name + "," + fn_args[fn_name][fn_param[fn_name].indexOf(changing_params[fn_name][i])];
+                
+                if(fn_name in fn_args)
+                {
+                    ind = fn_param[fn_name].indexOf(changing_params[fn_name][i]);
+                    no_of_calls_fn = fn_args[fn_name].length;
+        
+                    for(var j = 0; j < no_of_calls_fn; ++j)
+                    {
+                        if(fn_call_ref_line_no[fn_name][j] == -1)
+                        {
+                           println("1," + fn_name + "," + fn_args[fn_name][j][ind] + "," + fn_calls_line_no[fn_name][j] + "," + fn_call_ref_line_no[fn_name][j]); 
+                        }
+                        
+                        else
+                        {
+                            var first_rw_ref_line_no = fn_call_ref_line_no[fn_name][j] - main_first_line;
+                            println("1," + fn_name + "," + fn_args[fn_name][j][ind] + "," + fn_calls_line_no[fn_name][j] + "," + first_rw_ref_line_no);
+                        
+                        }
+                        
+                        
+                    }
+                }
+    
+            }
+        }
+        
+    }
+
+
+println("End of input.txt");
+println("End of Lara Output");
+
+
+end
+
+
+
