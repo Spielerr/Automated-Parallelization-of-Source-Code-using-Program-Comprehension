@@ -12,6 +12,9 @@
 # else:
 #     print("test")
 
+from getpass import getpass
+from mysql.connector import connect, Error
+
 input_file = open("input5.txt", "r")
 text = input_file.readlines()
 input_file.close()
@@ -70,20 +73,47 @@ int add(int a, int b)
 
 prev = 0
 n = len(pgm_inp)
-for func_name in fn_dict:
-    start_l = fn_dict[func_name][0]
-    end_l = fn_dict[func_name][1]
 
-    pgm_out = pgm_out + "".join(pgm_inp[prev:start_l-1])
-    prev = end_l
+try:
+    with connect(
+        host = "localhost",
+        user = "spielerr",
+        password = getpass("Enter password: "),
+        database = "parallel_mapping",
+    ) as connection:
+        # print(connection)
+        with connection.cursor() as cursor:
+            for func_name in fn_dict:
+                start_l = fn_dict[func_name][0]
+                end_l = fn_dict[func_name][1]
 
-    mapped_fn_name = fn_mapping_dict[func_name]
+                pgm_out = pgm_out + "".join(pgm_inp[prev:start_l-1])
+                prev = end_l
 
-    if mapped_fn_name == "test_new":
-        pgm_out = pgm_out + test_new
+                mapped_fn_name = fn_mapping_dict[func_name]
+                
+                # execute select statement based on key in present iteration
+                select_fn_name = "SELECT parallel_code FROM mapping WHERE fn_name=\"" + mapped_fn_name + "\";"
+                cursor.execute(select_fn_name)
+                result = cursor.fetchall()
+                
+                # if key found in db
+                # will have to have a newline at the end of the parallel code
+                if(len(result)):
+                    print(mapped_fn_name, " key found")
+                    pgm_out = pgm_out + result[0][0]
+                else:
+                    print(mapped_fn_name, " key not found")
+                    pgm_out = pgm_out + "".join(pgm_inp[start_l-1:end_l])
+                    
+                # if mapped_fn_name == "test_new":
+                #     pgm_out = pgm_out + test_new
+                    
 
-    elif mapped_fn_name == "add_new":
-        pgm_out = pgm_out + add_new
+                # elif mapped_fn_name == "add_new":
+                #     pgm_out = pgm_out + add_new
+except Error as e:
+    print(e)
 
 pgm_out = pgm_out + "".join(pgm_inp[prev:n])
 

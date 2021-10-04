@@ -10,11 +10,18 @@ int test(int a)
 
 int abc = 2;
 
+void max(int arr[], int n)
+{
+    int max = 100;
+}
 int add(int a, int b)
 {
     // test(1);
     return a + b;
-    
+}
+void sort(int arr[], int n)
+{
+    int b = 10;
 }
 
 

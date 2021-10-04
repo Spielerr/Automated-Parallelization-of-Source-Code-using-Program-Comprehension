@@ -1,2 +1,4 @@
 test test_new
 add add_new
+sort parallel_sort
+max parallel_max

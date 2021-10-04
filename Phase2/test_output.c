@@ -3,19 +3,20 @@
 #include <sys/time.h>
 #include <stdlib.h>
 
-
 int test(int a)
 {
-    return a + 4;
+    return a + 2;
 }
 
 int abc = 2;
 
-
+parallel code for max
 int add(int a, int b)
 {
-    return a + b + 4;
+    // test(1);
+    return a + b;
 }
+parallel code for sort
 
 
 
