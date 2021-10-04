@@ -77,8 +77,8 @@ n = len(pgm_inp)
 try:
     with connect(
         host = "localhost",
-        user = "spielerr",
-        password = getpass("Enter password: "),
+        user = "test_user",
+        password = "test_user123",
         database = "parallel_mapping",
     ) as connection:
         # print(connection)
