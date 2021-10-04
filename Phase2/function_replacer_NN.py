@@ -55,7 +55,8 @@ for line in pgm_comp_text:
 
 #output parallelized program
 output_par_pgm = open("test_output.c", "w")
-pgm_out = ""
+pgm_out = '''#include <parallel/algorithm>
+#include <parallel/numeric>\n'''
 
 test_new = '''
 int test(int a)
@@ -79,7 +80,7 @@ try:
         host = "localhost",
         user = "test_user",
         password = "test_user123",
-        database = "parallel_mapping",
+        database = "parallel_code"
     ) as connection:
         # print(connection)
         with connection.cursor() as cursor:
@@ -101,7 +102,8 @@ try:
                 # will have to have a newline at the end of the parallel code
                 if(len(result)):
                     print(mapped_fn_name, " key found")
-                    pgm_out = pgm_out + result[0][0]
+                    mapped_parallel_fn = (result[0][0]).replace("__my_mapped_parallel_function_",func_name)
+                    pgm_out = pgm_out + mapped_parallel_fn
                 else:
                     print(mapped_fn_name, " key not found")
                     pgm_out = pgm_out + "".join(pgm_inp[start_l-1:end_l])
