@@ -1,0 +1,20 @@
+aspectdef test
+output stats end
+
+stats = new LaraObject();
+
+// fill input5.txt
+//contains the function names, line number where the function starts, line number where the function ends
+
+
+select function end
+apply
+    if($function.name != "main")
+    {
+        println($function.name + " " + $function.line + " " + $function.endLine);
+    }
+    
+end
+
+
+end
