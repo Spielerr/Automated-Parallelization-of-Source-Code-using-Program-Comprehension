@@ -1,0 +1,81 @@
+ -==================================================-
+  1. Setting up LARA
+ -==================================================-
+Language Specification folder: .
+Output directory: .
+Path included for import: [., /mnt/c/Users/mayur/Desktop/PES/PES - 6/Capstone Project/Capstone_Project/Phase2/model/pre_processor]
+Resources included for import: [lara/benchmark/BenchmarkSet.lara, lara/benchmark/BenchmarkInstance.lara, lara/cmake/CMaker.lara, lara/cmake/CMakerSources.lara, lara/cmake/CMakerUtils.lara, lara/cmake/compilers/CMakeCompiler.lara, lara/cmake/compilers/GenericCMakeCompiler.lara, lara/dse/DseLoop.lara, lara/dse/DseValues.lara, lara/dse/DseValuesList.lara, lara/dse/DseValuesSet.lara, lara/dse/DseVariant.lara, lara/dse/VariableVariant.lara, lara/iterators/LaraIterator.lara, lara/iterators/LineIterator.lara, lara/metrics/EnergyMetric.lara, lara/metrics/ExecutionTimeMetric.lara, lara/metrics/FileSizeMetric.lara, lara/metrics/Metric.lara, lara/metrics/MetricResult.lara, lara/mutation/IterativeMutation.lara, lara/mutation/IterativeMutator.lara, lara/mutation/Mutation.lara, lara/mutation/MutationResult.lara, lara/mutation/Mutator.lara, lara/units/SiModifier.lara, lara/units/SiUnit.lara, lara/units/Unit.lara, lara/units/TimeModifier.lara, lara/units/TimeUnit.lara, lara/units/EnergyUnit.lara, lara/units/UnitModifier.lara, lara/units/UnitWithModifier.lara, lara/_JavaTypes.lara, lara/Check.lara, lara/Collections.lara, lara/Csv.lara, lara/Debug.lara, lara/Io.lara, lara/Numbers.lara, lara/Platforms.lara, lara/Strings.lara, lara/System.lara, lara/JavaInterop.lara, lara/util/Accumulator.lara, lara/util/Checkpoint.lara, lara/util/CodeInserter.lara, lara/util/Combinations.lara, lara/util/DataStore.lara, lara/util/IdGenerator.lara, lara/util/JpFilter.lara, lara/util/LineInserter.lara, lara/util/LocalFolder.lara, lara/util/PredefinedStrings.lara, lara/util/PrintOnce.lara, lara/util/ProcessExecutor.lara, lara/util/Replacer.lara, lara/util/SequentialCombinations.lara, lara/util/StringSet.lara, lara/util/TimeUnits.lara, lara/util/TupleId.lara, lara/code/EnergyBase.lara, lara/code/LoggerBase.lara, lara/code/TimerBase.lara, lara/CompilationBase.lara, weaver/util/WeaverDataStore.lara, weaver/Ast.lara, weaver/JoinPointsBase.lara, weaver/Query.lara, weaver/Selector.lara, weaver/Weaver.lara, weaver/WeaverJps.lara, weaver/WeaverLauncherBase.lara, weaver/WeaverOptions.lara, weaver/jp/JoinPoint.lara, weaver/jp/CommonJoinPointsBase.lara, weaver/jp/JoinPointIndex.lara, weaver/jp/JoinPointsCommonPath.lara, weaver/jp/ProgramJp.lara, weaver/jp/FileJp.lara, weaver/jp/StmtJp.lara, weaver/jp/DeclJp.lara, weaver/jp/ClassJp.lara, weaver/jp/FunctionJp.lara, weaver/jp/MethodJp.lara, weaver/jp/ConstructorJp.lara, weaver/jp/FieldJp.lara, weaver/jp/ExprJp.lara, weaver/jp/CallJp.lara, weaver/jp/MemberCallJp.lara, weaver/jp/ConstructorCallJp.lara, weaver/jp/VarRefJp.lara, weaver/jp/FieldRefJp.lara, weaver/jp/VarDeclJp.lara, weaver/jp/ParamJp.lara, weaver/jp/TypeJp.lara, weaver/jp/IfJp.lara, weaver/jp/SwitchJp.lara, weaver/jp/CaseJp.lara, weaver/jp/LoopJp.lara, weaver/jp/TernaryJp.lara, weaver/jp/BinaryJp.lara, weaver/jp/TryJp.lara, weaver/jp/CatchJp.lara, weaver/jp/ThrowJp.lara, weaver/jp/DefaultJp.lara, weaver/jp/BreakJp.lara, weaver/jp/ContinueJp.lara, weaver/jp/GotoJp.lara, weaver/jp/ThenJp.lara, weaver/jp/ElseJp.lara, weaver/jp/LambdaJp.lara, lara/MathExtra.lara, lcl/LaraCommonLanguage.lara, clava/lara/benchmark/ClavaBenchmarkInstance.lara, clava/lara/code/Logger.lara, clava/lara/code/Energy.lara, clava/lara/code/Timer.lara, clava/lara/Compilation.lara, clava/weaver/jp/ClavaElseJp.lara, clava/weaver/jp/ClavaFileJp.lara, clava/weaver/jp/ClavaLoopJp.lara, clava/weaver/jp/ClavaIfJp.lara, clava/weaver/jp/ClavaBinaryJp.lara, clava/weaver/jp/ClavaConstructorCallJp.lara, clava/weaver/jp/ClavaConstructorJp.lara, clava/weaver/jp/ClavaParamJp.lara, clava/weaver/jp/ClavaVarRefJp.lara, clava/weaver/jp/ClavaVarDeclJp.lara, clava/weaver/jp/ClavaTypeJp.lara, clava/weaver/jp/ClavaFieldRefJp.lara, clava/weaver/jp/ClavaFieldJp.lara, clava/weaver/jp/ClavaMemberCallJp.lara, clava/weaver/jp/ClavaCallJp.lara, clava/weaver/jp/ClavaFunctionJp.lara, clava/weaver/jp/ClavaMethodJp.lara, clava/weaver/jp/ClavaClassJp.lara, clava/weaver/jp/ClavaJoinPoint.lara, clava/weaver/jp/CommonJoinPoints.lara, clava/weaver/JoinPoints.lara, clava/weaver/WeaverLauncher.lara, clava/clava/autopar/additionalConditionsCheck.lara, clava/clava/autopar/AddOpenMPDirectivesForLoop.lara, clava/clava/autopar/AddPragmaLoopIndex.lara, clava/clava/autopar/AutoParStats.lara, clava/clava/autopar/AutoParUtils.lara, clava/clava/autopar/BuildPetitFileInput.lara, clava/clava/autopar/checkForFunctionCalls.lara, clava/clava/autopar/checkForInvalidStmts.lara, clava/clava/autopar/checkForOpenMPCanonicalForm.lara, clava/clava/autopar/CheckForSafeFunctionCall.lara, clava/clava/autopar/checkvarreReduction.lara, clava/clava/autopar/ExecPetitDependencyTest.lara, clava/clava/autopar/FindReductionArrays.lara, clava/clava/autopar/get_varTypeAccess.lara, clava/clava/autopar/InlineFunctionCalls.lara, clava/clava/autopar/LoopInductionVariables.lara, clava/clava/autopar/NormalizedBinaryOp.lara, clava/clava/autopar/OmegaConfig.lara, clava/clava/autopar/Parallelize.lara, clava/clava/autopar/ParallelizeLoop.lara, clava/clava/autopar/RemoveNakedloops.lara, clava/clava/autopar/RemoveOpenMPfromInnerloop.lara, clava/clava/autopar/RunInlineFunctionCalls.lara, clava/clava/autopar/SetArrayAccessOpenMPscoping.lara, clava/clava/autopar/SetMemberAccessOpenMPscoping.lara, clava/clava/autopar/SetVariableAccess.lara, clava/clava/autopar/SetVarrefOpenMPscoping.lara, clava/clava/code/GlobalVariable.lara, clava/clava/gprofer/Gprofer.lara, clava/clava/gprofer/_GproferAspects.lara, clava/clava/hdf5/Hdf5.lara, clava/clava/hls/HLSAnalysis.lara, clava/clava/hls/TraceInstrumentation.lara, clava/clava/hls/MathAnalysis.lara, clava/clava/hls/MathHInfo.lara, clava/clava/mpi/MpiAccessPattern.lara, clava/clava/mpi/MpiScatterGatherLoop.lara, clava/clava/mpi/MpiUtils.lara, clava/clava/mpi/patterns/IterationVariablePattern.lara, clava/clava/mpi/patterns/MpiAccessPatterns.lara, clava/clava/mpi/patterns/ScalarPattern.lara, clava/clava/opencl/OpenCLCall.lara, clava/clava/opencl/OpenCLCallVariables.lara, clava/clava/opencl/KernelReplacer.lara, clava/clava/opencl/KernelReplacerAuto.lara, clava/clava/parser/BatchParser.lara, clava/clava/stats/OpsBlock.lara, clava/clava/stats/OpsCost.lara, clava/clava/stats/OpsCounter.lara, clava/clava/stats/StaticOpsCounter.lara, clava/clava/memoi/MemoiProf.lara, clava/clava/memoi/MemoiGen.lara, clava/clava/memoi/_MemoiGenHelper.lara, clava/clava/memoi/MemoiTarget.lara, clava/clava/memoi/MemoiUtils.lara, clava/clava/memoi/MemoiAnalysis.lara, clava/clava/util/ClavaDataStore.lara, clava/clava/util/FileIterator.lara, clava/clava/util/SingleFile.lara, clava/clava/uve/UVE.lara, clava/clava/uve/DetectStream.lara, clava/clava/Clava.lara, clava/clava/ClavaAspects.lara, clava/clava/ClavaCode.lara, clava/clava/ClavaJoinPoints.lara, clava/clava/ClavaType.lara, clava/antarex/_Test.lara, clava/antarex/examon/Examon.lara, clava/antarex/examon/ExamonAspects.lara, clava/antarex/inline/inlineAspects.lara, clava/antarex/inline/inlineFuncs.lara, clava/antarex/libvc/LibVC.lara, clava/antarex/libvc/_internal/LibVCAspects.lara, clava/antarex/margot/codegen/MargotCodeGen.lara, clava/antarex/margot/codegen/_internal/MargotCodeGenAspects.lara, clava/antarex/margot/codegen/_internal/MargotStringsGen.lara, clava/antarex/margot/config/MargotBlock.lara, clava/antarex/margot/config/MargotConfig.lara, clava/antarex/margot/config/MargotDataFeature.lara, clava/antarex/margot/config/MargotEnergyDomain.lara, clava/antarex/margot/config/MargotKnob.lara, clava/antarex/margot/config/MargotState.lara, clava/antarex/margot/config/monitor/MargotCustomMonitor.lara, clava/antarex/margot/config/monitor/MargotEnergyMonitor.lara, clava/antarex/margot/config/monitor/MargotMonitor.lara, clava/antarex/margot/config/monitor/MargotThroughputMonitor.lara, clava/antarex/margot/config/monitor/MargotTimeMonitor.lara, clava/antarex/margot/dse/MargotDseInfo.lara, clava/antarex/margot/dse/metric/MargotMetric.lara, clava/antarex/memoi/Memoization.lara, clava/antarex/memoi/MemoizationAutoAspects.lara, clava/antarex/memoi/MemoizationAutoFuncs.lara, clava/antarex/memoi/MemoizationC.lara, clava/antarex/memoi/MemoizationCXX.lara, clava/antarex/memoi/MemoizationLibFuncs.lara, clava/antarex/memoi/MemoizationMath.lara, clava/antarex/multi/MultiVersionPointers.lara, clava/antarex/multi/MultiVersionPointersAspects.lara, clava/antarex/precision/CustomPrecision.lara, clava/antarex/precision/CustomPrecisionFunc.lara, clava/antarex/precision/rewTypes.lara, clava/antarex/precision/rewTypesFunc.lara, clava/antarex/split/extractCodeAspects.lara, clava/antarex/split/extractCodeFuncs.lara, clava/antarex/split/splitDeclarations.lara, clava/antarex/split/splitLoopAspects.lara, clava/antarex/split/splitLoopFuncs.lara, clava/antarex/utils/IdentReferences.lara, clava/antarex/utils/lowLevelFuncs.lara, clava/antarex/utils/mangling.lara, clava/antarex/utils/messages.lara, clava/antarex/utils/sysfile.lara]
+Running on: Linux
+Reading: /mnt/c/Users/mayur/Desktop/PES/PES - 6/Capstone Project/Capstone_Project/Phase2/model/pre_processor/fill_input_5.lara
+Parse Successful!
+ -==================================================-
+  2. Organizing Aspects
+ -==================================================-
+Organized!
+ -==================================================-
+  3. Creating Aspect-IR
+ -==================================================-
+Created!
+Processed 62 tokens from the LARA file.
+ -==================================================-
+  1. . Loading Aspect-IR
+ -==================================================-
+ -==================================================-
+  2. Initializing Interpreter
+ -==================================================-
+ -==================================================-
+  3. Loading Weaver
+ -==================================================-
+Importing internal scripts:
+  \_ larai/includes/scripts/dot.js
+  \_ larai/includes/scripts/dwarvUtils.js
+  \_ larai/includes/scripts/input.js
+  \_ larai/includes/scripts/LaraObject.js
+  \_ larai/includes/scripts/merge.js
+  \_ larai/includes/scripts/namedArguments.js
+  \_ larai/includes/scripts/output.js
+  \_ larai/includes/scripts/select.js
+  \_ larai/includes/scripts/toolExecution.js
+  \_ larai/includes/scripts/utils.js
+  \_ larai/includes/scripts/xilinx.js
+  \_ larai/includes/scripts/Enum.js
+  \_ lara/LaraCore.js
+  \_ clava/js/autopar/Add_msgError.js
+  \_ clava/js/autopar/allReplace.js
+  \_ clava/js/autopar/GetLoopIndex.js
+  \_ clava/js/autopar/orderedVarrefs3.js
+  \_ clava/js/autopar/RemoveStruct.js
+  \_ clava/js/autopar/SafeFunctionCalls.js
+  \_ clava/js/autopar/SearchStruct.js
+  \_ clava/js/HDF5.js
+  \_ clava/js/Types.js
+  \_ clava/antarex/AntarexTest.js
+Found 1 source files
+Parsing '/mnt/c/Users/mayur/Desktop/PES/PES - 6/Capstone Project/Capstone_Project/Phase2/model/pre_processor/inline_input.c' (1/1)
+[ClavaMetrics] Code to AST: 926ms
+[ClavaMetrics] AST Processing: 72ms
+[ClavaMetrics] Current memory used (Java):18 MiB
+--- AST parsing report ---
+ -==================================================-
+  Elapsed Time: 2250ms
+ -==================================================-
+ -==================================================-
+  4. Interpreting Aspects
+ -==================================================-
+ -==================================================-
+  Elapsed Time: 32ms
+ -==================================================-
+ -==================================================-
+  5. Executing Main Aspect
+ -==================================================-
+Start of Input5.txt
+input 2 14
+output 15 24
+bubbleSort 25 37
+End of Input5.txt
+ -==================================================-
+  Elapsed Time: 411ms
+ -==================================================-
+ -==================================================-
+  LARA total time: 6417ms
+ -==================================================-

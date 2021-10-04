@@ -1,0 +1,7 @@
+3
+tensor([0.2623]) tensor([0])
+input : Bubble Sort
+tensor([0.3333]) tensor([0])
+bubbleSort : Bubble Sort
+tensor([0.3369]) tensor([0])
+output : Bubble Sort
