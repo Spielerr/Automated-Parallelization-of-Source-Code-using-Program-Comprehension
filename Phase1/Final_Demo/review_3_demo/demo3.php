@@ -6,8 +6,8 @@
 
 	$output = null;
 
-	shell_exec(escapeshellcmd('/usr/local/bin/clang-tidy testfile_demo_3.cpp -fix -checks="readability-braces-around-statements,readability-isolate-declaration" -- COMPILE_OPTIONS'));
-	shell_exec(escapeshellcmd("bash demo_3/script.sh"));
+	// shell_exec(escapeshellcmd('/usr/local/bin/clang-tidy testfile_demo_3.cpp -fix -checks="readability-braces-around-statements,readability-isolate-declaration" -- COMPILE_OPTIONS'));
+	shell_exec(escapeshellcmd("bash demo_3/script_3.2.sh"));
 
     echo file_get_contents("demo_3/output.txt");
 	// $op = shell_exec("cd \"/mnt/c/Users/mayur/Desktop/PES/PES - 6/Capstone Project/Capstone_Project/Phase1/Thread_scheduling/\" && ./a.out");
