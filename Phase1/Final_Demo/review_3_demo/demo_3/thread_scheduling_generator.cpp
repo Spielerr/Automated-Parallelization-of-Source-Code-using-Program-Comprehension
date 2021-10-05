@@ -707,6 +707,7 @@ mutex m_tt;
 mutex m_tf;
 mutex m_sf;
 mutex m_sp_c;
+mutex m_f;
 
 // to mark the end of thread_track and scheduling_fn threads
 bool done_01 = false;
@@ -765,7 +766,7 @@ void threadtrack()
 {
 	string temp = R"(void thread_track_fn()
 {
-	while(!done_01)
+	while(!done_01 || special.size()!=0)
 	{
 		{
 			lock_guard<mutex> lockGuard(m_tt);
@@ -796,7 +797,7 @@ void schedulingfn()
 	string temp = R"(void scheduling_fn()
 {
 	//special got updated
-	while(!done_02)
+	while(!done_02 || ready_queue.size() != 0 || wait_queue.size() != 0)
 	{
 		// cout << "scheduling_fn\n";
 		{
@@ -852,9 +853,12 @@ void schedulingfn()
 				while(x != ready_queue.end())
 				{
 					// int_futures.emplace_back(tp.Submit(x->second));
-                    visit([](auto n)
-						  { futures.emplace_back(tp.Submit(n)); },
-						  x->second);
+					{
+						lock_guard<mutex> lockGuard(m_f);
+						visit([](auto n)
+							{ futures.emplace_back(tp.Submit(n)); },
+							x->second);
+					}
 					x = ready_queue.erase(x);
 					//file output code
 					// int_futures.emplace_back(tp.Submit(min, cref(arr1), cref(n)));
@@ -964,7 +968,9 @@ void mainfn()
 			}
 			cout << "\t}\n";
 			cout << "\tatomic<bool> done" + to_string(k+1) + "(false);\n";
-			cout << "\tfutures.emplace_back(tp.Submit([&] {\n\t\t " + get<0>(fn_call_info[k]) + "(";
+
+            cout << "\t{\n\t\tlock_guard<mutex> lockGuard(m_f);\n";
+			cout << "\t\tfutures.emplace_back(tp.Submit([&] {\n\t\t\t " + get<0>(fn_call_info[k]) + "(";
 			for(int i = 0; i < get<2>(fn_call_info[k]).size(); i++)
 			{
 				if(i == (get<2>(fn_call_info[k]).size() - 1))
@@ -976,7 +982,8 @@ void mainfn()
 					cout << get<2>(fn_call_info[k])[i] << ", ";
 				}
 			}
-			cout << "\t\tdone" + to_string(k+1) + " = true;}));\n";
+			cout << "\t\t\tdone" + to_string(k+1) + " = true;}));\n";
+            cout << "\t}\n";
 			string pair_temp = "p_th_" + to_string(k+1);
 			cout << "\tpair<int, atomic<bool>&> " + pair_temp + "(" + to_string(k+1) +", done" + to_string(k+1) + ");\n";
 			cout << "\t{\n\t\tlock_guard<mutex> lockGuard(m_tt);\n\t\tthread_track.push_back(" + pair_temp + ");\n\t}\n\n";
@@ -984,10 +991,16 @@ void mainfn()
 	}
 
     //printing client code after last fn call
-    for(int i = line_no_index; i < main_ip.size()-1; ++i)
+
+    for(int i = main_ip.size()-1; i>=0; --i)
     {
-        cout << main_ip[i] << '\n';
+        if(main_ip[i] == "}")
+        {
+            main_ip[i] = "";
+            break;
+        }
     }
+
 
 	string wait_on_futures = R"(
     for (auto &x : futures)
@@ -996,7 +1009,7 @@ void mainfn()
 	}
     )";
 
-    cout << wait_on_futures << endl;
+    
 
     string futures_scheduler = R"(
     done_01 = true;
@@ -1008,6 +1021,12 @@ void mainfn()
     )";
 
     cout << futures_scheduler << endl;
+    cout << wait_on_futures << endl;
+
+    for(int i = line_no_index; i < main_ip.size(); ++i)
+    {
+        cout << main_ip[i] << '\n';
+    }
 
 	string finish = R"(	// gettimeofday(&stop, NULL);
     // printf("%lu\n", ((stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec)/1000);
