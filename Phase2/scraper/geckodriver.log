@@ -1,0 +1,95 @@
+1633672120982	geckodriver	INFO	Listening on 127.0.0.1:51671
+1633672121923	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "--headless" "-no-remote" "-profile" "/tmp/rust_mozprofilejJU4t9"
+*** You are running in headless mode.
+[GFX1-]: glxtest: libEGL initialize failed
+[GFX1-]: glxtest: Unable to open a connection to the X server
+[GFX1-]: glxtest: libEGL initialize failed
+[GFX1-]: No GPUs detected via PCI
+
+(/usr/lib/firefox/firefox:18071): GLib-GObject-CRITICAL **: 11:18:42.512: g_object_set: assertion 'G_IS_OBJECT (object)' failed
+
+(/usr/lib/firefox/firefox:18100): GLib-GObject-CRITICAL **: 11:18:42.587: g_object_set: assertion 'G_IS_OBJECT (object)' failed
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1633672123422	Marionette	INFO	Listening on port 43763
+1633672123445	Marionette	WARN	TLS certificate errors will be ignored for this session
+
+(/usr/lib/firefox/firefox:18185): GLib-GObject-CRITICAL **: 11:18:43.539: g_object_set: assertion 'G_IS_OBJECT (object)' failed
+JavaScript warning: https://assets.leetcode.com/static_assets/public/webpack_bundles/new-apps/desktop.ae8fbfd6f.js, line 17: WebGL warning: <Create>: Can't use WebGL in headless mode (https://bugzil.la/1375585).
+JavaScript warning: https://assets.leetcode.com/static_assets/public/webpack_bundles/new-apps/desktop.ae8fbfd6f.js, line 17: Failed to create WebGL context: WebGL creation failed: 
+* Can't use WebGL in headless mode (https://bugzil.la/1375585).
+JavaScript warning: https://assets.leetcode.com/static_assets/public/webpack_bundles/new-apps/desktop.ae8fbfd6f.js, line 17: WebGL warning: <Create>: Can't use WebGL in headless mode (https://bugzil.la/1375585).
+JavaScript warning: https://assets.leetcode.com/static_assets/public/webpack_bundles/new-apps/desktop.ae8fbfd6f.js, line 17: Failed to create WebGL context: WebGL creation failed: 
+* Can't use WebGL in headless mode (https://bugzil.la/1375585).
+JavaScript warning: https://assets.leetcode.com/static_assets/public/webpack_bundles/new-apps/desktop.ae8fbfd6f.js, line 17: WebGL warning: <Create>: Can't use WebGL in headless mode (https://bugzil.la/1375585).
+JavaScript warning: https://assets.leetcode.com/static_assets/public/webpack_bundles/new-apps/desktop.ae8fbfd6f.js, line 17: Failed to create WebGL context: WebGL creation failed: 
+* Can't use WebGL in headless mode (https://bugzil.la/1375585).
+JavaScript warning: https://assets.leetcode.com/static_assets/public/webpack_bundles/new-apps/desktop.ae8fbfd6f.js, line 17: WebGL warning: <Create>: Can't use WebGL in headless mode (https://bugzil.la/1375585).
+JavaScript warning: https://assets.leetcode.com/static_assets/public/webpack_bundles/new-apps/desktop.ae8fbfd6f.js, line 17: Failed to create WebGL context: WebGL creation failed: 
+* Can't use WebGL in headless mode (https://bugzil.la/1375585).
+JavaScript error: , line 0: uncaught exception: Object
+JavaScript error: , line 0: uncaught exception: Object
+1633672189686	Marionette	INFO	Stopped listening on port 43763
+1633672202372	geckodriver	INFO	Listening on 127.0.0.1:35499
+1633672203313	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "--headless" "-no-remote" "-profile" "/tmp/rust_mozprofilegONFXC"
+*** You are running in headless mode.
+[GFX1-]: glxtest: libEGL initialize failed
+[GFX1-]: glxtest: Unable to open a connection to the X server
+[GFX1-]: glxtest: libEGL initialize failed
+[GFX1-]: No GPUs detected via PCI
+
+(/usr/lib/firefox/firefox:19284): GLib-GObject-CRITICAL **: 11:20:03.894: g_object_set: assertion 'G_IS_OBJECT (object)' failed
+
+(/usr/lib/firefox/firefox:19313): GLib-GObject-CRITICAL **: 11:20:03.972: g_object_set: assertion 'G_IS_OBJECT (object)' failed
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1633672204738	Marionette	INFO	Listening on port 32889
+1633672204837	Marionette	WARN	TLS certificate errors will be ignored for this session
+
+(/usr/lib/firefox/firefox:19398): GLib-GObject-CRITICAL **: 11:20:04.942: g_object_set: assertion 'G_IS_OBJECT (object)' failed
+JavaScript warning: https://assets.leetcode.com/static_assets/public/webpack_bundles/new-apps/desktop.ae8fbfd6f.js, line 17: WebGL warning: <Create>: Can't use WebGL in headless mode (https://bugzil.la/1375585).
+JavaScript warning: https://assets.leetcode.com/static_assets/public/webpack_bundles/new-apps/desktop.ae8fbfd6f.js, line 17: Failed to create WebGL context: WebGL creation failed: 
+* Can't use WebGL in headless mode (https://bugzil.la/1375585).
+JavaScript warning: https://assets.leetcode.com/static_assets/public/webpack_bundles/new-apps/desktop.ae8fbfd6f.js, line 17: WebGL warning: <Create>: Can't use WebGL in headless mode (https://bugzil.la/1375585).
+JavaScript warning: https://assets.leetcode.com/static_assets/public/webpack_bundles/new-apps/desktop.ae8fbfd6f.js, line 17: Failed to create WebGL context: WebGL creation failed: 
+* Can't use WebGL in headless mode (https://bugzil.la/1375585).
+JavaScript warning: https://assets.leetcode.com/static_assets/public/webpack_bundles/new-apps/desktop.ae8fbfd6f.js, line 17: WebGL warning: <Create>: Can't use WebGL in headless mode (https://bugzil.la/1375585).
+JavaScript warning: https://assets.leetcode.com/static_assets/public/webpack_bundles/new-apps/desktop.ae8fbfd6f.js, line 17: Failed to create WebGL context: WebGL creation failed: 
+* Can't use WebGL in headless mode (https://bugzil.la/1375585).
+JavaScript warning: https://assets.leetcode.com/static_assets/public/webpack_bundles/new-apps/desktop.ae8fbfd6f.js, line 17: WebGL warning: <Create>: Can't use WebGL in headless mode (https://bugzil.la/1375585).
+JavaScript warning: https://assets.leetcode.com/static_assets/public/webpack_bundles/new-apps/desktop.ae8fbfd6f.js, line 17: Failed to create WebGL context: WebGL creation failed: 
+* Can't use WebGL in headless mode (https://bugzil.la/1375585).
+JavaScript error: https://leetcode.com/problems/restore-ip-addresses/discuss/?currentPage=1&orderBy=hot&query=&tag=c-3, line 478: TypeError: document.getElementsByClassName(...)[0] is undefined
+1633672207786	Marionette	INFO	Stopped listening on port 32889
+JavaScript error: , line 0: uncaught exception: Object
+JavaScript error: , line 0: uncaught exception: Object
+1633672208266	geckodriver	INFO	Listening on 127.0.0.1:48245
+1633672209232	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "--headless" "-no-remote" "-profile" "/tmp/rust_mozprofilerRHesS"
+*** You are running in headless mode.
+[GFX1-]: glxtest: libEGL initialize failed
+[GFX1-]: glxtest: Unable to open a connection to the X server
+[GFX1-]: glxtest: libEGL initialize failed
+[GFX1-]: No GPUs detected via PCI
+
+(/usr/lib/firefox/firefox:19579): GLib-GObject-CRITICAL **: 11:20:09.800: g_object_set: assertion 'G_IS_OBJECT (object)' failed
+
+(/usr/lib/firefox/firefox:19607): GLib-GObject-CRITICAL **: 11:20:09.882: g_object_set: assertion 'G_IS_OBJECT (object)' failed
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1633672210649	Marionette	INFO	Listening on port 37309
+1633672210768	Marionette	WARN	TLS certificate errors will be ignored for this session
+
+(/usr/lib/firefox/firefox:19698): GLib-GObject-CRITICAL **: 11:20:10.828: g_object_set: assertion 'G_IS_OBJECT (object)' failed
+JavaScript warning: https://assets.leetcode.com/static_assets/public/webpack_bundles/new-apps/desktop.ae8fbfd6f.js, line 17: WebGL warning: <Create>: Can't use WebGL in headless mode (https://bugzil.la/1375585).
+JavaScript warning: https://assets.leetcode.com/static_assets/public/webpack_bundles/new-apps/desktop.ae8fbfd6f.js, line 17: Failed to create WebGL context: WebGL creation failed: 
+* Can't use WebGL in headless mode (https://bugzil.la/1375585).
+JavaScript warning: https://assets.leetcode.com/static_assets/public/webpack_bundles/new-apps/desktop.ae8fbfd6f.js, line 17: WebGL warning: <Create>: Can't use WebGL in headless mode (https://bugzil.la/1375585).
+JavaScript warning: https://assets.leetcode.com/static_assets/public/webpack_bundles/new-apps/desktop.ae8fbfd6f.js, line 17: Failed to create WebGL context: WebGL creation failed: 
+* Can't use WebGL in headless mode (https://bugzil.la/1375585).
+JavaScript warning: https://assets.leetcode.com/static_assets/public/webpack_bundles/new-apps/desktop.ae8fbfd6f.js, line 17: WebGL warning: <Create>: Can't use WebGL in headless mode (https://bugzil.la/1375585).
+JavaScript warning: https://assets.leetcode.com/static_assets/public/webpack_bundles/new-apps/desktop.ae8fbfd6f.js, line 17: Failed to create WebGL context: WebGL creation failed: 
+* Can't use WebGL in headless mode (https://bugzil.la/1375585).
+JavaScript warning: https://assets.leetcode.com/static_assets/public/webpack_bundles/new-apps/desktop.ae8fbfd6f.js, line 17: WebGL warning: <Create>: Can't use WebGL in headless mode (https://bugzil.la/1375585).
+JavaScript warning: https://assets.leetcode.com/static_assets/public/webpack_bundles/new-apps/desktop.ae8fbfd6f.js, line 17: Failed to create WebGL context: WebGL creation failed: 
+* Can't use WebGL in headless mode (https://bugzil.la/1375585).
+JavaScript error: https://leetcode.com/problems/restore-ip-addresses/discuss/448860/C-simple-solution%3A-double-100, line 478: TypeError: document.getElementsByClassName(...)[0] is undefined
+1633672213975	Marionette	INFO	Stopped listening on port 37309
+JavaScript error: , line 0: uncaught exception: Object
+JavaScript error: , line 0: uncaught exception: Object
