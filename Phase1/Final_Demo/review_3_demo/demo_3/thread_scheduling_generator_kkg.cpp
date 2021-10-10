@@ -10,27 +10,11 @@
 using namespace std;
 #define DEBUG 0
 
-// NOTE FOR DD: I have numbered whatever data from Lara is required.
-// Ctrl + F for "DD"
-
 // all return types
-// DD1
 vector<string> return_types;
 
 // vector of vector of strings containing all fn args
-// DD2
 vector<vector<string>> all_fn_args;
-
-// sp_c stores the total number of functions changing their arguments (like my_sort)
-// in our case, it is 2 (2 my_sort fn calls)
-// DD3
-int sp_c;
-
-
-// wr_q stores the total number of functions not changing their arguments (like min, max)
-// in our case, it is 4 (2 min and 2 max fn calls)
-// DD4
-int wr_q;
 
 /*
 string is for the fn name
@@ -48,7 +32,6 @@ tuple <char, int, float> geek;
 geek = make_tuple('a', 10, 15.5);
 thank me later
 */
-//DD5
 vector<tuple<string, int, vector<string>, vector<string>>> fn_call_info;
 
 //stores the line number of the first function call in main
@@ -58,7 +41,6 @@ int first_line_no;
 int last_line_no;
 
 //stores line numbers (relative to main) of all fn calls
-//DD6
 vector<int> fn_line_nos;
 
 // stores the fn name, the return value variable name, and its data type, fn call line no, next usage line no (of the changed argument)
@@ -113,53 +95,7 @@ void input_data()
     //this is because we can't count the number of argument to know the number of fn calls that perform a write
     //as a single fn call could be writing into multiple arguments
 
-    /*
-    while(getline(file_1, dependencies))
-    {
-        vector<string> result;
-        stringstream s_stream(dependencies);
-        while (s_stream.good()) 
-        {
-            string substr;
-            getline(s_stream, substr, ',');
-            result.push_back(substr);
-        }
-
-        pair<string, vector<string>> temp;
-
-        temp.first = result[0];
-
-        
-
-        auto it1 = find_if(fns_write_dep.begin(),fns_write_dep.end(),my_find_special(temp.first));
-        
-        if(it1 != fns_write_dep.end())
-        {
-            for(int i = 1; i < result.size(); ++i)
-            {
-                (*it1).second.push_back(result[i]);
-
-            }
-        }   
-
-        else
-        {
-            for(int i = 1; i < result.size(); ++i)
-            {
-                temp.second.push_back(result[i]);
-            }
-
-            fns_write_dep.push_back(temp);
-
-        }     
-
-        
-
-    }
-    */
-
-   
-   //creating a new pair every time sort occurs in the input.txt file
+    //creating a new pair every time sort occurs in the input.txt file
     while(getline(file_1, dependencies_1))
     {
         vector<string> result_1;
@@ -184,8 +120,6 @@ void input_data()
         fns_write_dep.push_back(temp_p_sv);
 
     }
-    
-
     file_1.close();
 
 
@@ -199,9 +133,7 @@ void input_data()
             cout<<j<<"\n";
         }
     }
-
     cout<<"\n\n\n";
-
     #endif
 
     //data structure that holds the data from input2.txt
@@ -225,15 +157,10 @@ void input_data()
             string substr;
             getline(s_stream, substr, ';');
 
-            //cout<<substr<<"\n";
-
             //substr contains the function and its return type
             if(i==0)
             {
-                //cout<<substr<<"\n";
-
                 stringstream s_stream_2(substr);
-
                 int j = 0;
 
                 while(s_stream_2.good())
@@ -241,9 +168,6 @@ void input_data()
                     string substr2;
                     getline(s_stream_2, substr2, ',');
 
-                    //cout<<substr2<<"\n";
-
-                    //substr2 contains function name
                     if(j==0)
                     {
                         temp.first = substr2;
@@ -260,8 +184,6 @@ void input_data()
 
                     ++j;
                 }
-                
-
             }
 
             //substr contains an argument and parameter along with their return types
@@ -269,11 +191,7 @@ void input_data()
             {
 
                 stringstream s_stream_3(substr);
-
-                //cout<<substr<<"\n";
-
                 vector<string> temp_v_s;
-
                 pair<string, vector<string>> temp_p;
 
                 while(s_stream_3.good())
@@ -282,10 +200,6 @@ void input_data()
                     getline(s_stream_3, substr3, ',');
 
                     temp_v_s.push_back(substr3);
-                    
-
-                    //cout<<substr3<<"\n";
-
                 }
 
                 if(temp_v_s.size()!=0)
@@ -296,15 +210,9 @@ void input_data()
                     temp_v.push_back(temp_p);
 
                 }
-
-
             }
-            
-            
-
             ++i;
         }
-
         temp.second = temp_v;
         order_fn_calls_types.push_back(temp);
     }
@@ -313,11 +221,9 @@ void input_data()
 
     #if DEBUG
     //testing whether data is stored properly in the data structure created
-
     for(auto i : order_fn_calls_types)
     {
         cout<<i.first<<":\n";
-
         for(auto j: i.second)
         {
             
@@ -326,17 +232,13 @@ void input_data()
                 {
                     cout<<k<<"\n";
                 }
-            
-            
         }
 
         cout<<"\n\n";
     }
-
     #endif
 
     string dependencies_3;
-
     ifstream file_3("input3.txt");
 
     //data structure that stores the info from input3.txt
@@ -362,7 +264,6 @@ void input_data()
 
     file_3.close();
 
-
     first_line_no = stoi(f3_ret_var_lineno[0][1]);
     last_line_no = stoi(f3_ret_var_lineno[f3_ret_var_lineno.size()-1][1]);
 
@@ -372,7 +273,6 @@ void input_data()
     }
 
     #if DEBUG
-
     cout<<"testing whether data is stored in the f3_ret_var_lineno data structure properly\n";
 
     for(auto i : f3_ret_var_lineno)
@@ -384,15 +284,8 @@ void input_data()
 
         cout<<"\n";
     }    
-
     cout<<"\n";
     #endif
-
-
-    //DD1
-    // all return types
-    
-    // vector<string> return_types;
 
     for(auto i : order_fn_calls_types)
     {
@@ -405,12 +298,6 @@ void input_data()
         }
     }
 
-    //set<string> temp_rt_set(return_types_copy.begin(),return_types_copy.end());
-
-
-
-    //vector<string> return_types(temp_rt_set.begin(),temp_rt_set.end());
-
     //testing whether data is stored in return_types properly
     #if DEBUG
     cout<<"\ntesting whether data is stored in return_types properly:\n";
@@ -419,8 +306,6 @@ void input_data()
         cout<<i<<"\n";
     }
     #endif
-
-
 
     //DD2
     // vector of vector of strings containing all fn args
@@ -453,29 +338,7 @@ void input_data()
         }
         cout<<"\n";
     }
-
     #endif
-
-
-    //DD3
-    // sp_c stores the total number of functions changing their arguments (like my_sort)
-    // in our case, it is 2 (2 my_sort fn calls)
-
-    sp_c = fns_write_dep.size();
-
-    #if DEBUG
-    cout<<"The total number of functions changing their arguments are: "<<sp_c<< "\n";
-    #endif
-
-    // DD4
-    // wr_q stores the total number of functions not changing their arguments (like min, max)
-    // in our case, it is 4 (2 min and 2 max fn calls)
-    wr_q = order_fn_calls_types.size() - fns_write_dep.size();
-
-    #if DEBUG
-    cout << "The Total number of functions not changing their arguments are: "<< wr_q <<"\n";
-    #endif
-
 
     /*
     string is for the fn name
@@ -498,8 +361,6 @@ void input_data()
     int loop_i = 0;
     int count_fn = 0;
 
-    
-
     for(auto i : order_fn_calls_types)
     {
         auto it_find_fn = find_if(fns_write_dep.begin(),fns_write_dep.end(),my_find_special(i.first));
@@ -514,12 +375,7 @@ void input_data()
             flag_fn_call = 1;
         }
 
-        
-
         vector<string> temp_v_args(all_fn_args[loop_i].begin(),all_fn_args[loop_i].end());
-
-        
-
         vector<string> temp_v_changes_args;
 
         //args getting changed
@@ -545,8 +401,6 @@ void input_data()
                     }
                 }
 
-                
-
                 int call_no_w = 0;
                 for(int j2 = 0; j2 < fns_write_dep.size(); ++ j2)
                 {
@@ -562,9 +416,7 @@ void input_data()
                         copy(fns_write_dep[j2].second.begin(),fns_write_dep[j2].second.end(),temp_v_changes_args.begin());
                         
                     }
-                }
-
-                
+                } 
             }
             else
             {
@@ -573,8 +425,6 @@ void input_data()
             }
         }
 
-        
-
         tuple<string, int, vector<string>, vector<string>> temp_fn_call;
         temp_fn_call = make_tuple(i.first,flag_fn_call,temp_v_args,temp_v_changes_args);
 
@@ -582,7 +432,6 @@ void input_data()
 
         ++loop_i;
     }
-
 
     #if DEBUG
     //testing if the data is stored properly in the fn_call_info data structure
@@ -645,7 +494,6 @@ void input_data()
 
 }
 
-
 void gen_headers()
 {
 	string temp = R"(#include "thread_pool.hpp"
@@ -678,8 +526,6 @@ void prologue()
 {
 	cout<<"int num_threads = thread::hardware_concurrency();\n";
 	cout<<"ThreadPool tp(num_threads);\n";
-	cout << "int sp_c = " << to_string(sp_c) << ";\n";
-	cout << "int wr_q = " << to_string(wr_q) << ";\n";
 
     string return_types_variant = "variant<";
     cout << "vector<pair<int, ";
@@ -803,9 +649,9 @@ class Find_special3
 
 )";
 
-cout << temp << "\n";
+    cout << temp << "\n";
 
-string find_futures = R"(class Find_futures
+    string find_futures = R"(class Find_futures
 {
 	private:
 	int ind_;
@@ -814,8 +660,8 @@ string find_futures = R"(class Find_futures
 	Find_futures(int index) : ind_(index) {}
 	bool operator()(pair<int,)";
 
-cout << find_futures << return_types_variant << ">" << " i)\n";
-cout << R"({
+    cout << find_futures << return_types_variant << ">" << " i)\n";
+    cout << R"({
 		if(i.first == ind_)
 		{
 			return true;
@@ -823,8 +669,8 @@ cout << R"({
 		return false;
 	}
 };)";
-cout << "\n\n";
-cout << R"(template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
+    cout << "\n\n";
+    cout << R"(template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
 template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 
 template<typename T>
@@ -844,7 +690,7 @@ void find_future(int index, T& res)
 	}
 	vector<pair<int,)" << return_types_variant << ">>::iterator it;\n";
 
-cout << R"({
+    cout << R"({
 		lock_guard<mutex> lockGuard(m_f);
 		it = find_if(begin(futures), end(futures), Find_futures(index));
 	}
@@ -874,7 +720,7 @@ void find_future(int index)
 	vector<pair<int,)" << return_types_variant << ">>::iterator it;\n";
 	
 
-cout << R"({
+    cout << R"({
 		lock_guard<mutex> lockGuard(m_f);
 		it = find_if(begin(futures), end(futures), Find_futures(index));
 	}
@@ -1021,44 +867,23 @@ void schedulingfn()
     cout << "\n\n";
 }
 
-bool sortbysec(const tuple<string, string, string, int, int>& a, 
-               const tuple<string, string, string, int, int>& b)
+bool sort_by_field(const tuple<string, string, string, int, int>& a, const tuple<string, string, string, int, int>& b)
 {
     return (get<3>(a) < get<3>(b));
 }
 
 void mainfn()
 {
-    // for(auto x: return_vars)
-    // {
-    //     cout << get<0>(x) << "\t" << get<1>(x) << "\t" << get<2>(x) << get<3>(x) << "\t" << get<4>(x) << "\n\n\n";
-    // }
-
-	// gotta handle this part of code from client somehow
-
     string line;
-
     ifstream file_ip_main("main_code_client.txt");
-
     vector<string> main_ip;
-
-    // int count_line = 0;
 
     while(getline(file_ip_main, line))
     {    
-        // if(count_line<first_line_no || count_line >last_line_no)
-        // {
-            main_ip.push_back(line);
-        // }
-        
-        // ++count_line;
+        main_ip.push_back(line);
     }
 
     cout<<"int main(int argc, char **argv)\n";
-    // for(int i = 0; i<first_line_no; ++i)
-    // {
-    //     cout<<main_ip[i]<<"\n";
-    // }
 
     cout<<main_ip[1]<<"\n";
 
@@ -1074,44 +899,7 @@ void mainfn()
 
     int line_no_index = 2;
 
-	// format of fn_call_info tuples
-	//("my_sort", 0, ["arr1", "n"], ["arr1"])
-	// cout << fn_call_info.size() << endl;
-    // cout << "//" << return_vars.size() << "\n";
-    // for(int i = 0; i<return_vars.size(); ++i)
-    // {
-    //     cout<< get<0>(return_vars[i]);
-    //     cout << "\t";
-    //     cout<< get<1>(return_vars[i]);
-    //     cout << "\t";
-    //     cout<< get<2>(return_vars[i]);
-    //     cout << "\t";
-    //     cout<< get<3>(return_vars[i]);
-    //     cout << "\t";
-    //     cout<< get<4>(return_vars[i]);
-    //     cout << "\t";
-    //     cout << "\n";
-    // }
-    // cout << "\n";
-
-    sort(return_vars.begin(), return_vars.end(), sortbysec);
-
-    // for(int i = 0; i<return_vars.size(); ++i)
-    // {
-    //     cout<< get<0>(return_vars[i]);
-    //     cout << "\t";
-    //     cout<< get<1>(return_vars[i]);
-    //     cout << "\t";
-    //     cout<< get<2>(return_vars[i]);
-    //     cout << "\t";
-    //     cout<< get<3>(return_vars[i]);
-    //     cout << "\t";
-    //     cout<< get<4>(return_vars[i]);
-    //     cout << "\t";
-    //     cout << "\n";
-    // }
-    // cout << "\n";
-
+    sort(return_vars.begin(), return_vars.end(), sort_by_field);
 
 	for(int k = 0; k < fn_call_info.size(); k++)
 	{
@@ -1125,14 +913,11 @@ void mainfn()
                 if((i == get<3>(return_vars[t_1])) && !(get<2>(return_vars[t_1]).empty()))
                 {
                     // the declaration
-                    cout << "//declaration\n";
                     cout << "\t" << get<2>(return_vars[t_1]) << " " << get<1>(return_vars[t_1]) << ";\n";
-                    // continue;
                 }
-                // cout << "//" << get<4>(return_vars[t_1]) - 1 << "\n";
+
                 if(i == get<4>(return_vars[t_1]))
                 {
-                    cout << "//find_future loop\n";
                     // call find_future
                     if(!(get<2>(return_vars[t_1]).empty()))
                     {
@@ -1142,15 +927,12 @@ void mainfn()
                     {
                         cout << "\tfind_future(" << to_string(t_1+1) << ");\n";
                     }
-
-                    // cout << "//" << get<1>(return_vars[t_1]) << " = \n";
-                    // call .get();
                 }
             }
             if(i != fn_line_nos[k])
                 cout << main_ip[i] << '\n';
         }
-        // cout << get<2>(return_vars[preempt_fn_call_count % return_vars.size()]) << " " << get<1>(return_vars[preempt_fn_call_count % return_vars.size()]) << ";\n";
+
         line_no_index = fn_line_nos[k] + 1;
 
 		// for min, max n stuff (functions not changing any of their arguments)
@@ -1181,20 +963,22 @@ void mainfn()
 			cout << to_string(k+1);
 			cout << ", fn" + to_string(k+1) + "));\n\t}\n";	
 		}
+
 		// for my_sort n stuff (fns changing one or more of their arguments)
 		else
 		{
-            // cout << "//" << get<2>(return_vars[preempt_fn_call_count % return_vars.size()]) << "\n\n";
-            // cout << "********************" << get<3>(fn_call_info[k]).size() << "\n";
-			for(int i = 0; i < get<3>(fn_call_info[k]).size(); i++)
+            for(int i = 0; i < get<3>(fn_call_info[k]).size(); i++)
 			{
 				cout << "\tpair<int,string> p" + to_string(k+1) + "_" + to_string(i+1) + "(" + to_string(k+1) + ", " + "\"" + get<3>(fn_call_info[k])[i] + "\");\n";
 			}
+
 			cout << "\t{\n\t\tlock_guard<mutex> lockGuard(m_sp);\n";
+
 			for(int i = 0; i < get<3>(fn_call_info[k]).size(); i++)
 			{
 				cout << "\t\tspecial.push_back(p" + to_string(k+1) + "_" + to_string(i+1) + ");\n";
 			}
+
 			cout << "\t}\n";
 			cout << "\tatomic<bool> done" + to_string(k+1) + "(false);\n";
 			cout << "\t{\n\t\tlock_guard<mutex> lockGuard(m_f);\n";
@@ -1203,6 +987,7 @@ void mainfn()
             {
                 cout << "\t\tfutures.emplace_back(make_pair(" + to_string(k+1) + ", tp.Submit([&]()->" + get<2>(return_vars[k]) + "{\n\t\t\t " + 
                 get<2>(return_vars[k]) + " temp = " + get<0>(fn_call_info[k]) + "(";
+
                 for(int i = 0; i < get<2>(fn_call_info[k]).size(); i++)
                 {
                     if(i == (get<2>(fn_call_info[k]).size() - 1))
@@ -1214,12 +999,14 @@ void mainfn()
                         cout << get<2>(fn_call_info[k])[i] << ", ";
                     }
                 }
+
                 cout << "\t\t\tdone" + to_string(k+1) + " = true; \nreturn temp;})));\n";
                 cout << "\t}\n";
             }
             else
             {
                 cout << "\t\tfutures.emplace_back(make_pair(" + to_string(k+1) + ", tp.Submit([&]{\n\t\t\t " + get<0>(fn_call_info[k]) + "(";
+
                 for(int i = 0; i < get<2>(fn_call_info[k]).size(); i++)
                 {
                     if(i == (get<2>(fn_call_info[k]).size() - 1))
@@ -1231,17 +1018,17 @@ void mainfn()
                         cout << get<2>(fn_call_info[k])[i] << ", ";
                     }
                 }
+
                 cout << "\t\t\tdone" + to_string(k+1) + " = true;})));\n";
                 cout << "\t}\n";
             }
+
             string pair_temp = "p_th_" + to_string(k+1);
             cout << "\tpair<int, atomic<bool>&> " + pair_temp + "(" + to_string(k+1) +", done" + to_string(k+1) + ");\n";
             cout << "\t{\n\t\tlock_guard<mutex> lockGuard(m_tt);\n\t\tthread_track.push_back(" + pair_temp + ");\n\t}\n\n";
  		    
         }
-        //  if(changed == true)
-        //     --preempt_fn_call_count;
-	}
+    }
 
     //printing client code after last fn call
     for(int i = line_no_index; i < main_ip.size()-1; ++i)
@@ -1250,7 +1037,6 @@ void mainfn()
         {
             if(i == get<4>(return_vars[t_1]))
             {
-                cout << "//outside for loop find future\n";
                 // call find_future
                 if(!(get<2>(return_vars[t_1]).empty()))
                 {
@@ -1260,11 +1046,9 @@ void mainfn()
                 {
                     cout << "\tfind_future(" << to_string(t_1+1) << ");\n";
                 }
-
-                // cout << "//" << get<1>(return_vars[t_1 % return_vars.size()]) << " = \n";
-                // call .get();
             }
         }
+
         cout << main_ip[i] << '\n';
     }
 
@@ -1274,8 +1058,6 @@ void mainfn()
 		visit([](auto n) { (n).wait();}, x.second);
 	}
     )";
-
-    
 
     string futures_scheduler = R"(
     done_01 = true;
@@ -1288,20 +1070,6 @@ void mainfn()
 
     cout << futures_scheduler << endl;
     cout << wait_on_futures << endl;
-
-	string finish = R"(	// gettimeofday(&stop, NULL);
-    // printf("%lu\n", ((stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec)/1000);
-    free(arr1);
-    free(arr2);
-	return 0;
-})";
-	//cout << finish << "\n\n";
-
-    // for(int i = first_line_no; i<main_ip.size(); ++i)
-    // {
-    //     cout<<main_ip[i]<<"\n";
-    // }
-    // cout<<main_ip[main_ip.size()-2]<<"\n";
     cout << "}\n";
 }
 
