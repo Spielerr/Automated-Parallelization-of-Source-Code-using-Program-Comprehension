@@ -64,6 +64,7 @@ vector<int> fn_line_nos;
 // stores the fn name, the return value variable name, and its data type, fn call line no, next usage line no (of the changed argument)
 // if no return value, then store empty string
 // maintain order of fn calls as it is, and every fn call should be present
+// last field being -1 signifies that fn can complete on its own will - no need to be preempted
 vector<tuple<string, string, string, int, int>> return_vars;
 map<string, int> fn_call_seq_order;
 
@@ -680,19 +681,24 @@ void prologue()
 	cout << "int sp_c = " << to_string(sp_c) << ";\n";
 	cout << "int wr_q = " << to_string(wr_q) << ";\n";
 
-    cout << "vector<pair<int, variant<";
+    string return_types_variant = "variant<";
+    cout << "vector<pair<int, ";
 	for(int i = 0; i < return_types.size(); ++i)
 	{
         if(i != return_types.size() - 1)
         {
-            cout << "shared_future<" << return_types[i] << ">, ";
+            // cout << "shared_future<" << return_types[i] << ">, ";
+            return_types_variant += "shared_future<" + return_types[i] + ">, ";
         }
         else
         {
-            cout << "shared_future<" << return_types[i] << ">";
+            // cout << "shared_future<" << return_types[i] << ">";
+            return_types_variant += "shared_future<" + return_types[i] + ">";
         }
 	}
-    cout << ">>> futures;\n";
+    return_types_variant += ">";
+    cout << return_types_variant;
+    cout << ">> futures;\n";
     cout << "vector<shared_future<void>> void_futures_scheduler;\n";
 	
 	cout<<"vector<pair<int, string>> special;\n";
@@ -795,24 +801,30 @@ class Find_special3
 	}
 };
 
-class Find_futures
+)";
+
+cout << temp << "\n";
+
+string find_futures = R"(class Find_futures
 {
 	private:
 	int ind_;
 
 	public:
 	Find_futures(int index) : ind_(index) {}
-	bool operator()(pair<int, variant<shared_future<int>, shared_future<void>>> i)
-	{
+	bool operator()(pair<int,)";
+
+cout << find_futures << return_types_variant << ">" << " i)\n";
+cout << R"({
 		if(i.first == ind_)
 		{
 			return true;
 		}
 		return false;
 	}
-};
-
-template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
+};)";
+cout << "\n\n";
+cout << R"(template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
 template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 
 template<typename T>
@@ -830,9 +842,9 @@ void find_future(int index, T& res)
 			}
 		}
 	}
-	vector<pair<int, variant<shared_future<int>, shared_future<void>>>>::iterator it;
+	vector<pair<int,)" << return_types_variant << ">>::iterator it;\n";
 
-	{
+cout << R"({
 		lock_guard<mutex> lockGuard(m_f);
 		it = find_if(begin(futures), end(futures), Find_futures(index));
 	}
@@ -859,9 +871,10 @@ void find_future(int index)
 			}
 		}
 	}
-	vector<pair<int, variant<shared_future<int>, shared_future<void>>>>::iterator it;
+	vector<pair<int,)" << return_types_variant << ">>::iterator it;\n";
+	
 
-	{
+cout << R"({
 		lock_guard<mutex> lockGuard(m_f);
 		it = find_if(begin(futures), end(futures), Find_futures(index));
 	}
@@ -872,12 +885,7 @@ void find_future(int index)
 		[](shared_future<void> n){ n.wait(); }
 		}, 
 		it->second);
-}
-
-)";
-	cout << temp << "\n\n";
-
-
+})";
 }
 
 void threadtrack()
@@ -912,7 +920,7 @@ void threadtrack()
 
 void schedulingfn()
 {
-	string temp = R"(void scheduling_fn()
+	cout << R"(void scheduling_fn()
 {
 	//special got updated
 	while(!done_02 || ready_queue.size() != 0 || wait_queue.size() != 0)
@@ -976,7 +984,28 @@ void schedulingfn()
                         lock_guard<mutex> lockGuard(m_f);
                         visit([temp](auto n)
                             {
-                                pair<int, variant<shared_future<int>, shared_future<void>>> temp_pair(temp, tp.Submit(n));
+                                pair<int, )";
+
+    string return_types_variant = "variant<";
+
+	for(int i = 0; i < return_types.size(); ++i)
+	{
+        if(i != return_types.size() - 1)
+        {
+            // cout << "shared_future<" << return_types[i] << ">, ";
+            return_types_variant += "shared_future<" + return_types[i] + ">, ";
+        }
+        else
+        {
+            // cout << "shared_future<" << return_types[i] << ">";
+            return_types_variant += "shared_future<" + return_types[i] + ">";
+        }
+	}
+    return_types_variant += ">";
+
+    cout << return_types_variant;
+
+    cout << R"(> temp_pair(temp, tp.Submit(n));
                                 futures.emplace_back(temp_pair); 
                                 },
                             x->second);
@@ -989,8 +1018,13 @@ void schedulingfn()
 		}
 	}
 })";
+    cout << "\n\n";
+}
 
-	cout << temp << "\n\n";
+bool sortbysec(const tuple<string, string, string, int, int>& a, 
+               const tuple<string, string, string, int, int>& b)
+{
+    return (get<3>(a) < get<3>(b));
 }
 
 void mainfn()
@@ -1039,44 +1073,82 @@ void mainfn()
 	cout << temp << "\n\n";
 
     int line_no_index = 2;
-    int preempt_fn_call_count = 0;
+
 	// format of fn_call_info tuples
 	//("my_sort", 0, ["arr1", "n"], ["arr1"])
 	// cout << fn_call_info.size() << endl;
+    // cout << "//" << return_vars.size() << "\n";
+    // for(int i = 0; i<return_vars.size(); ++i)
+    // {
+    //     cout<< get<0>(return_vars[i]);
+    //     cout << "\t";
+    //     cout<< get<1>(return_vars[i]);
+    //     cout << "\t";
+    //     cout<< get<2>(return_vars[i]);
+    //     cout << "\t";
+    //     cout<< get<3>(return_vars[i]);
+    //     cout << "\t";
+    //     cout<< get<4>(return_vars[i]);
+    //     cout << "\t";
+    //     cout << "\n";
+    // }
+    // cout << "\n";
+
+    sort(return_vars.begin(), return_vars.end(), sortbysec);
+
+    // for(int i = 0; i<return_vars.size(); ++i)
+    // {
+    //     cout<< get<0>(return_vars[i]);
+    //     cout << "\t";
+    //     cout<< get<1>(return_vars[i]);
+    //     cout << "\t";
+    //     cout<< get<2>(return_vars[i]);
+    //     cout << "\t";
+    //     cout<< get<3>(return_vars[i]);
+    //     cout << "\t";
+    //     cout<< get<4>(return_vars[i]);
+    //     cout << "\t";
+    //     cout << "\n";
+    // }
+    // cout << "\n";
+
 
 	for(int k = 0; k < fn_call_info.size(); k++)
 	{
 
         // printing client code up until present iteration function call
-        bool changed = false;
-        for(int i = line_no_index; i < fn_line_nos[k]; ++i)
+        for(int i = line_no_index; i <= fn_line_nos[k]; ++i)
         {
-            
-            cout << main_ip[i] << '\n';
-            if((i == get<3>(return_vars[preempt_fn_call_count % return_vars.size()]) - 1) && !(get<2>(return_vars[preempt_fn_call_count % return_vars.size()]).empty()))
-            {
-                // the declaration
-                cout << "\t" << get<2>(return_vars[preempt_fn_call_count % return_vars.size()]) << " " << get<1>(return_vars[preempt_fn_call_count % return_vars.size()]) << ";\n";
-            }
-            // cout << "//" << get<4>(return_vars[preempt_fn_call_count % return_vars.size()]) - 1 << "\n";
-            if(i == get<4>(return_vars[preempt_fn_call_count % return_vars.size()]) - 1)
-            {
-                // call find_future
-                if(!(get<2>(return_vars[preempt_fn_call_count % return_vars.size()]).empty()))
-                {
-                    cout << "\tfind_future(" << to_string(k+1) << ", " << get<1>(return_vars[preempt_fn_call_count % return_vars.size()]) << ");\n";
-                }
-                else
-                {
-                    cout << "\tfind_future(" << to_string(k+1) << ");\n";
-                }
 
-                // cout << "//" << get<1>(return_vars[preempt_fn_call_count % return_vars.size()]) << " = \n";
-                // call .get();
-                preempt_fn_call_count++;
-                changed = false;
-                
+            for(int t_1 = 0; t_1 < return_vars.size(); ++t_1)
+            {
+                if((i == get<3>(return_vars[t_1])) && !(get<2>(return_vars[t_1]).empty()))
+                {
+                    // the declaration
+                    cout << "//declaration\n";
+                    cout << "\t" << get<2>(return_vars[t_1]) << " " << get<1>(return_vars[t_1]) << ";\n";
+                    // continue;
+                }
+                // cout << "//" << get<4>(return_vars[t_1]) - 1 << "\n";
+                if(i == get<4>(return_vars[t_1]))
+                {
+                    cout << "//find_future loop\n";
+                    // call find_future
+                    if(!(get<2>(return_vars[t_1]).empty()))
+                    {
+                        cout << "\tfind_future(" << to_string(t_1+1) << ", " << get<1>(return_vars[t_1]) << ");\n";
+                    }
+                    else
+                    {
+                        cout << "\tfind_future(" << to_string(t_1+1) << ");\n";
+                    }
+
+                    // cout << "//" << get<1>(return_vars[t_1]) << " = \n";
+                    // call .get();
+                }
             }
+            if(i != fn_line_nos[k])
+                cout << main_ip[i] << '\n';
         }
         // cout << get<2>(return_vars[preempt_fn_call_count % return_vars.size()]) << " " << get<1>(return_vars[preempt_fn_call_count % return_vars.size()]) << ";\n";
         line_no_index = fn_line_nos[k] + 1;
@@ -1099,18 +1171,20 @@ void mainfn()
 			cout << "\t{\n\t\tlock_guard<mutex> lockGuard(m_sp);\n\t\titer1 = find_if(begin(special), end(special), Find_special2(\"";
 			cout << get<2>(fn_call_info[k])[0] + "\"));\n\t\titer2 = end(special);\n\t}\n";
 
-			cout << "\tif(iter1 != iter2)\n\t{\n\t\tlock_guard<mutex> lockGuard(m_wq);\n\t\twait_queue.push_back(pair<int, std::function<int()>>(";
+            string return_type = (get<2>(return_vars[k]).size() != 0) ? get<2>(return_vars[k]) : "void";
+
+			cout << "\tif(iter1 != iter2)\n\t{\n\t\tlock_guard<mutex> lockGuard(m_wq);\n\t\twait_queue.push_back(pair<int, std::function<" << return_type << "()>>(";
 			cout << to_string(k+1);
 			cout << ", fn" + to_string(k+1) + "));\n\t}\n";
 
-			cout << "\telse\n\t{\n\t\tlock_guard<mutex> lockGuard(m_rq);\n\t\tready_queue.push_back(pair<int, std::function<int()>>(";
+			cout << "\telse\n\t{\n\t\tlock_guard<mutex> lockGuard(m_rq);\n\t\tready_queue.push_back(pair<int, std::function<" << return_type << "()>>(";
 			cout << to_string(k+1);
 			cout << ", fn" + to_string(k+1) + "));\n\t}\n";	
 		}
 		// for my_sort n stuff (fns changing one or more of their arguments)
 		else
 		{
-            cout << "//" << get<2>(return_vars[preempt_fn_call_count % return_vars.size()]) << "\n\n";
+            // cout << "//" << get<2>(return_vars[preempt_fn_call_count % return_vars.size()]) << "\n\n";
             // cout << "********************" << get<3>(fn_call_info[k]).size() << "\n";
 			for(int i = 0; i < get<3>(fn_call_info[k]).size(); i++)
 			{
@@ -1124,11 +1198,11 @@ void mainfn()
 			cout << "\t}\n";
 			cout << "\tatomic<bool> done" + to_string(k+1) + "(false);\n";
 			cout << "\t{\n\t\tlock_guard<mutex> lockGuard(m_f);\n";
-            if(!get<2>(return_vars[preempt_fn_call_count % return_vars.size()]).empty())
+
+            if(!get<2>(return_vars[k]).empty())
             {
-                cout << "\t\tfutures.emplace_back(make_pair(" + to_string(k+1) + ", tp.Submit([&]()->" + get<2>(return_vars[preempt_fn_call_count % return_vars.size()]) + "{\n\t\t\t " + 
-                get<2>(return_vars[preempt_fn_call_count % return_vars.size()]) + " temp = " + get<0>(fn_call_info[k]) + "(";
-                ++preempt_fn_call_count;
+                cout << "\t\tfutures.emplace_back(make_pair(" + to_string(k+1) + ", tp.Submit([&]()->" + get<2>(return_vars[k]) + "{\n\t\t\t " + 
+                get<2>(return_vars[k]) + " temp = " + get<0>(fn_call_info[k]) + "(";
                 for(int i = 0; i < get<2>(fn_call_info[k]).size(); i++)
                 {
                     if(i == (get<2>(fn_call_info[k]).size() - 1))
@@ -1146,7 +1220,6 @@ void mainfn()
             else
             {
                 cout << "\t\tfutures.emplace_back(make_pair(" + to_string(k+1) + ", tp.Submit([&]{\n\t\t\t " + get<0>(fn_call_info[k]) + "(";
-                ++preempt_fn_call_count;
                 for(int i = 0; i < get<2>(fn_call_info[k]).size(); i++)
                 {
                     if(i == (get<2>(fn_call_info[k]).size() - 1))
@@ -1161,34 +1234,38 @@ void mainfn()
                 cout << "\t\t\tdone" + to_string(k+1) + " = true;})));\n";
                 cout << "\t}\n";
             }
-			string pair_temp = "p_th_" + to_string(k+1);
-			cout << "\tpair<int, atomic<bool>&> " + pair_temp + "(" + to_string(k+1) +", done" + to_string(k+1) + ");\n";
-			cout << "\t{\n\t\tlock_guard<mutex> lockGuard(m_tt);\n\t\tthread_track.push_back(" + pair_temp + ");\n\t}\n\n";
- 		}
-         if(changed == true)
-            --preempt_fn_call_count;
+            string pair_temp = "p_th_" + to_string(k+1);
+            cout << "\tpair<int, atomic<bool>&> " + pair_temp + "(" + to_string(k+1) +", done" + to_string(k+1) + ");\n";
+            cout << "\t{\n\t\tlock_guard<mutex> lockGuard(m_tt);\n\t\tthread_track.push_back(" + pair_temp + ");\n\t}\n\n";
+ 		    
+        }
+        //  if(changed == true)
+        //     --preempt_fn_call_count;
 	}
 
     //printing client code after last fn call
     for(int i = line_no_index; i < main_ip.size()-1; ++i)
     {
-        cout << main_ip[i] << '\n';
-        if(i == get<4>(return_vars[preempt_fn_call_count % return_vars.size()]) - 1)
+        for(int t_1 = 0; t_1 < return_vars.size(); ++t_1)
         {
-            // call find_future
-            if(!(get<2>(return_vars[preempt_fn_call_count % return_vars.size()]).empty()))
+            if(i == get<4>(return_vars[t_1]))
             {
-                cout << "\tfind_future(" << (fn_call_seq_order.find(get<0>(return_vars[preempt_fn_call_count % return_vars.size()])))->second + 1<< ", " << get<1>(return_vars[preempt_fn_call_count % return_vars.size()]) << ");\n";
-            }
-            else
-            {
-                cout << "\tfind_future(" << (fn_call_seq_order.find(get<0>(return_vars[preempt_fn_call_count % return_vars.size()])))->second + 1<< ");\n";
-            }
+                cout << "//outside for loop find future\n";
+                // call find_future
+                if(!(get<2>(return_vars[t_1]).empty()))
+                {
+                    cout << "\tfind_future(" << to_string(t_1+1) << ", " << get<1>(return_vars[t_1]) << ");\n";
+                }
+                else
+                {
+                    cout << "\tfind_future(" << to_string(t_1+1) << ");\n";
+                }
 
-            // cout << "//" << get<1>(return_vars[preempt_fn_call_count % return_vars.size()]) << " = \n";
-            // call .get();
-            preempt_fn_call_count++;
+                // cout << "//" << get<1>(return_vars[t_1 % return_vars.size()]) << " = \n";
+                // call .get();
+            }
         }
+        cout << main_ip[i] << '\n';
     }
 
 	string wait_on_futures = R"(
