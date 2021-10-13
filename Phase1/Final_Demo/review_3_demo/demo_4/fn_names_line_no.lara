@@ -1,0 +1,47 @@
+aspectdef test
+output stats end
+
+stats = new LaraObject();
+
+var fn_calls = [];
+
+var avoid_inbuilt_fn = {"malloc":0, "free":0, "calloc":0, "realloc":0, "printf":0, "atoi":0, "srand":0,"rand":0,"gettimeofday":0};
+
+select function.call end
+apply
+    
+        if(!($call.name in avoid_inbuilt_fn))
+        {
+            var temp = [];
+            temp.push($call.name);
+            temp.push($call.returnType.code);
+            temp.push($call.line);
+            fn_calls.push(temp);
+        }
+    
+end
+
+select function{'main'} end
+apply
+    
+    var start_line_body = $function.line;
+    var end_line = $function.endLine;
+    
+    println("Start of Input3.txt");
+    
+    for(var fn_i = 0; fn_i < fn_calls.length; ++fn_i)
+    {
+        if(fn_calls[fn_i][2] >= start_line_body && fn_calls[fn_i][2] <= end_line)
+        {
+            var new_line = fn_calls[fn_i][2] - start_line_body;
+            println(fn_calls[fn_i][0] + " " + new_line);
+        }
+        
+    }
+    
+    println("End of Input3.txt");
+    
+    
+end
+
+end
