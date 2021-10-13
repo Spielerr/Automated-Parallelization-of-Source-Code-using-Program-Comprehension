@@ -6,7 +6,7 @@
 
 	$output = null;
 
-	shell_exec(escapeshellcmd('/usr/local/bin/clang-tidy testfile_demo_2.cpp -fix -checks="readability-braces-around-statements,readability-isolate-declaration" -- COMPILE_OPTIONS'));
+	// shell_exec(escapeshellcmd('/usr/local/bin/clang-tidy testfile_demo_2.cpp -fix -checks="readability-braces-around-statements,readability-isolate-declaration" -- COMPILE_OPTIONS'));
 	shell_exec(escapeshellcmd("bash demo_2/script.sh"));
 
     echo file_get_contents("demo_2/output.txt");
