@@ -11,6 +11,6 @@ int main(int argc, char** argv)
     system(argv[1]);
 
     gettimeofday(&stop, NULL);
-	printf("Time Taken 2: %lu ms\n", ((stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec)/1000);
+	printf("%lu\n", ((stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec)/1000);
 
 }
