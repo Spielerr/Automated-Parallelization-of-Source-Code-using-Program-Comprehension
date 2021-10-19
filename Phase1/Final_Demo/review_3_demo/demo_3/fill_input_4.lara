@@ -240,6 +240,9 @@ end
 //apply
 
 //println("End of input2.txt");
+
+
+
 println("input4.txt:");
 
 select function.varref end
@@ -317,6 +320,47 @@ apply
                     }
                 }
     
+            }
+        }
+
+        else
+        {
+            // println("test");
+
+            if(fn_name in fn_args)
+            {
+
+                no_of_calls_fn = fn_args[fn_name].length;
+                // println("test1");
+                for(var j = 0; j < no_of_calls_fn; ++j)
+                {
+    //              println(fn_name + "," + fn_args[fn_name][j][ind] + "," + fn_calls_line_no[fn_name][j]);
+                    
+                    if(fn_name in fn_ret_type && $function.name == 'main')
+                    {
+        
+                        var ret_var_name = fn_ret_type[fn_name][j][2];
+                        var curr_line = fn_ret_type[fn_name][j][1];
+    //                            println(ret_var_name + ', ' + curr_line + ',' + $varref.name + ', ' + $varref.line );
+                        if($varref.name == ret_var_name && $varref.line > curr_line)
+                        {
+    //                                println("test1");
+                            if(fn_call_ref_line_no[fn_name][j] == -1)
+                            {
+    //                                    println("test2");
+                                fn_call_ref_line_no[fn_name][j] = $varref.line; 
+                            }
+                            
+                            else if($varref.line < fn_call_ref_line_no[fn_name][j])
+                            {
+    //                                    println("test3");
+                                fn_call_ref_line_no[fn_name][j] = $varref.line; 
+                            }
+                        }
+                    }
+                    
+                }
+
             }
         }
         

@@ -1,6 +1,6 @@
 import re
 
-file_ip = open("testfile_demo_3.cpp","r")
+file_ip = open("input_prog_test.cpp","r")
 
 ip = file_ip.read()
 
@@ -19,6 +19,6 @@ if match:
 file_op.close()
 
 new_client = re.sub(pat,"",ip,flags=re.S)
-file_ip = open("testfile_demo_3.cpp","w")
+file_ip = open("input_prog_test.cpp","w")
 file_ip.write(new_client)
 file_ip.close()

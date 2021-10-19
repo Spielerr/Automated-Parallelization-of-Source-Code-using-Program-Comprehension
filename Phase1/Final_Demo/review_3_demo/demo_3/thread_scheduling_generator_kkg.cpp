@@ -514,7 +514,7 @@ using namespace thread_pool;
 
     string dependencies;
 
-    ifstream file_ip_client("testfile_demo_3.cpp");
+    ifstream file_ip_client("input_prog_test.cpp");
 
     while(getline(file_ip_client, dependencies))
     {    
