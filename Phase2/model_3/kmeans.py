@@ -33,7 +33,7 @@ for i in range(len(l)):
 print(X[0], label_names[0])
 
 
-NUM_CLUSTERS = 4
+NUM_CLUSTERS = 2
 from sklearn import cluster
 from sklearn import metrics
 kmeans = cluster.KMeans(n_clusters=NUM_CLUSTERS)
@@ -105,13 +105,19 @@ import seaborn as sns
 
 # Generate some random clusters
 # X, y = make_blobs()
+X = np.array(X)
+t = kmeans.transform(X)
+print(t)
 # kmeans = KMeans(n_clusters=3).fit(X)
 
 # plot the cluster centers and samples 
-# sns.scatterplot(kmeans.cluster_centers_[:,0], kmeans.cluster_centers_[:,1], 
-#                 marker='+', 
-#                 color='black', 
-#                 s=200)
+print(kmeans.cluster_centers_[:,0])
+sns.scatterplot(kmeans.cluster_centers_[:,0], kmeans.cluster_centers_[:,1], 
+                marker='+', 
+                color='black', 
+                s=200)
+
+sns.scatterplot(t[:,0], t[:,1], palette=sns.color_palette("Set1", n_colors=15))
 
 T = []
 # label_names_ = []
@@ -123,5 +129,5 @@ for i in X:
 #     print(i, d[i][1])
 # print(len(T), len(labels))
 # print(le)
-sns.swarmplot(label_names, T)
+# sns.swarmplot(label_names, T)
 plt.savefig('kmeans.png')
