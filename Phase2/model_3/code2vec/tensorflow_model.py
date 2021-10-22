@@ -45,10 +45,11 @@ class Code2VecModel(Code2VecModelBase):
         sum_loss = 0
         multi_batch_start_time = time.time()
         num_batches_to_save_and_eval = max(int(self.config.train_steps_per_epoch * self.config.SAVE_EVERY_EPOCHS), 1)
-
+        print("num_batches_to_save_and_eval : ", num_batches_to_save_and_eval)
         train_reader = PathContextReader(vocabs=self.vocabs,
                                          model_input_tensors_former=_TFTrainModelInputTensorsFormer(),
                                          config=self.config, estimator_action=EstimatorAction.Train)
+        print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", train_reader.get_dataset(), "\n\n\n\n\n\n")
         input_iterator = tf.compat.v1.data.make_initializable_iterator(train_reader.get_dataset())
         input_iterator_reset_op = input_iterator.initializer
         input_tensors = input_iterator.get_next()
@@ -65,6 +66,7 @@ class Code2VecModel(Code2VecModelBase):
         self._initialize_session_variables()
 
         if self.config.MODEL_LOAD_PATH:
+            print("\n\n\n\n\n\n\n\nLOADINGLOADINGLOADING\n\n\n\n\n\n")
             self._load_inner_model(self.sess)
 
         self.sess.run(input_iterator_reset_op)

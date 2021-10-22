@@ -20,7 +20,9 @@ if __name__ == '__main__':
     config.log('Done creating code2vec model')
 
     if config.is_training:
+        print("\n\n\n\n\n\n\n\n\nTRAININGTRAININGTRAININGTRAININGTRAINING\n\n\n\n\n\n\n\n\nTRAINING\n\n\n\n")
         model.train()
+        print("\n\n\n\n\n\n\n\n\nTRAINEDEDEDEDEDEDEDEDED\n\n\n\n\n\n\n\n\nTRAINING\n\n\n\n")
     if config.SAVE_W2V is not None:
         model.save_word2vec_format(config.SAVE_W2V, VocabType.Token)
         config.log('Origin word vectors saved in word2vec text format in: %s' % config.SAVE_W2V)
@@ -28,10 +30,13 @@ if __name__ == '__main__':
         model.save_word2vec_format(config.SAVE_T2V, VocabType.Target)
         config.log('Target word vectors saved in word2vec text format in: %s' % config.SAVE_T2V)
     if (config.is_testing and not config.is_training) or config.RELEASE:
-        eval_results = model.evaluate()
-        if eval_results is not None:
-            config.log(
-                str(eval_results).replace('topk', 'top{}'.format(config.TOP_K_WORDS_CONSIDERED_DURING_PREDICTION)))
+        # try:
+            eval_results = model.evaluate()
+            if eval_results is not None:
+                config.log(
+                    str(eval_results).replace('topk', 'top{}'.format(config.TOP_K_WORDS_CONSIDERED_DURING_PREDICTION)))
+        # except:
+            # pass
     if config.PREDICT:
         predictor = InteractivePredictor(config, model)
         predictor.predict()

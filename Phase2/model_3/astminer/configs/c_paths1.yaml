@@ -1,12 +1,12 @@
 # input directory (path to project)
-inputDir: src/test/resources/examples/cpp/realExamples2
+inputDir: data_train
 # output directory
 outputDir: output/train
 
 # parse Python files with ANTLR parser
 parser:
   name: fuzzy
-  languages: [cpp]
+  languages: [c]
 
 filters:
   - name: by tree size  # exclude the trees that have > 1000 nodes
@@ -15,11 +15,11 @@ filters:
 # use file names as labels
 # this selects the file level granularity
 label:
-  name: function name
+  name: file name
 
 # extract from each tree paths with length 9 and width 2
 # save paths in code2vec format
 storage:
   name: code2vec
-  maxPathLength: 10
-  maxPathWidth: 2
+  maxPathLength: 1000
+  maxPathWidth: 1000
