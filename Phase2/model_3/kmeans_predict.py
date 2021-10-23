@@ -4,7 +4,7 @@ import os
 from pycparser import c_parser
 import numpy as np
 from sklearn.metrics.pairwise import distance_metrics
-
+from dynamic_verification import verify
 root = 'data/'
 
 from gensim.models.word2vec import Word2Vec
@@ -70,13 +70,15 @@ t = kmeans.transform(X)
 with open("threshold", "rb") as f:
     threshold = pickle.load(f)
 distance_clusters = list(t)
+threshold = [1]
 for i in range(len(distance_clusters)):
     distance_clusters[i] = list(distance_clusters[i])
     for j in range(len(distance_clusters[i])):
         distance_clusters[i][j] = (distance_clusters[i][j], j)
     distance_clusters[i] = sorted(distance_clusters[i])
 assigned_cluster = [-1]*len(distance_clusters)
-# print(threshold)
+print(distance_clusters)
+print(threshold)
 for i in range(len(distance_clusters)):
     for j in distance_clusters[i]:
         if(j[0] < threshold[j[1]]):
@@ -85,8 +87,15 @@ for i in range(len(distance_clusters)):
 
 with open("cluster_mapping", "rb") as f:
     cluster_mapping = pickle.load(f)
+print(cluster_mapping, assigned_cluster)
 for i in range(len(assigned_cluster)):
-    print(label_names[i], cluster_mapping[assigned_cluster[i]], distance_clusters[i][0])
+    # print(label_names[i], cluster_mapping[assigned_cluster[i]], assigned_cluster[i])
+    if(cluster_mapping[assigned_cluster[i]] == "parallel_sort"):
+        if(verify(label_names[i])):
+            print(label_names[i], cluster_mapping[assigned_cluster[i]], assigned_cluster[i])
+        else:
+            print(label_names[i], cluster_mapping[-1], assigned_cluster[i])
+
 
 
 # for i in range(len(label_names)):

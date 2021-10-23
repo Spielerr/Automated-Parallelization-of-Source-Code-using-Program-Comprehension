@@ -31,6 +31,7 @@ for i in range(len(l)):
     X.append(l[i][1])
     label_names.append(l[i][0])
 # print(X[0], label_names[0])
+# print(X, label_names)
 
 
 NUM_CLUSTERS = 1
@@ -47,7 +48,7 @@ labels = kmeans.labels_
 centroids = kmeans.cluster_centers_
  
 # print ("Cluster id labels for inputted data")
-# print (labels)
+print (labels)
 # print (len(labels))
 
 
@@ -77,7 +78,7 @@ for i in range(len(distance_clusters)):
 #     # distance_clusters[i] = sorted(distance_clusters[i])
 # assigned_cluster = labels
 
-print("Distance from Centers : ", distance_clusters)
+# print("Distance from Centers : ", distance_clusters)
 
 sum_distances = [0] * len(distance_clusters[0])
 for i in range(len(distance_clusters)):
@@ -88,7 +89,7 @@ for i in range(len(distance_clusters)):
 threshold = [0] * len(distance_clusters[0])
 for i in range(len(distance_clusters)):
     for j in range(len(distance_clusters[i])):
-        threshold[j] += distance_clusters[i][j] * (1 - 2.5 * distance_clusters[i][j] / sum_distances[j])
+        threshold[j] += distance_clusters[i][j] * (1 - 2 * distance_clusters[i][j] / sum_distances[j])
 
 
 
@@ -98,7 +99,17 @@ print("Threshold for each center : ", threshold)
 with open("threshold", "wb") as f:
     pickle.dump(threshold, f)
 # TODO
-cluster_mapping = {-1: "other", 0 : "parallel_sort"}
+cluster_mapping = {-1: "other"}
+for i in range(len(label_names)):
+    if "sort" in label_names[i]:
+        label_names[i] = "parallel_sort"
+    else:
+        label_names[i] = "other"
+print(label_names)
+for i in range(len(labels)):
+    cluster_mapping[labels[i]] = label_names[i]
+print(cluster_mapping)
+
 with open("cluster_mapping", "wb") as f:
     pickle.dump(cluster_mapping, f)
 

@@ -11,7 +11,7 @@ int imaximo(int* array, int size) {
   return imax;
 }
 
-void selection_sort(int* array, int size) {
+void selectionSort(int* array, int size) {
   int j, imax;
   for(j = size; j > 0; j--) {
     imax = imaximo(array, j);

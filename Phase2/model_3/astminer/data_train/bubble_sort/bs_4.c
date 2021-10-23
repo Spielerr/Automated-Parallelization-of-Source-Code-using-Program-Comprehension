@@ -1,6 +1,6 @@
 
 
-void BubbleSort(int arr[], int n)
+void bubbleSort(int arr[], int n)
 {
 	int i,j;
 	int temp;

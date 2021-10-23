@@ -1,6 +1,6 @@
 
 
-void main(){
+void selectionSort(){
 	int i,j,ar[20],n,min,t;
 	printf("Enter array limit:");
 	scanf("%d",&n);

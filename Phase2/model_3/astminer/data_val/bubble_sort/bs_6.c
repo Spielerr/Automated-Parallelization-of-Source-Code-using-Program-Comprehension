@@ -1,5 +1,5 @@
 
-void main()
+void bubbleSort()
 {
     int count;
     printf("Enter the count: \n");

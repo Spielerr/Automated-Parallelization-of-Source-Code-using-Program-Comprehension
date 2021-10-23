@@ -1,15 +1,15 @@
 
-void dispArr(int *arr, int n);
+// void dispArr(int *arr, int n);
 void bubbleSort(int *arr,int n);
 
-void dispArr(int *arr, int n)
-{
-    for (int i = 0; i < n; i++)
-    {
-        printf("%d\t", arr[i]);
-    }
-    printf("\n");
-}
+// void dispArr(int *arr, int n)
+// {
+//     for (int i = 0; i < n; i++)
+//     {
+//         printf("%d\t", arr[i]);
+//     }
+//     printf("\n");
+// }
 
 void bubbleSort(int *arr,int n){
     int temp,isSorted=0;

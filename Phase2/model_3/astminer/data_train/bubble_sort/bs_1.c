@@ -2,7 +2,7 @@
 
 int nums[] = { 5, 23, -6, 13, 100, 2, 19 };
 
-void bubblesort(int a[], int len)
+void bubbleSort(int a[], int len)
 {
   int swapped;
 

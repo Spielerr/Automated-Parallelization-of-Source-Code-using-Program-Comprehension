@@ -6,7 +6,7 @@ struct array{
     int size;
 };
 
-void SelectionSort(int B[],int size){
+void selectionSort(int B[],int size){
     
     for(int i=0;i<size;i++){
     int k,j;

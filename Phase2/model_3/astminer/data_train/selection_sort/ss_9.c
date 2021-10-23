@@ -6,17 +6,17 @@
 
 
 
-void SelectionSort(int x[], int n);
-void troca(int v[], int i, int j);
+void selectionSort(int x[], int n);
+// void troca(int v[], int i, int j);
 
-void troca(int v[], int i, int j){   
-  int aux;
-  aux = v[i];
-  v[i] = v[j];
-  v[j] = aux;
-}
+// void troca(int v[], int i, int j){   
+//   int aux;
+//   aux = v[i];
+//   v[i] = v[j];
+//   v[j] = aux;
+// }
 
-void SelectionSort(int x[], int n){
+void selectionSort(int x[], int n){
   int menor,pos;
   int i,k = 0;
 
