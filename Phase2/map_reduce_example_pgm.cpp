@@ -46,7 +46,7 @@ void merge_arr(int *arr1, int n1, int *arr2, int n2, int *arr3, int n3, int *mer
 
 }
 
-void selection_sort(int *arr, int n)
+void sort(int *arr, int n)
 {
     int min_key, min_ind;
     int temp;
@@ -138,8 +138,8 @@ int reduce(int *sorted_scores_arr, int l, int r, node_results *arr, int n)
 // range 2 : 100 - 199
 // range 3 : 200 - 300
 
-//generates the combined array
-void combiner(node_results *arr1, int n1, node_results *arr2, int n2, node_results *arr3, int n3, node_results *combined_arr)
+//returns the length of the combined array generates the combined array
+int combiner(node_results *arr1, int n1, node_results *arr2, int n2, node_results *arr3, int n3, node_results *combined_arr)
 {
     int ind = 0;
     for(int i = 0; i<n1; ++i)
@@ -162,6 +162,8 @@ void combiner(node_results *arr1, int n1, node_results *arr2, int n2, node_resul
         combined_arr[ind].score = arr3[i].score;
         ++ind;
     }
+
+    return ind;
 
 }
 
@@ -197,7 +199,7 @@ int main()
     int merged_arr[n];
 
     merge_arr(match_1_scores, match_1_len, match_2_scores, match_2_len, match_3_scores, match_3_len, merged_arr);
-    selection_sort(merged_arr, n);
+    sort(merged_arr, n);
 
     int start_ind = 0;
     int range1_ind = -1; 
@@ -240,8 +242,8 @@ int main()
     }
 
     node_results *final_results = (node_results*)malloc((n1+n2+n3)*sizeof(node_results));
-    combiner(arr1, n1, arr2, n2, arr3, n3, final_results);
+    int combined_length = combiner(arr1, n1, arr2, n2, arr3, n3, final_results);
 
-    display(final_results, n1 + n2 + n3);
+    display(final_results, combined_length);
 
 }
