@@ -202,9 +202,6 @@ int main()
     sort(merged_arr, n);
 
     int start_ind = 0;
-    int range1_ind = -1; 
-    int range2_ind = -1; 
-    int range3_ind = -1;
 
     // range 1 : 0-99
     // range 2 : 100 - 199
@@ -217,7 +214,7 @@ int main()
     int n2 = 0;
     int n3 = 0;
 
-    range1_ind = partition(merged_arr, n, 0, 99, 0);
+    int range1_ind = partition(merged_arr, n, 0, 99, 0);
     
     if(range1_ind != -1)
     {
@@ -225,7 +222,7 @@ int main()
         start_ind = range1_ind + 1;
     }
 
-    range2_ind = partition(merged_arr, n, 100, 199, start_ind);
+    int range2_ind = partition(merged_arr, n, 100, 199, start_ind);
 
     if(range2_ind != -1)
     {
@@ -233,7 +230,7 @@ int main()
         start_ind = range2_ind + 1;
     }
 
-    range3_ind = partition(merged_arr, n, 200, 300, start_ind);
+    int range3_ind = partition(merged_arr, n, 200, 300, start_ind);
 
     if(range3_ind != -1)
     {
