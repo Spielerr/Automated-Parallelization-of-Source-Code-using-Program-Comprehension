@@ -94,6 +94,8 @@ apply
             var temp_ret_line = [];
             //return type, line number, variable name, declaration statement (yes or no)
             
+            temp_ret_line.push($call.returnType.code);
+            temp_ret_line.push($call.line);
             
             //ex: int res1 = add(1,2)
             if($call.astParent.astName == 'VarDecl')
@@ -101,8 +103,7 @@ apply
                 var fn_call_stmt = $call.astParent.astParent.code;
                 var variable_name = ((fn_call_stmt.split('=')[0]).split(' ')[1]).trim();
 
-                temp_ret_line.push($call.returnType.code);
-                temp_ret_line.push($call.line);
+                
                 temp_ret_line.push(variable_name);
                 temp_ret_line.push(1);
                 
@@ -117,8 +118,7 @@ apply
                 var fn_call_stmt = $call.astParent.astParent.code;
                 var variable_name = (fn_call_stmt.split('=')[0]).trim();
 
-                temp_ret_line.push('assignment');
-                temp_ret_line.push($call.line);
+                
                 temp_ret_line.push(variable_name);
                 temp_ret_line.push(0);
 //                println(variable_name);
@@ -424,7 +424,7 @@ for(fn_name in fn_calls_line_no)
         {
             if(fn_name in fn_ret_type)
             {
-                println(fn_name + "," + fn_calls_line_no[fn_name][j] + "," + fn_call_ref_line_no[fn_name][j] + "," + fn_ret_type[fn_name][j][0] + "," + fn_ret_type[fn_name][j][2]); 
+                println(fn_name + "," + fn_calls_line_no[fn_name][j] + "," + fn_call_ref_line_no[fn_name][j] + "," + fn_ret_type[fn_name][j][0] + "," + fn_ret_type[fn_name][j][2] + "," + fn_ret_type[fn_name][j][3]); 
             }
             else
             {
@@ -439,7 +439,7 @@ for(fn_name in fn_calls_line_no)
             
             if(fn_name in fn_ret_type)
             {
-                println(fn_name + "," + fn_calls_line_no[fn_name][j] + "," + first_rw_ref_line_no + "," + fn_ret_type[fn_name][j][0] + "," + fn_ret_type[fn_name][j][2]); 
+                println(fn_name + "," + fn_calls_line_no[fn_name][j] + "," + first_rw_ref_line_no + "," + fn_ret_type[fn_name][j][0] + "," + fn_ret_type[fn_name][j][2] + "," + fn_ret_type[fn_name][j][3]); 
             }
             else
             {
