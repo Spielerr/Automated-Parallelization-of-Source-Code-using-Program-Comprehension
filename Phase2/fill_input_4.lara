@@ -93,14 +93,16 @@ apply
             
             var temp_ret_line = [];
             //return type, line number, variable name, declaration statement (yes or no)
-            temp_ret_line.push($call.returnType.code);
-            temp_ret_line.push($call.line);
+            
             
             //ex: int res1 = add(1,2)
             if($call.astParent.astName == 'VarDecl')
             {
                 var fn_call_stmt = $call.astParent.astParent.code;
                 var variable_name = ((fn_call_stmt.split('=')[0]).split(' ')[1]).trim();
+
+                temp_ret_line.push($call.returnType.code);
+                temp_ret_line.push($call.line);
                 temp_ret_line.push(variable_name);
                 temp_ret_line.push(1);
                 
@@ -114,6 +116,9 @@ apply
 //                println('hello world, everything');
                 var fn_call_stmt = $call.astParent.astParent.code;
                 var variable_name = (fn_call_stmt.split('=')[0]).trim();
+
+                temp_ret_line.push('assignment');
+                temp_ret_line.push($call.line);
                 temp_ret_line.push(variable_name);
                 temp_ret_line.push(0);
 //                println(variable_name);
