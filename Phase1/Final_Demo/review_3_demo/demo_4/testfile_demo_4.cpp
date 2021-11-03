@@ -16,7 +16,7 @@ void fill(int a[], int n)
 {
 	for(int i = 0; i < n; ++i)
 	{
-		a[i] = rand() % 300;
+		a[i] = rand() % 200;
 	}
 }
 void map(int *arr, int *count_arr, int n)
@@ -184,9 +184,9 @@ void display(node_results *arr, int n)
 
 int main()
 {
-    int match_1_len = 5;
-    int match_2_len = 5;
-    int match_3_len = 5;
+    int match_1_len = 20000;
+    int match_2_len = 10000;
+    int match_3_len = 80000;
 
     int *match_1_scores = (int*)malloc( sizeof(int) * match_1_len );
     int *match_2_scores = (int*)malloc( sizeof(int) * match_2_len );
@@ -202,7 +202,7 @@ int main()
     map(match_3_scores, count_3, match_3_len);
 
     int n = match_1_len + match_2_len + match_3_len;
-    int *merged_arr = (int*)malloc( sizeof(int) * n );
+    int merged_arr[n];
 
     merge_arr(match_1_scores, match_1_len, match_2_scores, match_2_len, match_3_scores, match_3_len, merged_arr);
     sort(merged_arr, n);
@@ -213,9 +213,9 @@ int main()
     // range 2 : 100 - 199
     // range 3 : 200 - 300
 
-    node_results *arr1 = (node_results*)malloc( sizeof(node_results) * 100 );
-    node_results *arr2 = (node_results*)malloc( sizeof(node_results) * 100 );
-    node_results *arr3 = (node_results*)malloc( sizeof(node_results) * 101 );
+    node_results arr1[100];
+    node_results arr2[100];
+    node_results arr3[101];
     int n1 = 0;
     int n2 = 0;
     int n3 = 0;
@@ -247,7 +247,7 @@ int main()
     node_results *final_results = (node_results*)malloc((n1+n2+n3)*sizeof(node_results));
     int combined_length = combiner(arr1, n1, arr2, n2, arr3, n3, final_results);
 
-   //  display(final_results, combined_length);
+    display(final_results, combined_length);
     // free(final_results);
     // return 0;
 

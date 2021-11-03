@@ -41,7 +41,7 @@ vector<int> fn_line_nos;
 // if no return value, then store empty string
 // maintain order of fn calls as it is, and every fn call should be present
 // last field being -1 signifies that fn can complete on its own will - no need to be preempted
-vector<tuple<string, string, string, int, int>> return_vars;
+vector<tuple<string, string, string, int, int, int>> return_vars;
 
 class my_find_special
 {
@@ -356,7 +356,7 @@ void input_data()
     ifstream file_4("input4.txt");
     string return_vars_info;
     while (getline(file_4, return_vars_info)) {
-        tuple<string, string, string, int, int> temp_return_vars;
+        tuple<string, string, string, int, int, int> temp_return_vars;
         int indx = 0;
         vector<string> store_string_info;
         vector<int> store_line_info;
@@ -374,11 +374,12 @@ void input_data()
         if (store_string_info.size() == 1) {
             store_string_info.push_back("");
             store_string_info.push_back("");
+            store_string_info.push_back("0");
         }
         string old_ = "undefined";
         string new_ = "";
         replace(begin(store_string_info), end(store_string_info), old_, new_);
-        temp_return_vars = make_tuple(store_string_info[0], store_string_info[2], store_string_info[1], store_line_info[0], store_line_info[1]);
+        temp_return_vars = make_tuple(store_string_info[0], store_string_info[2], store_string_info[1], store_line_info[0], store_line_info[1], stoi(store_string_info[3]));
         return_vars.push_back(temp_return_vars);
     }
     file_4.close();
@@ -479,18 +480,14 @@ template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 template<typename T>
 void find_future(int index, T& res)
 {
-	// wait until the required future is moved into futures from ready queue
-	// while(find_if(begin(futures), end(futures), Find_futures(index)) != end(futures));
-	while(1)
-	{
-		{
-			lock_guard<mutex> lockGuard(m_f);
-			if(find_if(begin(futures), end(futures), Find_futures(index)) != end(futures))
-			{
-				break;
-			}
-		}
-	}
+	
+    {
+        lock_guard<mutex> lockGuard(m_f);
+        if(find_if(begin(futures), end(futures), Find_futures(index)) == end(futures))
+        {
+            return;
+        }
+    }
 	vector<pair<int,)" << return_types_variant << ">>::iterator it;\n";
 
     cout << R"({
@@ -508,18 +505,14 @@ void find_future(int index, T& res)
 
 void find_future(int index)
 {
-	// wait until the required future is moved into futures from ready queue
-	// while(find_if(begin(futures), end(futures), Find_futures(index)) != end(futures));
-	while(1)
-	{
-		{
-			lock_guard<mutex> lockGuard(m_f);
-			if(find_if(begin(futures), end(futures), Find_futures(index)) != end(futures))
-			{
-				break;
-			}
-		}
-	}
+	
+    {
+        lock_guard<mutex> lockGuard(m_f);
+        if(find_if(begin(futures), end(futures), Find_futures(index)) == end(futures))
+        {
+            return;
+        }
+    }
 	vector<pair<int,)" << return_types_variant << ">>::iterator it;\n";
 	
 
@@ -539,7 +532,7 @@ void find_future(int index)
 cout << "\n\n";
 }
 
-bool sort_by_field(const tuple<string, string, string, int, int>& a, const tuple<string, string, string, int, int>& b)
+bool sort_by_field(const tuple<string, string, string, int, int, int>& a, const tuple<string, string, string, int, int, int>& b)
 {
     return (get<3>(a) < get<3>(b));
 }
@@ -572,7 +565,7 @@ void mainfn()
 
             for(int t_1 = 0; t_1 < return_vars.size(); ++t_1)
             {
-                if((i == get<3>(return_vars[t_1])) && !(get<2>(return_vars[t_1]).empty()) && !(get<1>(return_vars[t_1]).empty()))
+                if((i == get<3>(return_vars[t_1])) && get<5>(return_vars[t_1]) != 0 && !(get<1>(return_vars[t_1]).empty()))
                 {
                     // the declaration
                     cout << "\t" << get<2>(return_vars[t_1]) << " " << get<1>(return_vars[t_1]) << ";\n";

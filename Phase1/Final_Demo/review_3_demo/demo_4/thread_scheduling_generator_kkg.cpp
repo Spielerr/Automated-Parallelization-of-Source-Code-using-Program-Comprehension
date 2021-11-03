@@ -679,18 +679,15 @@ template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 template<typename T>
 void find_future(int index, T& res)
 {
-	// wait until the required future is moved into futures from ready queue
-	// while(find_if(begin(futures), end(futures), Find_futures(index)) != end(futures));
-	while(1)
-	{
-		{
-			lock_guard<mutex> lockGuard(m_f);
-			if(find_if(begin(futures), end(futures), Find_futures(index)) != end(futures))
-			{
-				break;
-			}
-		}
-	}
+	
+    {
+        lock_guard<mutex> lockGuard(m_f);
+        if(find_if(begin(futures), end(futures), Find_futures(index)) != end(futures))
+        {
+            return;
+        }
+    }
+	
 	vector<pair<int,)" << return_types_variant << ">>::iterator it;\n";
 
     cout << R"({
@@ -708,18 +705,14 @@ void find_future(int index, T& res)
 
 void find_future(int index)
 {
-	// wait until the required future is moved into futures from ready queue
-	// while(find_if(begin(futures), end(futures), Find_futures(index)) != end(futures));
-	while(1)
-	{
-		{
-			lock_guard<mutex> lockGuard(m_f);
-			if(find_if(begin(futures), end(futures), Find_futures(index)) != end(futures))
-			{
-				break;
-			}
-		}
-	}
+	
+    {
+        lock_guard<mutex> lockGuard(m_f);
+        if(find_if(begin(futures), end(futures), Find_futures(index)) != end(futures))
+        {
+            return;
+        }
+    }
 	vector<pair<int,)" << return_types_variant << ">>::iterator it;\n";
 	
 
