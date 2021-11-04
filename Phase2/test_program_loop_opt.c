@@ -9,14 +9,20 @@ int main()
     // loop iterations are independent
     for(int i = 0; i<n; ++i)
     {
-        a[i] = -1;
+        a[i] = 0;
     }
 
     //loop iterations are dependent
+    for(int i = 1; i<n; ++i)
+    {
+        a[i] = a[i-1] + 5;
+    }
+
     for(int i = 0; i<n; ++i)
     {
-        a[i] = a[i] + 5;
+        printf("%d ", a[i]);
     }
+    printf("\n");
 
 
     return 0;
