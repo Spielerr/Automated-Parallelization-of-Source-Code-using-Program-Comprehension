@@ -1,0 +1,45 @@
+Paper 2:
+Intra Function Parallelism using Program Comprehension
+
+Intro to Paper:
+- How Parallelism is useful
+- Concept of Program Comprehension
+- Martino
+- Related Work
+- How our approach is different
+- Loop based Parallelism (Pluto)
+- Using Program Comprehension as an approach to solve Parallelism
+
+
+Refer Final Report
+
+Program Comprehension
+
+Mappings from sequential to parallel algos
+- sort
+- max
+- min 
+- mean
+
+add more Mappings
+
+Write our own stubs
+
+Flow charts for Program Comprehension Implementation
+Explain:
+- Reducing program to AST 
+- Path Based Representation of data 
+- Code to Vec Model to generate vector embeddings (Similar to Word to Vec)
+- K Means Clustering(Modified)
+- Training phase and prediction phase
+- Threshold concepts
+- Other Category (Maintaining semantics and correctness of the original program)
+- Mapping program to label
+- Dynamic Verification
+- Replacing code with parallel equivalent
+
+Results:
+- Graphs
+- Showing correctness is maintained
+- Improvements with hardware (Better utilization of hardware)
+
