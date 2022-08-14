@@ -1,0 +1,27 @@
+Only Inter function Parallelism
+
+- Show Map Reduce code stubs, explain the variations wrt array sizes, number of mappers...
+
+Fields to be used in the result tables:
+- Number of arrays / mappers / function fn_calls
+- Array Sizes
+
+- The above 2 can either be shown in 2 separate tables or as a combination of possibilities
+
+- Sequential time 
+- Parallel time
+
+- Speedup as a ratio 
+
+- Hardware Usage:
+-- With increasing threads => change number of threads being used
+-- Use some profiling
+-- How many threads are used?
+-- How long a thread is used?
+-- How busy are you keeping the available threads
+-- To justify "With increase in available hardware. there are improvements in usage of the hardware as well
+
+- Comparison between the two methods explained in our paper 
+
+- Show meaningful graphs for everything
+
