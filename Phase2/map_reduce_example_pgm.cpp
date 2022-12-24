@@ -12,6 +12,13 @@ struct node_results
 typedef struct node_results node_results;
 
 
+void fill(int a[], int n)
+{
+    for(int i = 0; i < n; ++i)
+    {
+        a[i] = rand() % 300;
+    }
+}
 
 void map(int *arr, int *count_arr, int n)
 {
@@ -176,27 +183,76 @@ void display(node_results *arr, int n)
     }
 }
 
+int max_score(int* a, int n)
+{
+    int max = a[0];
+    for (int i = 1; i < n; ++i)
+    {
+        if(a[i]>max)
+        {
+            max = a[i];
+        }
+    }
+	
+    return max;
+}
+
+int min_score(int* a, int n)
+{
+    int min = a[0];
+    for (int i = 1; i < n; ++i)
+    {
+        if(a[i]<min)
+        {
+            min = a[i];
+        }
+    }
+    return min;
+	
+}
+
 int main()
 {
-    int match_1_scores[] = {12,0,89,43,22,78,67};
-    int match_1_len = 7;
+    int match_1_len = 20000;
+    int match_2_len = 10000;
+    int match_3_len = 80000;
 
-    int match_2_scores[] = {0,22,97,150,0,1,7,12,0,1};
-    int match_2_len = 10;
+    int *match_1_scores = (int*)malloc( sizeof(int) * match_1_len );
+    int *match_2_scores = (int*)malloc( sizeof(int) * match_2_len );
+    int *match_3_scores = (int*)malloc( sizeof(int) * match_3_len );
 
-    int match_3_scores[] = {100,89,2,1,0,8,7,12};
-    int match_3_len = 8;
+    fill(match_1_scores, match_1_len);
+    fill(match_2_scores, match_2_len);
+    fill(match_3_scores, match_3_len);
 
-    int count_1[match_1_len];
-    int count_2[match_2_len];
-    int count_3[match_3_len];
+    int max1 = max_score(match_1_scores, match_1_len);
+    int min1 = min_score(match_1_scores, match_1_len);
+    int range1 = max1 - min1;
+    printf("Range of Scores in first array: %d - %d\n", min1, max1);
+
+    int max2 = max_score(match_2_scores, match_2_len);
+    int min2 = min_score(match_2_scores, match_2_len);
+    int range2 = max2 - min2;
+    printf("Range of Scores in second array: %d - %d\n", min2, max2);
+
+    int max3 = max_score(match_3_scores, match_3_len);
+    int min3 = min_score(match_3_scores, match_3_len);
+    int range3 = max3 - min3;
+    printf("Range of Scores in third array: %d - %d\n", min3, max3);
+
+
+    int *count_1 = (int*)malloc( sizeof(int) * match_1_len );
+    int *count_2 = (int*)malloc( sizeof(int) * match_2_len );
+    int *count_3 = (int*)malloc( sizeof(int) * match_3_len );
 
     map(match_1_scores, count_1, match_1_len);
     map(match_2_scores, count_2, match_2_len);
     map(match_3_scores, count_3, match_3_len);
 
+
+
     int n = match_1_len + match_2_len + match_3_len;
-    int merged_arr[n];
+    int *merged_arr = (int*)malloc( sizeof(int) * n );
 
     merge_arr(match_1_scores, match_1_len, match_2_scores, match_2_len, match_3_scores, match_3_len, merged_arr);
     sort(merged_arr, n);
@@ -207,9 +263,9 @@ int main()
     // range 2 : 100 - 199
     // range 3 : 200 - 300
 
-    node_results arr1[100];
-    node_results arr2[100];
-    node_results arr3[101];
+    node_results *arr1 = (node_results*)malloc( sizeof(node_results) * 100 );
+    node_results *arr2 = (node_results*)malloc( sizeof(node_results) * 100 );
+    node_results *arr3 = (node_results*)malloc( sizeof(node_results) * 101 );
     int n1 = 0;
     int n2 = 0;
     int n3 = 0;
@@ -218,23 +274,23 @@ int main()
     
     if(range1_ind != -1)
     {
-        n1 = reduce(merged_arr, start_ind, range1_ind, arr1, 100);
+        n1 = reduce(merged_arr, 0, range1_ind, arr1, 100);
         start_ind = range1_ind + 1;
     }
 
-    int range2_ind = partition(merged_arr, n, 100, 199, start_ind);
+    int range2_ind = partition(merged_arr, n, 100, 199, range1_ind + 1);
 
     if(range2_ind != -1)
     {
-        n2 = reduce(merged_arr, start_ind, range2_ind, arr2, 100);
+        n2 = reduce(merged_arr, range1_ind + 1, range2_ind, arr2, 100);
         start_ind = range2_ind + 1;
     }
 
-    int range3_ind = partition(merged_arr, n, 200, 300, start_ind);
+    int range3_ind = partition(merged_arr, n, 200, 300, range2_ind + 1);
 
     if(range3_ind != -1)
     {
-        n3 = reduce(merged_arr, start_ind, range3_ind, arr3, 101);
+        n3 = reduce(merged_arr, range2_ind + 1, range3_ind, arr3, 101);
         start_ind = range3_ind + 1;
     }
 
