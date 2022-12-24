@@ -373,7 +373,7 @@ int main()
             if(range1_ind != -1)
             {
                 n1 = reduce(merged_arr, 0, range1_ind, arr1, 100);
-                start_ind = range1_ind + 1;
+                //start_ind = range1_ind + 1;
             }
         }
 
@@ -391,7 +391,7 @@ int main()
             if(range2_ind != -1)
             {
                 n2 = reduce(merged_arr, range1_ind + 1, range2_ind, arr2, 100);
-                start_ind = range2_ind + 1;
+                //start_ind = range2_ind + 1;
             }
         }
 
@@ -404,7 +404,7 @@ int main()
     if(range3_ind != -1)
     {
         n3 = reduce(merged_arr, range2_ind + 1, range3_ind, arr3, 101);
-        start_ind = range3_ind + 1;
+        //start_ind = range3_ind + 1;
     }
 
     node_results *final_results = (node_results*)malloc((n1+n2+n3)*sizeof(node_results));
