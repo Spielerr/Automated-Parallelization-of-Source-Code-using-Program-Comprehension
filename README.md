@@ -57,3 +57,60 @@ A Research exploration aimed at exploring methods to improve the performance of 
 
 The project successfully achieved the research and development of techniques to automatically convert the sequential source code to its functionally accurate parallel equivalent with a substantial performance speedup (up to 500 times for larger data), thereby enabling the efficient and effective utilization of the underlying hardware resources.
 
+## Details about running the Software
+
+### Requirements
+
+* Python3:
+   * tensorflow==2.0.0-beta1
+   * numpy
+   * pandas
+   * tabulate
+   * sklearn
+   * pickle
+
+* Java:
+   * sudo apt install default-jdk
+   * sudo apt install default-jre
+
+* Get mysql:
+   * sudo apt-get install mysql
+
+* Run the init_db.sql to create and fill the database
+   * sql init_db.sql
+
+* Set up docker on your system.
+   * https://docs.docker.com/engine/install/ubuntu/
+   * https://docs.docker.com/get-started/
+
+### Code Execution
+
+The application can be run using a GUI or a CLI as follows:
+
+* **GUI**:
+
+   * Apache2 is required to run the GUI for the application: <br>
+     ```sudo apt-get apache2```
+   * Edit the apache2.conf file in /etc/apache2/: <br>
+     ```
+     <Directory "path/to/the/demo/folder">
+        Options Indexes FollowSymLinks
+        AllowOverride None
+        Require all granted
+     </Directory>
+     ```
+   * Edit the 000-default.conf file in sites-available:
+      * Change document root to point to the demo folder
+   * Restart apache2: <br>
+     ```sudo service apache2 restart```
+   * The web-app can now be accessed at http://localhost/WePar.html
+
+* **CLI**:
+
+   * cd to ```Phase2/Final_Demo/demo_4``` folder of this repository
+   * Rewrite testfile_demo_4.cpp with the sequential input program
+   * Run the bash script
+     * Method-3 (Master-Worker based) - ```bash script_3.1.sh``` <br>
+        OR
+     * Method-4 (Non Master-Worker based) - ```bash script_3.2.sh```
+   * The output is written into the ```model_3/output``` folder
